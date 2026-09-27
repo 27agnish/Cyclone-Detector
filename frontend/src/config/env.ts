@@ -3,30 +3,37 @@
  * Provides type-safe access to environment variables without scattering import.meta.env.
  */
 
-const isProd = import.meta.env.PROD;
 const rawMapsKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '').trim();
 
-// Base backend URL resolution:
-// In production on Vercel: must be set via VITE_API_BASE_URL or VITE_API_URL in Vercel project settings
-// In development: defaults to local FastAPI backend on http://127.0.0.1:8000
-const rawBaseUrl = (
-  import.meta.env.VITE_API_BASE_URL || 
-  import.meta.env.VITE_API_URL || 
-  (isProd ? '' : 'http://127.0.0.1:8000')
-).trim();
+/**
+ * Base backend URL resolution:
+ * - In development: uses VITE_API_BASE_URL / VITE_API_URL if provided, else defaults to local backend
+ * - In production: MUST be provided via VITE_API_BASE_URL or VITE_API_URL. NEVER falls back to localhost.
+ */
+function resolveApiBaseUrl(): string {
+  const configured = (
+    import.meta.env.VITE_API_BASE_URL || 
+    import.meta.env.VITE_API_URL || 
+    ''
+  ).trim();
 
-// Ensure clean base URL without trailing slash
-const sanitizedBaseUrl = rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
-const apiBaseWithV1 = sanitizedBaseUrl 
-  ? (sanitizedBaseUrl.endsWith('/api/v1') ? sanitizedBaseUrl : `${sanitizedBaseUrl}/api/v1`)
-  : '/api/v1';
+  if (configured) {
+    const clean = configured.replace(/\/+$/, '');
+    return clean.endsWith('/api/v1') ? clean : `${clean}/api/v1`;
+  }
 
-if (isProd && (!sanitizedBaseUrl || sanitizedBaseUrl.includes('localhost') || sanitizedBaseUrl.includes('127.0.0.1'))) {
-  console.warn(
-    '[CycloneShield] Notice: Running in production without a public backend URL configured. ' +
-    'Set VITE_API_BASE_URL in your Vercel Project Settings > Environment Variables.'
-  );
+  // Safe development fallback ONLY (active during 'vite dev', never during production build)
+  if (import.meta.env.DEV) {
+    return 'http://127.0.0.1:8000/api/v1';
+  }
+
+  // In production without configured backend URL: return empty string.
+  // Never attempt localhost or send network requests to an unknown host in production.
+  return '';
 }
+
+const apiBaseWithV1 = resolveApiBaseUrl();
+const sanitizedBaseUrl = apiBaseWithV1 ? apiBaseWithV1.replace(/\/api\/v1$/, '') : '';
 
 export const env = {
   /**
@@ -47,15 +54,16 @@ export const env = {
   /**
    * Production mode indicator.
    */
-  IS_PRODUCTION: isProd,
+  IS_PRODUCTION: import.meta.env.PROD,
 
   /**
-   * Base URL for the FastAPI backend service (e.g. https://your-backend.onrender.com).
+   * Base URL for the FastAPI backend service (without /api/v1).
    */
   BACKEND_BASE_URL: sanitizedBaseUrl,
 
   /**
    * Base URL with /api/v1 prefix for standard API queries.
+   * In production, this is non-empty ONLY when VITE_API_BASE_URL is configured.
    */
   API_V1_BASE_URL: apiBaseWithV1,
 

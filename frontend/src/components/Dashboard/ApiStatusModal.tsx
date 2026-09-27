@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, ShieldCheck, AlertCircle, Key, Server, Database, Globe, Satellite, Wind } from 'lucide-react';
 import { env } from '../../config/env';
-import axios from 'axios';
+import { apiClient } from '../../services/api';
 
 interface ApiStatusModalProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export const ApiStatusModal: React.FC<ApiStatusModalProps> = ({ isOpen, onClose 
   const fetchHealth = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${env.API_V1_BASE_URL}/health`);
+      const res = await apiClient.get('/health');
       setHealthData(res.data);
     } catch (e) {
       setHealthData({ status: 'unreachable', services: {} });
