@@ -1,0 +1,33 @@
+# Production Dockerfile for CycloneShield AI Backend on Google Cloud Run
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PORT=8080
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libgdal-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/pyproject.toml* backend/requirements.txt* ./
+RUN pip install --no-cache-dir \
+    fastapi \
+    "uvicorn[standard]" \
+    pydantic \
+    pydantic-settings \
+    sqlalchemy \
+    shapely \
+    numpy \
+    pandas \
+    scikit-learn \
+    httpx \
+    python-multipart
+
+COPY backend/app ./app
+
+EXPOSE 8080
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
