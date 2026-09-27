@@ -11,4 +11,29 @@ export const apiClient = axios.create({
   timeout: 15000,
 });
 
+// Interceptor for detailed diagnostic logging in browser console
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const method = error.config?.method?.toUpperCase() || 'GET';
+    const url = `${error.config?.baseURL || ''}${error.config?.url || ''}`;
+    const status = error.response?.status;
+    const statusText = error.response?.statusText || '';
+    const errorDetails = error.response?.data || error.message;
+
+    console.error(
+      `[CycloneShield API Error] ${method} ${url} -> ${status || 'NETWORK ERROR'} (${statusText || error.message})`,
+      {
+        url,
+        status,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        message: error.message,
+      }
+    );
+
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;

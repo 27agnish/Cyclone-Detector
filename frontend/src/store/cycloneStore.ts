@@ -10,6 +10,7 @@ import {
 } from '../types/cyclone';
 import { cycloneApi } from '../services/cycloneApi';
 import { infrastructureApi } from '../services/infrastructureApi';
+import { env } from '../config/env';
 
 interface CycloneStoreState {
   activeCyclones: CycloneSummary[];
@@ -139,9 +140,21 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
         isLoading: false
       });
     } catch (err: any) {
-      console.error('Failed to load initial cyclone data:', err);
+      console.error('[CycloneShield] Failed to load initial cyclone data:', err);
+      const targetUrl = env.API_V1_BASE_URL;
+      const status = err.response?.status;
+      const statusText = err.response?.statusText;
+      const errMsg = err.message || 'Unknown network error';
+      
+      let userFriendlyError = `Unable to connect to CycloneShield backend (${targetUrl}). ${errMsg}`;
+      if (status) {
+        userFriendlyError = `Backend returned HTTP ${status}${statusText ? ` (${statusText})` : ''} at ${targetUrl}`;
+      } else if (env.IS_PRODUCTION && (!targetUrl || targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1'))) {
+        userFriendlyError = `Production backend URL is not configured. Please set VITE_API_BASE_URL in your Vercel Project Settings > Environment Variables to your deployed backend URL.`;
+      }
+      
       set({ 
-        error: 'Failed to connect to CycloneShield backend. Verify FastAPI service is running.',
+        error: userFriendlyError,
         isLoading: false 
       });
     }

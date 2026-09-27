@@ -24,8 +24,16 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./cycloneshield.db")
     
-    # CORS
-    CORS_ORIGINS: List[str] = ["*"]
+    # CORS Origins (Include Vercel production frontend and local dev environments)
+    CORS_ORIGINS: List[str] = [
+        "https://cyclone-detector.vercel.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
     
     # Region defaults
     DEFAULT_REGION: str = "Odisha, India"

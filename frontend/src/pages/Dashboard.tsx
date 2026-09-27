@@ -6,7 +6,7 @@ import { useCycloneStore } from '../store/cycloneStore';
 import { AlertCircle } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { cycloneDetail, isLoading, error } = useCycloneStore();
+  const { cycloneDetail, isLoading, error, fetchInitialData } = useCycloneStore();
 
   if (isLoading && !cycloneDetail) {
     return (
@@ -21,10 +21,18 @@ export const Dashboard: React.FC = () => {
 
   if (error && !cycloneDetail) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
         <div className="text-base font-mono font-bold text-white">Connection Error</div>
-        <p className="text-xs text-slate-400 max-w-md">{error}</p>
+        <p className="text-xs text-slate-300 max-w-lg leading-relaxed bg-slate-900/60 p-4 rounded-lg border border-slate-800 font-mono">
+          {error}
+        </p>
+        <button
+          onClick={() => fetchInitialData()}
+          className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs rounded shadow transition flex items-center gap-2"
+        >
+          RETRY CONNECTION
+        </button>
       </div>
     );
   }

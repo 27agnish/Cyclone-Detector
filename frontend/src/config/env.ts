@@ -3,12 +3,30 @@
  * Provides type-safe access to environment variables without scattering import.meta.env.
  */
 
+const isProd = import.meta.env.PROD;
 const rawMapsKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '').trim();
-const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000').trim();
+
+// Base backend URL resolution:
+// In production on Vercel: must be set via VITE_API_BASE_URL or VITE_API_URL in Vercel project settings
+// In development: defaults to local FastAPI backend on http://127.0.0.1:8000
+const rawBaseUrl = (
+  import.meta.env.VITE_API_BASE_URL || 
+  import.meta.env.VITE_API_URL || 
+  (isProd ? '' : 'http://127.0.0.1:8000')
+).trim();
 
 // Ensure clean base URL without trailing slash
 const sanitizedBaseUrl = rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
-const apiBaseWithV1 = sanitizedBaseUrl.endsWith('/api/v1') ? sanitizedBaseUrl : `${sanitizedBaseUrl}/api/v1`;
+const apiBaseWithV1 = sanitizedBaseUrl 
+  ? (sanitizedBaseUrl.endsWith('/api/v1') ? sanitizedBaseUrl : `${sanitizedBaseUrl}/api/v1`)
+  : '/api/v1';
+
+if (isProd && (!sanitizedBaseUrl || sanitizedBaseUrl.includes('localhost') || sanitizedBaseUrl.includes('127.0.0.1'))) {
+  console.warn(
+    '[CycloneShield] Notice: Running in production without a public backend URL configured. ' +
+    'Set VITE_API_BASE_URL in your Vercel Project Settings > Environment Variables.'
+  );
+}
 
 export const env = {
   /**
@@ -27,7 +45,12 @@ export const env = {
   ),
 
   /**
-   * Base URL for the FastAPI backend service (e.g. http://localhost:8000).
+   * Production mode indicator.
+   */
+  IS_PRODUCTION: isProd,
+
+  /**
+   * Base URL for the FastAPI backend service (e.g. https://your-backend.onrender.com).
    */
   BACKEND_BASE_URL: sanitizedBaseUrl,
 
