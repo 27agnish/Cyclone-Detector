@@ -54,9 +54,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from starlette.requests import Request
+
+@app.middleware("http")
+async def normalize_api_path(request: Request, call_next):
+    """
+    Normalizes request paths to ensure full compatibility with Vercel serverless rewrites.
+    Whether Vercel routes with /api/v1/..., /api/..., /v1/..., or direct /cyclones/...,
+    this middleware normalizes the ASGI path so FastAPI router always matches.
+    """
+    path = request.scope.get("path", "")
+    if path in ("/api/index.py", "/api/index.py/"):
+        request.scope["path"] = "/"
+    elif path in ("/api/v1", "/api/v1/", "/api", "/api/", "/", "/docs", "/openapi.json"):
+        pass
+    elif path.startswith("/api/v1/"):
+        pass
+    elif path.startswith("/v1/"):
+        request.scope["path"] = "/api" + path
+    elif path.startswith("/api/"):
+        if not path.startswith("/api/docs") and not path.startswith("/api/openapi.json") and not path.startswith("/api/health"):
+            request.scope["path"] = "/api/v1" + path[4:]
+    elif not path.startswith("/api"):
+        if path not in ("/health", "/health/"):
+            request.scope["path"] = f"/api/v1{path}"
+    return await call_next(request)
+
 @app.get("/", tags=["System"])
 @app.get("/api", include_in_schema=False)
 @app.get("/api/v1", include_in_schema=False)
+@app.get("/api/index.py", include_in_schema=False)
 def root():
     return {
         "name": settings.PROJECT_NAME,

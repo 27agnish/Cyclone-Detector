@@ -54,6 +54,11 @@ class CycloneSummary(BaseModel):
     estimated_risk_score: Optional[float] = 78.5
     estimated_risk_category: Optional[RiskLevel] = RiskLevel.CRITICAL
 
+class CycloneDetectionResponse(BaseModel):
+    status: str
+    cyclones_count: int
+    cyclones: List[CycloneSummary]
+
 class ForecastCone(BaseModel):
     cyclone_id: str
     generated_at: str

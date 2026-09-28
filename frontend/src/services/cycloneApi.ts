@@ -1,5 +1,5 @@
 import { apiClient } from './api';
-import { CycloneSummary, CycloneDetail, ForecastCone, LandfallInfo, LandfallZone, PopulationExposure } from '../types/cyclone';
+import { CycloneSummary, CycloneDetail, ForecastCone, LandfallInfo, LandfallZone, PopulationExposure, CycloneDetectionResponse } from '../types/cyclone';
 
 export const cycloneApi = {
   getActiveCyclones: async (): Promise<CycloneSummary[]> => {
@@ -12,8 +12,8 @@ export const cycloneApi = {
     return res.data;
   },
 
-  detectCyclones: async (forceRefresh: boolean = false) => {
-    const res = await apiClient.get('/cyclones/detect', { params: { force_refresh: forceRefresh } });
+  detectCyclones: async (forceRefresh: boolean = false): Promise<CycloneDetectionResponse> => {
+    const res = await apiClient.get<CycloneDetectionResponse>('/cyclones/detect', { params: { force_refresh: forceRefresh } });
     return res.data;
   },
 

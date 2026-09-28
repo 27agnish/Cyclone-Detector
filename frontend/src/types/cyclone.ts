@@ -41,6 +41,12 @@ export interface CycloneSummary {
   estimated_landfall_location?: string;
 }
 
+export interface CycloneDetectionResponse {
+  status: string;
+  cyclones_count: number;
+  cyclones: CycloneSummary[];
+}
+
 export interface ForecastCone {
   cyclone_id: string;
   generated_at: string;

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import List, Dict, Any, Optional
 from app.services.cyclone_detection.detector import detector_service
 from app.services.cyclone_detection.tracker import cyclone_tracker
-from app.schemas.cyclone import CycloneSummary, CycloneDetail, TrackPoint, ForecastCone, LandfallInfo, LandfallZone
+from app.schemas.cyclone import CycloneSummary, CycloneDetail, TrackPoint, ForecastCone, LandfallInfo, LandfallZone, CycloneDetectionResponse
 from app.services.infrastructure_service import infrastructure_service
 from app.services.population_service import population_service
 
@@ -19,7 +19,7 @@ def get_active_cyclones():
     active = [c for c in detector_service.detect_active_cyclones() if c.is_active]
     return active
 
-@router.get("/detect")
+@router.get("/detect", response_model=CycloneDetectionResponse)
 def trigger_detection(force_refresh: bool = False):
     """Proactively checks data sources to detect active cyclonic disturbances."""
     results = detector_service.detect_active_cyclones(force_refresh=force_refresh)
@@ -40,7 +40,7 @@ def refresh_cyclone_data():
         "cyclones": results
     }
 
-@router.get("/{cyclone_id}")
+@router.get("/{cyclone_id}", response_model=CycloneDetail)
 def get_cyclone_by_id(cyclone_id: str):
     """Retrieves full cyclone package including observed track, forecast, uncertainty cone, and landfall."""
     detail = detector_service.get_cyclone_detail(cyclone_id)

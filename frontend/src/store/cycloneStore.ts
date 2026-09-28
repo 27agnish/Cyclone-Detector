@@ -114,13 +114,49 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
     try {
       // 1. Detect cyclones
       const detectRes = await cycloneApi.detectCyclones();
-      const cyclones: CycloneSummary[] = detectRes.cyclones || [];
-      const defaultId = cyclones.length > 0 ? cyclones[0].id : 'cyclone_dana';
+      let cyclones: CycloneSummary[] = [];
+      if (Array.isArray(detectRes)) {
+        cyclones = detectRes;
+      } else if (detectRes && Array.isArray((detectRes as any).cyclones)) {
+        cyclones = (detectRes as any).cyclones;
+      } else {
+        const receivedType = typeof detectRes;
+        const preview = typeof detectRes === 'object' ? JSON.stringify(detectRes) : String(detectRes);
+        throw new Error(
+          `Unexpected cyclone detection response: expected array or object with 'cyclones' list, received ${receivedType}: ${preview.slice(0, 150)}`
+        );
+      }
+
+      const defaultId = cyclones.length > 0 && cyclones[0]?.id ? cyclones[0].id : 'cyclone_dana';
 
       // 2. Fetch selected cyclone details
       const detail = await cycloneApi.getCycloneById(defaultId);
-      const infra = await infrastructureApi.getInfrastructure(defaultId);
-      const pop = await cycloneApi.getPopulationExposure(defaultId);
+      if (!detail || typeof detail !== 'object') {
+        throw new Error(
+          `Invalid cyclone detail response for '${defaultId}': expected JSON object, received ${typeof detail}: ${String(detail).slice(0, 150)}`
+        );
+      }
+      if (!Array.isArray(detail.observed_track)) {
+        const presentKeys = Object.keys(detail).join(', ') || 'none';
+        throw new Error(
+          `Cyclone '${defaultId}' response missing 'observed_track' array (keys found: [${presentKeys}])`
+        );
+      }
+
+      // Safe retrieval of supplemental infrastructure and population datasets
+      let infra = null;
+      try {
+        infra = await infrastructureApi.getInfrastructure(defaultId);
+      } catch (infraErr) {
+        console.warn(`[CycloneShield] Supplemental infrastructure data warning for ${defaultId}:`, infraErr);
+      }
+
+      let pop = null;
+      try {
+        pop = await cycloneApi.getPopulationExposure(defaultId);
+      } catch (popErr) {
+        console.warn(`[CycloneShield] Supplemental population data warning for ${defaultId}:`, popErr);
+      }
 
       // Default frame to current cyclone position (last observed point)
       const currentPoint = detail.observed_track.length > 0 
@@ -151,6 +187,8 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
         userFriendlyError = `Backend returned HTTP ${status}${statusText ? ` (${statusText})` : ''} at ${targetUrl}`;
       } else if (env.IS_PRODUCTION && (targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1'))) {
         userFriendlyError = `Localhost backend URL (${targetUrl}) detected in production. Remove VITE_API_BASE_URL from Vercel Environment Variables to use the unified /api/v1 route.`;
+      } else if (err instanceof Error) {
+        userFriendlyError = err.message;
       }
       
       set({ 
@@ -164,8 +202,31 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
     set({ isLoading: true });
     try {
       const detail = await cycloneApi.getCycloneById(cycloneId);
-      const infra = await infrastructureApi.getInfrastructure(cycloneId);
-      const pop = await cycloneApi.getPopulationExposure(cycloneId);
+      if (!detail || typeof detail !== 'object') {
+        throw new Error(
+          `Invalid cyclone detail response for '${cycloneId}': expected JSON object, received ${typeof detail}`
+        );
+      }
+      if (!Array.isArray(detail.observed_track)) {
+        const presentKeys = Object.keys(detail).join(', ') || 'none';
+        throw new Error(
+          `Cyclone '${cycloneId}' response missing 'observed_track' array (keys found: [${presentKeys}])`
+        );
+      }
+
+      let infra = null;
+      try {
+        infra = await infrastructureApi.getInfrastructure(cycloneId);
+      } catch (infraErr) {
+        console.warn(`[CycloneShield] Supplemental infrastructure data warning for ${cycloneId}:`, infraErr);
+      }
+
+      let pop = null;
+      try {
+        pop = await cycloneApi.getPopulationExposure(cycloneId);
+      } catch (popErr) {
+        console.warn(`[CycloneShield] Supplemental population data warning for ${cycloneId}:`, popErr);
+      }
       
       const currentPoint = detail.observed_track.length > 0 
         ? detail.observed_track[detail.observed_track.length - 1] 
@@ -182,9 +243,12 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
         lastUpdated: detail.last_updated,
         isLoading: false
       });
-    } catch (err) {
-      console.error('Error switching cyclone:', err);
-      set({ isLoading: false });
+    } catch (err: any) {
+      console.error(`[CycloneShield] Failed to select cyclone ${cycloneId}:`, err);
+      set({ 
+        error: `Failed to load details for ${cycloneId}: ${err.message || err}`,
+        isLoading: false 
+      });
     }
   },
 
