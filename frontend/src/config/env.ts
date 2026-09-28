@@ -7,8 +7,8 @@ const rawMapsKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '').trim();
 
 /**
  * Base backend URL resolution:
- * - In development: uses VITE_API_BASE_URL / VITE_API_URL if provided, else defaults to local backend
- * - In production: MUST be provided via VITE_API_BASE_URL or VITE_API_URL. NEVER falls back to localhost.
+ * - In local development: defaults to 'http://127.0.0.1:8000/api/v1' unless overridden by VITE_API_BASE_URL.
+ * - In unified Vercel deployment: defaults to same-origin relative path '/api/v1' (or uses VITE_API_BASE_URL if explicitly provided).
  */
 function resolveApiBaseUrl(): string {
   const configured = (
@@ -22,14 +22,13 @@ function resolveApiBaseUrl(): string {
     return clean.endsWith('/api/v1') ? clean : `${clean}/api/v1`;
   }
 
-  // Safe development fallback ONLY (active during 'vite dev', never during production build)
+  // Local development default (when running 'vite' dev server alongside local FastAPI)
   if (import.meta.env.DEV) {
     return 'http://127.0.0.1:8000/api/v1';
   }
 
-  // In production without configured backend URL: return empty string.
-  // Never attempt localhost or send network requests to an unknown host in production.
-  return '';
+  // Single-deployment Vercel production default: frontend and backend communicate via same-origin '/api/v1'
+  return '/api/v1';
 }
 
 const apiBaseWithV1 = resolveApiBaseUrl();

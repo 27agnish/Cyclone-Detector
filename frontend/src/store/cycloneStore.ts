@@ -149,8 +149,8 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
       let userFriendlyError = `Unable to connect to CycloneShield backend (${targetUrl}). ${errMsg}`;
       if (status) {
         userFriendlyError = `Backend returned HTTP ${status}${statusText ? ` (${statusText})` : ''} at ${targetUrl}`;
-      } else if (env.IS_PRODUCTION && (!targetUrl || targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1'))) {
-        userFriendlyError = `Production backend URL is not configured. Please set VITE_API_BASE_URL in your Vercel Project Settings > Environment Variables to your deployed backend URL.`;
+      } else if (env.IS_PRODUCTION && (targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1'))) {
+        userFriendlyError = `Localhost backend URL (${targetUrl}) detected in production. Remove VITE_API_BASE_URL from Vercel Environment Variables to use the unified /api/v1 route.`;
       }
       
       set({ 

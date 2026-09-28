@@ -15,7 +15,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   if (!API_BASE_URL && env.IS_PRODUCTION) {
     const errorMsg =
-      'Production backend URL is not configured. Please add VITE_API_BASE_URL in your Vercel Project Settings > Environment Variables (e.g. https://your-backend.onrender.com) and redeploy.';
+      'CycloneShield backend API URL is not configured. Expected /api/v1 same-origin route.';
     console.error(`[CycloneShield Config Error] ${errorMsg}`);
     return Promise.reject(new Error(errorMsg));
   }

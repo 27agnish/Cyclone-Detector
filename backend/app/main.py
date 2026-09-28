@@ -24,18 +24,24 @@ from app.services.cyclone_detection.detector import detector_service
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: preload active cyclone and start periodic scheduler
+    # Startup: preload active cyclone and start periodic scheduler (only in persistent servers)
     detector_service.detect_active_cyclones()
-    cyclone_scheduler.start()
+    is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+    if not is_serverless:
+        cyclone_scheduler.start()
     yield
     # Shutdown: stop background scheduler cleanly
-    cyclone_scheduler.stop()
+    if not is_serverless:
+        cyclone_scheduler.stop()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Track-Based Cyclone Impact & Infrastructure Vulnerability Forecaster API",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False,
+    docs_url="/api/docs",
+    openapi_url="/api/openapi.json",
 )
 
 # CORS configuration: Allow production Vercel frontend, preview deployments, and local dev
@@ -48,8 +54,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/", tags=["System"])
+@app.get("/api", include_in_schema=False)
+def root():
+    return {
+        "name": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "docs_url": "/api/docs",
+        "health_url": f"{settings.API_V1_STR}/health"
+    }
+
 # Health endpoint with safe service status reporting
 @app.get("/api/v1/health", tags=["Health"])
+@app.get("/api/health", include_in_schema=False)
+@app.get("/health", include_in_schema=False)
 def health_check():
     return {
         "status": "ok",

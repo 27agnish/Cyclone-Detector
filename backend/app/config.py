@@ -1,7 +1,7 @@
 import os
 from pydantic_settings import BaseSettings
-from pydantic import ConfigDict
-from typing import List, Optional
+from pydantic import ConfigDict, field_validator
+from typing import List, Optional, Union
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "CYCLONESHIELD AI"
@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./cycloneshield.db")
     
     # CORS Origins (Include Vercel production frontend and local dev environments)
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: Union[List[str], str] = [
         "https://cyclone-detector.vercel.app",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -34,6 +34,19 @@ class Settings(BaseSettings):
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ]
+    
+    @field_validator("CORS_ORIGINS", mode="before")
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        if isinstance(v, str):
+            clean_str = v.strip()
+            if clean_str.startswith("["):
+                import json
+                try:
+                    return json.loads(clean_str)
+                except Exception:
+                    pass
+            return [i.strip() for i in clean_str.split(",") if i.strip()]
+        return v
     
     # Region defaults
     DEFAULT_REGION: str = "Odisha, India"
