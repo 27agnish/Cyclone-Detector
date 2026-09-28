@@ -4,22 +4,11 @@ import { env } from '../config/env';
 export const API_BASE_URL = env.API_V1_BASE_URL;
 
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL || undefined,
+  baseURL: API_BASE_URL || '/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 15000,
-});
-
-// Guard Interceptor: In production, prevent any request if backend URL is not configured
-apiClient.interceptors.request.use((config) => {
-  if (!API_BASE_URL && env.IS_PRODUCTION) {
-    const errorMsg =
-      'CycloneShield backend API URL is not configured. Expected /api/v1 same-origin route.';
-    console.error(`[CycloneShield Config Error] ${errorMsg}`);
-    return Promise.reject(new Error(errorMsg));
-  }
-  return config;
 });
 
 // Response interceptor for detailed diagnostic logging in browser console

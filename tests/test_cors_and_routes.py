@@ -88,16 +88,19 @@ def test_vercel_serverless_entrypoint():
     from api.index import app as vercel_app
     vclient = TestClient(vercel_app)
     
-    # Test root and /api alias
+    # Test root and /api /api/v1 alias
     resp_root = vclient.get("/")
     assert resp_root.status_code == 200
     assert resp_root.json()["name"] == "CYCLONESHIELD AI"
     
     resp_api = vclient.get("/api")
     assert resp_api.status_code == 200
+
+    resp_apiv1 = vclient.get("/api/v1")
+    assert resp_apiv1.status_code == 200
     
     # Test health endpoints
-    for endpoint in ["/api/v1/health", "/api/health", "/health"]:
+    for endpoint in ["/api/v1/health", "/api/v1/health/", "/api/health", "/api/health/", "/health", "/health/"]:
         h_resp = vclient.get(endpoint)
         assert h_resp.status_code == 200
         assert h_resp.json()["status"] == "ok"

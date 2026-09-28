@@ -152,7 +152,7 @@ export const ApiStatusModal: React.FC<ApiStatusModalProps> = ({ isOpen, onClose 
 
         {/* Footer */}
         <div className="px-5 py-3 bg-command-card border-t border-command-border flex items-center justify-between text-xs text-slate-400 font-mono">
-          <span>Backend URL: {env.BACKEND_BASE_URL}</span>
+          <span>Backend: {env.BACKEND_BASE_URL || '(Same Origin)'} ({env.API_V1_BASE_URL})</span>
           <button onClick={onClose} className="px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-white transition">
             Close
           </button>

@@ -56,6 +56,7 @@ app.add_middleware(
 
 @app.get("/", tags=["System"])
 @app.get("/api", include_in_schema=False)
+@app.get("/api/v1", include_in_schema=False)
 def root():
     return {
         "name": settings.PROJECT_NAME,
@@ -66,8 +67,11 @@ def root():
 
 # Health endpoint with safe service status reporting
 @app.get("/api/v1/health", tags=["Health"])
+@app.get("/api/v1/health/", include_in_schema=False)
 @app.get("/api/health", include_in_schema=False)
+@app.get("/api/health/", include_in_schema=False)
 @app.get("/health", include_in_schema=False)
+@app.get("/health/", include_in_schema=False)
 def health_check():
     return {
         "status": "ok",

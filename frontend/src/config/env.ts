@@ -62,7 +62,7 @@ export const env = {
 
   /**
    * Base URL with /api/v1 prefix for standard API queries.
-   * In production, this is non-empty ONLY when VITE_API_BASE_URL is configured.
+   * Defaults to same-origin '/api/v1' in production, or 'http://127.0.0.1:8000/api/v1' in development.
    */
   API_V1_BASE_URL: apiBaseWithV1,
 
