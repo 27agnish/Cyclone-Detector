@@ -2,14 +2,21 @@ import sys
 import os
 from pathlib import Path
 
-# Ensure 'backend' directory is on sys.path for Vercel serverless execution
-backend_dir = Path(__file__).resolve().parent.parent / "backend"
-if str(backend_dir) not in sys.path:
-    sys.path.insert(0, str(backend_dir))
+# Add all candidate paths to sys.path for Vercel Serverless environment
+api_dir = Path(__file__).resolve().parent
+root_dir = api_dir.parent
 
-# Ensure root directory is on sys.path
-root_dir = Path(__file__).resolve().parent.parent
-if str(root_dir) not in sys.path:
-    sys.path.insert(0, str(root_dir))
+candidate_paths = [
+    str(root_dir / "backend"),
+    str(api_dir / "backend"),
+    str(root_dir),
+    str(api_dir),
+    os.getcwd(),
+    os.path.join(os.getcwd(), "backend"),
+]
+
+for p in candidate_paths:
+    if os.path.exists(p) and p not in sys.path:
+        sys.path.insert(0, p)
 
 from app.main import app

@@ -108,4 +108,32 @@ def test_vercel_serverless_entrypoint():
     # Test active cyclones
     cyc_resp = vclient.get("/api/v1/cyclones/active")
     assert cyc_resp.status_code == 200
+    assert "application/json" in cyc_resp.headers.get("content-type", "")
+
+    # Test detect endpoint used by fetchInitialData()
+    detect_resp = vclient.get("/api/v1/cyclones/detect")
+    assert detect_resp.status_code == 200
+    assert "application/json" in detect_resp.headers.get("content-type", "")
+    detect_data = detect_resp.json()
+    assert "cyclones" in detect_data
+    assert isinstance(detect_data["cyclones"], list)
+    assert len(detect_data["cyclones"]) > 0
+
+    # Test detail endpoint used by fetchInitialData()
+    detail_resp = vclient.get("/api/v1/cyclones/cyclone_dana")
+    assert detail_resp.status_code == 200
+    assert "application/json" in detail_resp.headers.get("content-type", "")
+    detail_data = detail_resp.json()
+    assert "observed_track" in detail_data
+    assert isinstance(detail_data["observed_track"], list)
+    assert len(detail_data["observed_track"]) > 0
+
+    # Test infrastructure and population endpoints used by fetchInitialData()
+    infra_resp = vclient.get("/api/v1/infrastructure?cyclone_id=cyclone_dana")
+    assert infra_resp.status_code == 200
+    assert "application/json" in infra_resp.headers.get("content-type", "")
+
+    pop_resp = vclient.get("/api/v1/population?cyclone_id=cyclone_dana")
+    assert pop_resp.status_code == 200
+    assert "application/json" in pop_resp.headers.get("content-type", "")
 
