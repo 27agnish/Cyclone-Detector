@@ -60,9 +60,19 @@ from starlette.requests import Request
 async def normalize_api_path(request: Request, call_next):
     """
     Normalizes request paths to ensure full compatibility with Vercel serverless rewrites.
-    Whether Vercel routes with /api/v1/..., /api/..., /v1/..., or direct /cyclones/...,
-    this middleware normalizes the ASGI path so FastAPI router always matches.
+    Inspects Vercel's x-matched-path / x-vercel-matched-path headers if the rewrite arrived
+    at /api/index.py, and normalizes prefix permutations so FastAPI routes always match.
     """
+    # Check if Vercel forwarded original URL via headers
+    matched_path = (
+        request.headers.get("x-matched-path") or
+        request.headers.get("x-vercel-matched-path") or
+        request.headers.get("x-forwarded-uri") or
+        ""
+    )
+    if matched_path and matched_path not in ("/api/index.py", "/api/index.py/"):
+        request.scope["path"] = matched_path.split("?")[0]
+
     path = request.scope.get("path", "")
     if path in ("/api/index.py", "/api/index.py/"):
         request.scope["path"] = "/"
