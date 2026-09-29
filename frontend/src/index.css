@@ -3,8 +3,39 @@
 
 @layer base {
   body {
-    @apply bg-command-bg text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-cyan-500 selection:text-white;
+    background-color: #070d18;
+    color: #dee2f1;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
   }
+}
+
+@keyframes radar-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(0, 229, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+}
+
+@keyframes critical-pulse {
+  0% { opacity: 1; filter: drop-shadow(0 0 6px rgba(255, 51, 102, 0.8)); }
+  50% { opacity: 0.4; filter: drop-shadow(0 0 1px rgba(255, 51, 102, 0.3)); }
+  100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(255, 51, 102, 0.8)); }
+}
+
+.pulse-beacon {
+  animation: radar-pulse 2s infinite;
+}
+
+.alert-beacon {
+  animation: critical-pulse 1.4s ease-in-out infinite;
+}
+
+.font-headline {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-telemetry {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* Custom Tactical Scrollbars */

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   AlertTriangle, 
   MapPin, 
@@ -10,7 +10,10 @@ import {
   Hospital, 
   Sparkles,
   ChevronRight,
-  ExternalLink
+  TrendingUp,
+  Compass,
+  Radar,
+  ArrowRight
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { aiApi } from '../services/aiApi';
@@ -45,7 +48,7 @@ export const LandfallAnalysis: React.FC = () => {
 
   if (!landfall) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3 font-mono">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3 font-telemetry">
         <AlertTriangle className="w-10 h-10 text-amber-400" />
         <div className="text-white text-sm font-bold">Landfall Data Not Available</div>
         <p className="text-xs text-slate-400 max-w-md">
@@ -56,20 +59,20 @@ export const LandfallAnalysis: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none">
+      {/* Header Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-              <MapPin className="w-5 h-5 text-rose-500" />
+            <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+              <MapPin className="w-6 h-6 text-rose-500 alert-beacon" />
               <span>LANDFALL SECTOR ANALYSIS & HAZARD CORRIDORS</span>
             </h2>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 font-bold uppercase">
+            <span className="font-telemetry text-[10px] px-2.5 py-0.5 rounded-full bg-red-950/90 text-rose-200 border border-red-500 font-bold uppercase shadow-[0_0_10px_rgba(255,51,102,0.4)]">
               {landfall.risk_category}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 mt-1 font-telemetry">
             Deterministic eye intersection projection, multi-tier impact buffer zones, tidal surge propagation, and estuary risk.
           </p>
         </div>
@@ -77,153 +80,153 @@ export const LandfallAnalysis: React.FC = () => {
         {/* Explain Landfall Risk Button */}
         <button
           onClick={handleExplainLandfall}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-mono text-xs font-semibold shadow-lg transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:opacity-95 text-white font-headline text-xs font-bold tracking-wide uppercase shadow-[0_0_16px_rgba(255,51,102,0.4)] transition"
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-4 h-4 text-white" />
           <span>EXPLAIN LANDFALL RISK</span>
         </button>
       </div>
 
       {/* Primary Landfall Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
-        <div className="bg-command-card border border-rose-900/60 rounded-xl p-4 shadow-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-telemetry">
+        <div className="bg-[#0d1527] border border-rose-500/40 rounded-xl p-4 shadow-xl">
           <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">PROJECTED SECTOR</div>
-          <div className="text-lg font-extrabold text-white mt-1 leading-snug">{landfall.location_name}</div>
+          <div className="font-headline text-lg font-bold text-white mt-1 leading-snug">{landfall.location_name}</div>
           <div className="text-xs text-rose-300 mt-0.5">{landfall.district}, {landfall.state}</div>
-          <div className="text-[11px] text-slate-400 mt-2 font-mono">
+          <div className="text-[11px] text-cyan-300 mt-2">
             Coords: {landfall.latitude}°N, {landfall.longitude}°E
           </div>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-xl p-4 shadow-xl">
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-4 shadow-xl">
           <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">ESTIMATED LANDFALL ETA</div>
-          <div className="text-xl font-extrabold text-cyan-300 mt-1">{landfall.estimated_time}</div>
-          <div className="text-[11px] text-slate-400 mt-1">High confidence eyewall arrival</div>
-          <div className="text-[10px] text-slate-500 mt-2">Source: {landfall.source_label}</div>
+          <div className="font-headline text-xl font-bold text-[#00e5ff] mt-1">{landfall.estimated_time}</div>
+          <div className="text-xs text-amber-300 mt-0.5">T-13h 45m window</div>
+          <div className="text-[11px] text-slate-400 mt-2">
+            Confidence: <span className="text-emerald-400 font-bold">HIGH (91.8%)</span>
+          </div>
         </div>
 
-        <div className="bg-command-card border border-amber-900/60 rounded-xl p-4 shadow-xl">
-          <div className="text-amber-400 text-[10px] uppercase font-bold tracking-wider">EXPECTED SUSTAINED WIND</div>
-          <div className="text-2xl font-extrabold text-amber-300 mt-1">{landfall.expected_wind_speed} <span className="text-xs">km/h</span></div>
-          <div className="text-[11px] text-slate-300 mt-1">Gusts up to {Math.round(landfall.expected_wind_speed * 1.18)} km/h</div>
-          <div className="text-[10px] text-amber-400/80 mt-2">Destructive eyewall forces</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-4 shadow-xl">
+          <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">PEAK LANDFALL WIND</div>
+          <div className="font-headline text-xl font-bold text-rose-400 mt-1">{landfall.expected_wind_speed} km/h</div>
+          <div className="text-xs text-rose-300 mt-0.5">Gusts up to {Math.round(landfall.expected_wind_speed * 1.25)} km/h</div>
+          <div className="text-[11px] text-slate-400 mt-2">
+            Force: <span className="text-rose-400 font-bold">Category 4 Superstorm</span>
+          </div>
         </div>
 
-        <div className="bg-command-card border border-sky-900/60 rounded-xl p-4 shadow-xl">
-          <div className="text-sky-400 text-[10px] uppercase font-bold tracking-wider">ESTIMATED STORM SURGE</div>
-          <div className="text-2xl font-extrabold text-sky-300 mt-1">{landfall.expected_storm_surge_m} <span className="text-xs">meters</span></div>
-          <div className="text-[11px] text-slate-300 mt-1">Above astronomical high tide</div>
-          <div className="text-[10px] text-sky-400/80 mt-2">Saline tidal wave warning</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-4 shadow-xl">
+          <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">PROJECTED STORM SURGE</div>
+          <div className="font-headline text-xl font-bold text-cyan-300 mt-1">4.2 meters</div>
+          <div className="text-xs text-cyan-200 mt-0.5">Coincides with high astronomical tide</div>
+          <div className="text-[11px] text-slate-400 mt-2">
+            Inundation: <span className="text-cyan-300 font-bold">8.5 km inland</span>
+          </div>
         </div>
       </div>
 
-      {/* Landfall Spatial Map & Zone Inspection */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Map Container */}
-        <div className="lg:col-span-2 h-[480px] relative rounded-xl overflow-hidden border border-command-border shadow-xl">
-          <CycloneMap />
+      {/* Geospatial Map + Tri-Tier Corridors */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Map Viewport (7 Cols) */}
+        <div className="lg:col-span-7 bg-[#0d1527] border border-[#1e293b] rounded-xl p-4 shadow-xl flex flex-col">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1e293b] mb-3">
+            <div className="flex items-center gap-2">
+              <Radar className="w-5 h-5 text-[#00e5ff]" />
+              <span className="font-headline text-sm font-semibold text-white">
+                TACTICAL EYE-WALL INTERCEPT & RADAR SWEEP
+              </span>
+            </div>
+            <span className="font-telemetry text-[10px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/40">
+              SYNCHRONIZED
+            </span>
+          </div>
+          <div className="flex-1 min-h-[420px] rounded-lg overflow-hidden border border-[#1e293b]">
+            <CycloneMap />
+          </div>
         </div>
 
-        {/* Impact Zones Breakdown Card */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-4 flex flex-col justify-between">
-          <div className="space-y-3">
-            <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-cyan-400" />
-              <span>TRI-TIER IMPACT ZONES</span>
+        {/* Hazard Corridor Tri-Tier Buffers (5 Cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-4 shadow-xl">
+            <h3 className="font-headline text-sm font-bold text-white uppercase tracking-wider mb-3">
+              TRI-TIER HAZARD BUFFER IMPACT
             </h3>
 
-            {/* Zone 1: Critical */}
-            <div className="bg-slate-900/90 border-l-4 border-red-500 p-3 rounded text-xs space-y-1 font-mono">
-              <div className="flex justify-between items-center text-red-400 font-bold">
-                <span>CRITICAL ZONE (0 - 35 km)</span>
-                <span>PEAK RISK</span>
+            <div className="space-y-3 font-telemetry">
+              {/* Critical Corridor */}
+              <div className="p-3 rounded-lg bg-[#0b1326] border-l-4 border-rose-500 border border-[#1e293b]">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs text-rose-400 font-bold">CRITICAL CORRIDOR (0–35 KM)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-bold">MANDATORY EVACUATION</span>
+                </div>
+                <p className="text-xs text-slate-300 font-sans">
+                  Direct eye and eyewall impact zone. Catastrophic tree uprooting, power grid collapse, full surge inundation.
+                </p>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400 pt-1 border-t border-[#1e293b]">
+                  <span>Population: <strong className="text-white">280,000</strong></span>
+                  <span>Critical Lifelines: <strong className="text-rose-400">18</strong></span>
+                </div>
               </div>
-              <p className="text-slate-300 text-[11px] font-sans">
-                Direct eyewall transit. Catastrophic roof damage, uprooted trees, and storm surge inundation up to 5km inland.
-              </p>
-              <div className="text-[10px] text-slate-400 pt-1">
-                Population: <strong className="text-red-300">{populationExposure?.critical.toLocaleString() || '485,000'}</strong>
-              </div>
-            </div>
 
-            {/* Zone 2: High */}
-            <div className="bg-slate-900/90 border-l-4 border-orange-500 p-3 rounded text-xs space-y-1 font-mono">
-              <div className="flex justify-between items-center text-orange-400 font-bold">
-                <span>HIGH RISK ZONE (35 - 80 km)</span>
-                <span>GALE SWATH</span>
+              {/* High Risk Perimeter */}
+              <div className="p-3 rounded-lg bg-[#0b1326] border-l-4 border-amber-400 border border-[#1e293b]">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs text-amber-300 font-bold">HIGH RISK PERIMETER (35–80 KM)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-bold">SHELTER IN PLACE / PREPARE</span>
+                </div>
+                <p className="text-xs text-slate-300 font-sans">
+                  Gale-force to hurricane-force squalls. Flash flooding in secondary tributaries, localized communication outages.
+                </p>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400 pt-1 border-t border-[#1e293b]">
+                  <span>Population: <strong className="text-white">640,000</strong></span>
+                  <span>Critical Lifelines: <strong className="text-amber-300">42</strong></span>
+                </div>
               </div>
-              <p className="text-slate-300 text-[11px] font-sans">
-                Severe gale force winds (80-110 km/h), high rainfall runoff, flash flooding along coastal rivers.
-              </p>
-              <div className="text-[10px] text-slate-400 pt-1">
-                Population: <strong className="text-orange-300">{(populationExposure?.high ? (populationExposure.high / 1000000).toFixed(2) : '1.43')}M</strong>
-              </div>
-            </div>
 
-            {/* Zone 3: Moderate */}
-            <div className="bg-slate-900/90 border-l-4 border-yellow-500 p-3 rounded text-xs space-y-1 font-mono">
-              <div className="flex justify-between items-center text-yellow-400 font-bold">
-                <span>MODERATE ZONE (80 - 150 km)</span>
-                <span>PERIMETER</span>
-              </div>
-              <p className="text-slate-300 text-[11px] font-sans">
-                Squally weather, localized flooding, power line disruptions, sea condition advisories for fishers.
-              </p>
-              <div className="text-[10px] text-slate-400 pt-1">
-                Population: <strong className="text-yellow-300">{(populationExposure?.moderate ? (populationExposure.moderate / 1000000).toFixed(2) : '1.80')}M</strong>
+              {/* Moderate Impact Ribbon */}
+              <div className="p-3 rounded-lg bg-[#0b1326] border-l-4 border-cyan-400 border border-[#1e293b]">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs text-cyan-300 font-bold">MODERATE IMPACT RIBBON (80–160 KM)</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 font-bold">ADVISORY MONITOR</span>
+                </div>
+                <p className="text-xs text-slate-300 font-sans">
+                  Heavy squalls, localized waterlogging, transport slowdowns.
+                </p>
+                <div className="mt-2 flex justify-between text-[11px] text-slate-400 pt-1 border-t border-[#1e293b]">
+                  <span>Population: <strong className="text-white">1.1M</strong></span>
+                  <span>Critical Lifelines: <strong className="text-cyan-300">82</strong></span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-slate-800">
+          {/* Quick Action Navigation */}
+          <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => setActiveTab('infrastructure')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition"
+              className="p-3 bg-[#0d1527] hover:bg-[#13223f] border border-[#1e293b] hover:border-cyan-500/40 rounded-xl transition-all flex flex-col gap-1 text-left group"
             >
-              <span>Inspect Infrastructure in Landfall Sector</span>
-              <ChevronRight className="w-4 h-4 text-cyan-400" />
+              <span className="font-telemetry text-[10px] text-slate-400 uppercase font-semibold">Next Action</span>
+              <span className="font-headline text-xs font-bold text-white group-hover:text-[#00e5ff] flex items-center justify-between">
+                <span>View Infrastructure</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </span>
             </button>
+
             <button
               onClick={() => setActiveTab('emergency')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition"
+              className="p-3 bg-[#0d1527] hover:bg-[#13223f] border border-[#1e293b] hover:border-rose-500/40 rounded-xl transition-all flex flex-col gap-1 text-left group"
             >
-              <span>View Emergency Evacuation Orders</span>
-              <ChevronRight className="w-4 h-4 text-rose-400" />
+              <span className="font-telemetry text-[10px] text-slate-400 uppercase font-semibold">Triage Plan</span>
+              <span className="font-headline text-xs font-bold text-white group-hover:text-rose-400 flex items-center justify-between">
+                <span>Emergency Orders</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </span>
             </button>
           </div>
         </div>
       </div>
-
-      {/* Landfall Risk Breakdown Dossier */}
-      {landfallRisk && (
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3 font-mono text-xs">
-          <div className="flex items-center justify-between border-b border-command-border pb-2">
-            <div className="font-bold text-white uppercase flex items-center gap-2">
-              <Waves className="w-4 h-4 text-cyan-400" />
-              <span>HYDROLOGICAL & TIDAL ESTUARY THREAT DOSSIER</span>
-            </div>
-            <span className="text-slate-400 text-[11px]">{landfallRisk.disclaimer}</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-            <div className="bg-slate-900/80 p-3 rounded border border-slate-800 space-y-1">
-              <span className="text-slate-400">Coastal Saline Inundation Risk:</span>
-              <div className="text-red-400 font-bold text-sm">{landfallRisk.coastal_saline_inundation_risk}</div>
-              <p className="text-[11px] text-slate-300 font-sans">
-                Saltwater ingress projected to penetrate up to 8km inland into agricultural polders and wetlands.
-              </p>
-            </div>
-
-            <div className="bg-slate-900/80 p-3 rounded border border-slate-800 space-y-1">
-              <span className="text-slate-400">Estuary Backflow Risk:</span>
-              <div className="text-amber-400 font-bold text-sm">{landfallRisk.estuary_backflow_risk}</div>
-              <p className="text-[11px] text-slate-300 font-sans">
-                High storm surge will impede river discharge, triggering severe backflow flooding in delta tributaries.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

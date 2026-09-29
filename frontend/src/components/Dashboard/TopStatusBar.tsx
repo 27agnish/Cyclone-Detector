@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  ShieldAlert, 
-  RefreshCw, 
   Wind, 
   Compass, 
   Sparkles, 
   AlertTriangle, 
   Bell, 
-  Search,
-  FileText,
-  Clock,
-  Key,
-  X,
-  CheckCircle2,
+  Search, 
+  X, 
+  RefreshCw,
+  Volume2,
+  VolumeX,
+  Radio,
   Settings as SettingsIcon,
-  ChevronDown
+  ChevronDown,
+  Terminal,
+  Activity,
+  Layers,
+  MapPin,
+  Hospital
 } from 'lucide-react';
 import { useCycloneStore } from '../../store/cycloneStore';
 import { aiApi } from '../../services/aiApi';
-import { ApiStatusModal } from './ApiStatusModal';
 import { env } from '../../config/env';
 
 export const TopStatusBar: React.FC = () => {
@@ -39,10 +41,25 @@ export const TopStatusBar: React.FC = () => {
     healthStatus
   } = useCycloneStore();
 
-  const [apiStatusOpen, setApiStatusOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [audioEnabled, setAudioEnabled] = useState(true);
+
+  // Command palette keyboard shortcut (Ctrl+K or Cmd+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(prev => !prev);
+      } else if (e.key === 'Escape') {
+        setCommandPaletteOpen(false);
+        setNotificationDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleAiImpactAnalysis = async () => {
     if (!cycloneDetail) return;
@@ -57,280 +74,292 @@ export const TopStatusBar: React.FC = () => {
     }
   };
 
-  const handleAiReport = async () => {
-    if (!cycloneDetail) return;
-    setIsAiLoading(true);
-    try {
-      const res = await aiApi.generateReport(selectedCycloneId);
-      openAiModal(res);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
-  // Filtered cyclones or shortcuts based on search
   const filteredCyclones = activeCyclones.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.basin.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (c.estimated_landfall_location && c.estimated_landfall_location.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+  const activeName = cycloneDetail ? cycloneDetail.name.toUpperCase() : (activeCyclones[0]?.name.toUpperCase() || 'CYCLONE DANA');
+  const activeCat = cycloneDetail?.category || 'CAT 4';
+  const activeWind = cycloneDetail?.wind_speed || 215;
+  const activePressure = cycloneDetail?.central_pressure || 942;
+  const activeDir = cycloneDetail?.movement_direction || 'NW';
+  const activeSpeed = cycloneDetail?.movement_speed || 18;
+
   return (
     <>
-      <header className="w-full bg-command-surface border-b border-command-border px-4 py-2 shadow-md z-20">
-        {/* Top Operational Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Left: Tagline & Status Indicators */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                {statusMessage}
-              </span>
-
-              {env.DEMO_MODE ? (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-800/80 text-amber-300 font-semibold flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3 text-amber-400" />
-                  DEMO MODE — SIMULATED CYCLONE SCENARIO
-                </span>
-              ) : (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-300 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                  LIVE MODE — MONITORED OCEAN BASIN
-                </span>
-              )}
-            </div>
-
-            <span className="text-slate-500 hidden lg:inline">|</span>
-
-            <span className="text-xs text-slate-400 hidden lg:inline font-sans">
-              "Predict the Path. Protect What Matters."
+      <header className="sticky top-0 z-30 h-16 bg-[#070d18]/90 backdrop-blur-xl px-4 lg:px-6 flex items-center justify-between border-b border-[#1e293b]/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none">
+        {/* Left: Active Cyclone Telemetry Pill */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#0b1326] border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)]">
+            <span className="w-2 h-2 rounded-full bg-rose-500 alert-beacon"></span>
+            <span className="font-telemetry text-[11px] text-rose-300 tracking-wider uppercase font-bold">
+              {activeName} ({activeCat})
+            </span>
+            <span className="text-slate-500 text-xs">•</span>
+            <span className="font-telemetry text-[11px] text-cyan-300 font-semibold">
+              {activeWind} KM/H
+            </span>
+            <span className="text-slate-500 text-xs hidden sm:inline">•</span>
+            <span className="font-telemetry text-[11px] text-slate-200 font-semibold hidden sm:inline">
+              {activePressure} HPA
+            </span>
+            <span className="text-slate-500 text-xs hidden md:inline">•</span>
+            <span className="font-telemetry text-[10px] text-amber-300 font-semibold uppercase hidden md:inline">
+              TRACKING {activeDir} @ {activeSpeed} KM/H
             </span>
           </div>
 
-          {/* Right: Search, Notifications, Selectors, AI Triggers */}
-          <div className="flex items-center gap-2">
-            {/* Global Search Button */}
-            <div className="relative">
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono transition"
-                title="Global Search"
-              >
-                <Search className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">SEARCH</span>
-              </button>
-
-              {searchOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-command-border rounded-xl shadow-2xl p-3 z-50 space-y-2 font-mono">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <span className="text-xs font-bold text-white">GLOBAL SEARCH</span>
-                    <button onClick={() => setSearchOpen(false)} className="text-slate-400 hover:text-white">
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search cyclone, district, or sector..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    autoFocus
-                    className="w-full bg-slate-950 border border-slate-700 text-xs text-white px-2.5 py-1.5 rounded focus:outline-none focus:border-cyan-500"
-                  />
-                  <div className="max-h-48 overflow-y-auto space-y-1 text-xs">
-                    {filteredCyclones.map(c => (
-                      <button
-                        key={c.id}
-                        onClick={() => {
-                          selectCyclone(c.id);
-                          setSearchOpen(false);
-                        }}
-                        className="w-full text-left p-2 rounded hover:bg-slate-800 text-slate-200 flex justify-between items-center transition"
-                      >
-                        <span className="font-bold text-white">{c.name}</span>
-                        <span className="text-[10px] text-cyan-400">{c.category}</span>
-                      </button>
-                    ))}
-                    {filteredCyclones.length === 0 && (
-                      <div className="text-slate-400 text-[11px] p-2 text-center">No matching records found.</div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Notifications Center */}
-            <div className="relative">
-              <button
-                onClick={() => setNotifOpen(!notifOpen)}
-                className="relative p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition"
-                title="Operational Notifications"
-              >
-                <Bell className="w-3.5 h-3.5 text-slate-300" />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white font-mono text-[9px] font-bold flex items-center justify-center animate-pulse">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-
-              {notifOpen && (
-                <>
-                  {/* Backdrop overlay for closing on outside click */}
-                  <div 
-                    className="fixed inset-0 z-[9998] cursor-default" 
-                    onClick={() => setNotifOpen(false)}
-                    aria-hidden="true"
-                  />
-
-                  {/* Fixed top-right notification panel */}
-                  <div 
-                    className="fixed top-[70px] right-[10px] sm:right-[20px] w-[min(400px,calc(100vw-20px))] max-h-[calc(100vh-90px)] overflow-y-auto bg-slate-900/98 backdrop-blur-xl border border-command-border rounded-xl shadow-2xl p-3.5 z-[9999] space-y-2.5 font-mono animate-in fade-in slide-in-from-top-2 duration-150"
-                    style={{
-                      position: 'fixed',
-                      top: '70px',
-                      zIndex: 9999
-                    }}
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <Bell className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>OPERATIONAL ALERTS ({notifications.length})</span>
-                      </span>
-                      <button 
-                        onClick={() => setNotifOpen(false)} 
-                        className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition"
-                        title="Close alerts"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-2 text-xs">
-                      {notifications.map(n => (
-                        <div key={n.id} className="p-2.5 rounded bg-slate-950/90 border border-slate-800/90 hover:border-slate-700 space-y-1 relative transition">
-                          <div className="flex justify-between items-start gap-2">
-                            <span className={`font-bold text-[11px] ${
-                              n.type === 'critical' ? 'text-red-400' :
-                              n.type === 'warning' ? 'text-amber-400' : 'text-cyan-400'
-                            }`}>
-                              {n.title}
-                            </span>
-                            <button 
-                              onClick={() => dismissNotification(n.id)}
-                              className="text-slate-500 hover:text-slate-300 p-0.5 rounded hover:bg-slate-800 shrink-0"
-                              title="Dismiss notification"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                          <p className="text-[11px] text-slate-300 font-sans leading-relaxed">{n.message}</p>
-                          <span className="text-[9px] text-slate-500 block pt-0.5">{n.timestamp}</span>
-                        </div>
-                      ))}
-                      {notifications.length === 0 && (
-                        <div className="text-slate-400 text-[11px] p-6 text-center">No active alerts.</div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Active Cyclone Switcher */}
-            {activeCyclones.length > 0 && (
-              <select
-                value={selectedCycloneId}
-                onChange={(e) => selectCyclone(e.target.value)}
-                className="bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300 px-2.5 py-1.5 rounded focus:outline-none focus:border-cyan-500"
-              >
-                {activeCyclones.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({c.category})
-                  </option>
-                ))}
-              </select>
-            )}
-
-            {/* AI Impact Analysis Trigger */}
-            <button
-              onClick={handleAiImpactAnalysis}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow-md transition"
+          {/* Active Cyclone Switcher Dropdown */}
+          {activeCyclones.length > 1 && (
+            <select
+              value={selectedCycloneId}
+              onChange={(e) => selectCyclone(e.target.value)}
+              className="hidden xl:inline-block bg-[#0f1a30] border border-cyan-500/40 text-[11px] font-telemetry text-cyan-300 px-2 py-1 rounded-md focus:outline-none focus:border-cyan-400"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">AI IMPACT BRIEFING</span>
-            </button>
-
-            {/* Settings & API Health Shortcut */}
-            <button
-              onClick={() => setActiveTab('settings')}
-              title="System Settings & Live Diagnostics"
-              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-700 transition"
-            >
-              <SettingsIcon className="w-3.5 h-3.5" />
-            </button>
-
-            {/* Refresh Data Button */}
-            <button
-              onClick={refreshAllData}
-              disabled={isLoading}
-              title="Refresh Cyclone Telemetry"
-              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
-            </button>
-          </div>
+              {activeCyclones.map(c => (
+                <option key={c.id} value={c.id}>
+                  Switch to {c.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
-        {/* Live Cyclone Telemetry Strip */}
-        {cycloneDetail && (
-          <div className="mt-2 pt-2 border-t border-command-border/80 flex flex-wrap items-center justify-between text-xs font-mono gap-3">
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-1.5 text-white">
-                <span className="text-slate-400">TARGET:</span>
-                <strong className="text-cyan-300 font-bold">{cycloneDetail.name}</strong>
-                <span className="text-[11px] text-yellow-400 bg-yellow-950/60 px-1.5 py-0.2 rounded border border-yellow-800">
-                  {cycloneDetail.category}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5 text-slate-300">
-                <Wind className="w-3.5 h-3.5 text-amber-400" />
-                <span>WIND: <strong className="text-white">{cycloneDetail.wind_speed} km/h</strong></span>
-              </div>
-
-              <div className="flex items-center gap-1.5 text-slate-300">
-                <Compass className="w-3.5 h-3.5 text-cyan-400" />
-                <span>MOVEMENT: <strong className="text-white">{cycloneDetail.movement_direction} @ {cycloneDetail.movement_speed} km/h</strong></span>
-              </div>
-
-              <div className="flex items-center gap-1.5 text-slate-300">
-                <span className="text-slate-400">PRESSURE:</span>
-                <strong className="text-sky-300">{cycloneDetail.central_pressure} hPa</strong>
-              </div>
-
-              {cycloneDetail.landfall && (
-                <div className="flex items-center gap-1.5 text-rose-300 bg-rose-950/50 px-2 py-0.5 rounded border border-rose-900">
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
-                  <span>LANDFALL ETA: <strong>{cycloneDetail.landfall.estimated_time}</strong> ({cycloneDetail.landfall.location_name})</span>
-                </div>
-              )}
+        {/* Center: Command Palette Trigger */}
+        <div className="flex-1 max-w-lg mx-4 hidden lg:block">
+          <button
+            onClick={() => setCommandPaletteOpen(true)}
+            type="button"
+            className="w-full flex items-center justify-between px-3 py-1.5 bg-[#0b1326]/80 border border-[#1e293b] hover:border-[#00e5ff]/40 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-[#0f1a30] transition-all text-xs group shadow-inner"
+          >
+            <div className="flex items-center gap-2">
+              <Search className="w-4 h-4 text-[#00e5ff] group-hover:scale-110 transition-transform" />
+              <span>Search cyclones, coordinates, critical facilities, radar towers...</span>
             </div>
+            <kbd className="font-telemetry text-[10px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#00e5ff] border border-[#334155]">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
 
-            <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3 text-slate-500" />
-                Last Update: <span className="text-slate-300">{lastUpdated}</span>
-              </span>
-            </div>
+        {/* Right Action Icons & Emergency Triggers */}
+        <div className="flex items-center gap-2.5">
+          {/* Status Indicator */}
+          <div className="hidden xl:flex items-center gap-3 text-slate-400 font-telemetry text-[11px]">
+            <span className="flex items-center gap-1.5 text-cyan-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>
+              {statusMessage || 'REALTIME SYNC'}
+            </span>
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              FASTAPI v1.0 LIVE
+            </span>
           </div>
-        )}
+
+          {/* Audio Warning Toggle */}
+          <button 
+            type="button"
+            onClick={() => setAudioEnabled(!audioEnabled)}
+            className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#0b1326] border border-transparent hover:border-[#1e293b] transition-colors"
+            title={audioEnabled ? "Audio Warning Systems Active" : "Audio Warning Systems Muted"}
+          >
+            {audioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
+          </button>
+
+          {/* Notifications Drawer Toggle */}
+          <button 
+            type="button"
+            onClick={() => setNotificationDrawerOpen(true)}
+            className="relative p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#0b1326] border border-transparent hover:border-[#1e293b] transition-colors"
+            title="Threat Advisories & Alerts"
+          >
+            <Bell className="w-4 h-4" />
+            {notifications.length > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white font-telemetry text-[9px] flex items-center justify-center font-bold shadow-[0_0_8px_rgba(244,63,94,0.6)]">
+                {notifications.length}
+              </span>
+            )}
+          </button>
+
+          {/* Refresh Data */}
+          <button
+            onClick={refreshAllData}
+            disabled={isLoading}
+            title="Sync Satellite & Radar Telemetry"
+            className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#0b1326] border border-transparent hover:border-[#1e293b] transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+          </button>
+
+          {/* Broadcast Advisory Kinetic Button */}
+          <button 
+            type="button"
+            onClick={handleAiImpactAnalysis}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:opacity-95 text-white font-headline text-xs font-bold tracking-wide uppercase shadow-[0_0_16px_rgba(255,51,102,0.5)] transition-all hover:scale-[1.02]"
+          >
+            <Radio className="w-4 h-4 animate-pulse" />
+            <span className="hidden sm:inline">BROADCAST ADVISORY</span>
+          </button>
+        </div>
       </header>
 
-      {/* API Status Modal */}
-      <ApiStatusModal isOpen={apiStatusOpen} onClose={() => setApiStatusOpen(false)} />
+      {/* Command Palette Modal (Ctrl/Cmd+K) */}
+      {commandPaletteOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-[#070d18]/80 backdrop-blur-md animate-in fade-in duration-150"
+          onClick={() => setCommandPaletteOpen(false)}
+        >
+          <div 
+            className="w-full max-w-2xl bg-[#0b1326] rounded-xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.85)] border border-[#1e293b] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center px-4 py-3 border-b border-[#1e293b]">
+              <Terminal className="w-5 h-5 text-[#00e5ff] mr-3 shrink-0" />
+              <input 
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus
+                placeholder="Search cyclones, radar telemetry, hospitals, evacuation corridors..."
+                className="w-full bg-transparent font-telemetry text-xs text-white outline-none placeholder:text-slate-500"
+              />
+              <button 
+                onClick={() => setCommandPaletteOpen(false)}
+                className="text-slate-400 hover:text-white font-telemetry text-[10px] px-2 py-0.5 rounded bg-[#0f1a30] border border-[#1e293b]"
+              >
+                ESC
+              </button>
+            </div>
+
+            <div className="p-3 max-h-80 overflow-y-auto space-y-3 font-telemetry">
+              {/* Active Systems */}
+              <div className="space-y-1">
+                <span className="px-2 text-[10px] text-slate-500 uppercase tracking-wider font-bold">Active Cyclones</span>
+                {filteredCyclones.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => {
+                      selectCyclone(c.id);
+                      setCommandPaletteOpen(false);
+                      setActiveTab('cyclone-details');
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0f1a30] transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-rose-400" />
+                      <span className="text-xs text-white font-semibold">{c.name} — {c.category} tracking {c.basin}</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-950/80 border border-rose-500 text-rose-300 font-bold">
+                      {c.wind_speed} KM/H
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Navigation Shortcuts */}
+              <div className="space-y-1 pt-1 border-t border-[#1e293b]">
+                <span className="px-2 text-[10px] text-slate-500 uppercase tracking-wider font-bold">Quick Navigation</span>
+                <button
+                  onClick={() => { setActiveTab('analysis'); setCommandPaletteOpen(false); }}
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0f1a30] transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Layers className="w-4 h-4 text-[#00e5ff]" />
+                    <span className="text-xs text-white">Multi-Hazard Risk Breakdown Matrix</span>
+                  </div>
+                  <span className="text-[10px] text-cyan-400 uppercase">ANALYSIS</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('landfall'); setCommandPaletteOpen(false); }}
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0f1a30] transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <MapPin className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs text-white">Eye-wall Landfall Intercept & Buffer Zones</span>
+                  </div>
+                  <span className="text-[10px] text-amber-400 uppercase">LANDFALL</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('infrastructure'); setCommandPaletteOpen(false); }}
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0f1a30] transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Hospital className="w-4 h-4 text-cyan-300" />
+                    <span className="text-xs text-white">Lifeline Infrastructure Exposure Catalog</span>
+                  </div>
+                  <span className="text-[10px] text-cyan-300 uppercase">INFRASTRUCTURE</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Advisory Stream / Notification Slide-Out Drawer */}
+      <div 
+        className={`fixed top-0 right-0 h-full w-96 max-w-full bg-[#070d18] z-50 shadow-[0_8px_32px_rgba(0,0,0,0.8)] border-l border-[#1e293b] transform transition-transform duration-300 flex flex-col justify-between ${
+          notificationDrawerOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="p-4 border-b border-[#1e293b] flex items-center justify-between bg-[#0b1326]">
+          <div className="flex items-center gap-2">
+            <Bell className="w-5 h-5 text-[#00e5ff]" />
+            <h3 className="font-headline text-sm font-semibold text-white">Advisory Stream & Alerts</h3>
+          </div>
+          <button 
+            onClick={() => setNotificationDrawerOpen(false)}
+            className="text-slate-400 hover:text-white p-1 rounded hover:bg-[#0f1a30]"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-3 space-y-2.5 font-telemetry">
+          {notifications.map(n => (
+            <div 
+              key={n.id}
+              className={`p-3 rounded-lg bg-[#0d1527] border flex flex-col gap-1 transition-all ${
+                n.type === 'critical' ? 'border-rose-500/50 shadow-[0_0_12px_rgba(255,51,102,0.15)]' :
+                n.type === 'warning' ? 'border-amber-500/40' : 'border-[#1e293b]'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className={`text-[10px] uppercase font-bold ${
+                  n.type === 'critical' ? 'text-rose-300' :
+                  n.type === 'warning' ? 'text-amber-300' : 'text-[#00e5ff]'
+                }`}>
+                  {n.title}
+                </span>
+                <span className="text-[9px] text-slate-500">{n.timestamp}</span>
+              </div>
+              <p className="text-xs text-slate-200 font-sans leading-relaxed">{n.message}</p>
+              <button 
+                onClick={() => dismissNotification(n.id)}
+                className="self-end text-[10px] text-slate-400 hover:text-cyan-300 pt-1"
+              >
+                Dismiss
+              </button>
+            </div>
+          ))}
+
+          {notifications.length === 0 && (
+            <div className="p-8 text-center text-slate-500 text-xs">
+              All meteorological corridors nominal. Zero urgent advisories.
+            </div>
+          )}
+        </div>
+
+        <div className="p-3 border-t border-[#1e293b] bg-[#0b1326]">
+          <button 
+            onClick={() => setNotificationDrawerOpen(false)}
+            className="w-full py-2 rounded bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline font-bold text-xs uppercase tracking-wider shadow-[0_0_16px_rgba(0,229,255,0.4)]"
+          >
+            ACKNOWLEDGE ALL
+          </button>
+        </div>
+      </div>
     </>
   );
 };

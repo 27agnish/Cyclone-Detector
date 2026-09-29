@@ -10,7 +10,10 @@ import {
   Filter, 
   Sparkles, 
   AlertTriangle,
-  ArrowUpDown
+  Layers,
+  MapPin,
+  Building2,
+  ShieldAlert
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { InfrastructureAsset } from '../types/cyclone';
@@ -48,13 +51,24 @@ export const Infrastructure: React.FC = () => {
     setActiveTab('dashboard');
   };
 
+  const getAssetIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'hospital': return <Hospital className="w-5 h-5 text-rose-400" />;
+      case 'power': return <Zap className="w-5 h-5 text-amber-400" />;
+      case 'bridge':
+      case 'transport': return <Landmark className="w-5 h-5 text-cyan-400" />;
+      case 'shelter': return <Home className="w-5 h-5 text-emerald-400" />;
+      default: return <Building2 className="w-5 h-5 text-[#00e5ff]" />;
+    }
+  };
+
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-            <Hospital className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+            <Hospital className="w-6 h-6 text-[#00e5ff]" />
             <span>LIFELINE INFRASTRUCTURE VULNERABILITY DOSSIER</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1">
@@ -63,116 +77,165 @@ export const Infrastructure: React.FC = () => {
         </div>
 
         {/* Search & Filter */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search asset or district..."
+              placeholder="Search asset, district..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-slate-900 border border-slate-700 text-xs font-mono text-white pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-cyan-500 w-56"
+              className="bg-[#0f1a30] border border-[#1e293b] rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 w-48 sm:w-64"
             />
           </div>
 
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300 px-3 py-2 rounded-lg focus:outline-none focus:border-cyan-500"
+            className="bg-[#0f1a30] border border-[#1e293b] rounded-lg px-3 py-1.5 text-xs text-cyan-300 focus:outline-none focus:border-cyan-400"
           >
-            <option value="all">All Lifeline Types</option>
-            <option value="hospital">Hospitals</option>
-            <option value="power">Power Substation</option>
-            <option value="bridge">Bridges & Highways</option>
-            <option value="shelter">Cyclone Shelters</option>
-            <option value="water">Water Facilities</option>
-            <option value="communication">Radar & Telecom</option>
+            <option value="all">ALL LIFELINE TYPES</option>
+            <option value="hospital">HOSPITALS & HEALTHCARE</option>
+            <option value="power">POWER & ENERGY</option>
+            <option value="bridge">TRANSPORT & BRIDGES</option>
+            <option value="shelter">CYCLONE SHELTERS</option>
           </select>
         </div>
       </div>
 
-      {/* Summary KPI Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400">TOTAL MONITORED</span>
-          <div className="text-lg font-bold text-white mt-1">{infrastructure?.total_assets_monitored || 20} Assets</div>
+      {/* Summary Chips */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3.5 flex justify-between items-center">
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase">Monitored Assets</div>
+            <div className="font-headline text-xl font-bold text-white mt-0.5">{assets.length}</div>
+          </div>
+          <Building2 className="w-6 h-6 text-[#00e5ff] opacity-80" />
         </div>
-        <div className="bg-command-card border border-red-900/40 rounded-lg p-3">
-          <span className="text-red-400">CRITICAL THREAT</span>
-          <div className="text-lg font-bold text-red-400 mt-1">{infrastructure?.critical_assets || 4} Assets</div>
+
+        <div className="bg-[#0d1527] border border-rose-500/40 rounded-xl p-3.5 flex justify-between items-center">
+          <div>
+            <div className="text-[10px] text-rose-400 uppercase font-bold">Critical Vulnerability</div>
+            <div className="font-headline text-xl font-bold text-rose-400 mt-0.5">
+              {assets.filter(a => a.risk_category === 'CRITICAL').length}
+            </div>
+          </div>
+          <AlertTriangle className="w-6 h-6 text-rose-400 alert-beacon" />
         </div>
-        <div className="bg-command-card border border-orange-900/40 rounded-lg p-3">
-          <span className="text-orange-400">HIGH RISK</span>
-          <div className="text-lg font-bold text-orange-400 mt-1">{infrastructure?.high_risk_assets || 8} Assets</div>
+
+        <div className="bg-[#0d1527] border border-amber-500/40 rounded-xl p-3.5 flex justify-between items-center">
+          <div>
+            <div className="text-[10px] text-amber-400 uppercase font-bold">High Risk</div>
+            <div className="font-headline text-xl font-bold text-amber-400 mt-0.5">
+              {assets.filter(a => a.risk_category === 'HIGH').length}
+            </div>
+          </div>
+          <AlertTriangle className="w-6 h-6 text-amber-400" />
         </div>
-        <div className="bg-command-card border border-yellow-900/40 rounded-lg p-3">
-          <span className="text-yellow-400">MODERATE EXPOSURE</span>
-          <div className="text-lg font-bold text-yellow-400 mt-1">{infrastructure?.moderate_risk_assets || 8} Assets</div>
+
+        <div className="bg-[#0d1527] border border-cyan-500/40 rounded-xl p-3.5 flex justify-between items-center">
+          <div>
+            <div className="text-[10px] text-cyan-400 uppercase font-bold">Moderate / Low</div>
+            <div className="font-headline text-xl font-bold text-cyan-300 mt-0.5">
+              {assets.filter(a => a.risk_category === 'MODERATE' || a.risk_category === 'LOW').length}
+            </div>
+          </div>
+          <ShieldAlert className="w-6 h-6 text-cyan-400" />
         </div>
       </div>
 
-      {/* Asset Table */}
-      <div className="bg-command-card border border-command-border rounded-xl shadow-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-900 text-slate-400 border-b border-command-border">
-              <tr>
-                <th className="p-3">ASSET NAME</th>
-                <th className="p-3">TYPE</th>
-                <th className="p-3">DISTRICT</th>
-                <th className="p-3">DIST TO TRACK</th>
-                <th className="p-3">DIST TO LANDFALL</th>
-                <th className="p-3">WIND EXPOSURE</th>
-                <th className="p-3">RISK SCORE</th>
-                <th className="p-3">PROTOTYPE ACTION</th>
-                <th className="p-3 text-right">ACTION</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800">
-              {filteredAssets.map((a) => (
-                <tr key={a.id} className="hover:bg-slate-800/40 transition">
-                  <td className="p-3 font-semibold text-white">
-                    {a.name}
-                    <div className="text-[10px] text-slate-500 font-normal">Elev: {a.elevation_m}m | Backup: {a.backup_power ? 'Yes' : 'No'}</div>
-                  </td>
-                  <td className="p-3 text-slate-300 capitalize">{a.type}</td>
-                  <td className="p-3 text-slate-300">{a.district}</td>
-                  <td className="p-3 text-cyan-400 font-semibold">{a.distance_from_track_km} km</td>
-                  <td className="p-3 text-rose-400 font-semibold">{a.distance_from_landfall_km} km</td>
-                  <td className="p-3 text-amber-400 font-semibold">{a.wind_exposure_kmh} km/h</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      a.risk_category === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' :
-                      a.risk_category === 'HIGH' ? 'bg-orange-950 text-orange-300 border border-orange-800' :
-                      'bg-yellow-950 text-yellow-300 border border-yellow-800'
-                    }`}>
-                      {a.risk_category} ({a.risk_score})
-                    </span>
-                  </td>
-                  <td className="p-3 text-slate-300 text-[11px] max-w-xs truncate" title={a.prototype_action}>
-                    {a.prototype_action}
-                  </td>
-                  <td className="p-3 text-right space-x-1.5 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewOnMap(a)}
-                      className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 text-[10px]"
-                    >
-                      Map
-                    </button>
-                    <button
-                      onClick={() => handleExplainAsset(a)}
-                      className="px-2 py-1 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 text-[10px] inline-flex items-center gap-1"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                      AI Explain
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Asset Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredAssets.map((asset) => {
+          const isCritical = asset.risk_category === 'CRITICAL';
+          const isHigh = asset.risk_category === 'HIGH';
+
+          return (
+            <div
+              key={asset.id}
+              className={`bg-[#0d1527] border rounded-xl p-4 shadow-xl flex flex-col justify-between transition group ${
+                isCritical ? 'border-rose-500/40 hover:border-rose-400 hover:shadow-[0_0_20px_rgba(255,51,102,0.2)]' :
+                isHigh ? 'border-amber-500/40 hover:border-amber-400' :
+                'border-[#1e293b] hover:border-cyan-500/40'
+              }`}
+            >
+              <div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-lg bg-[#0f1a30] border border-[#1e293b]">
+                      {getAssetIcon(asset.type)}
+                    </div>
+                    <div>
+                      <h4 className="font-headline text-sm font-bold text-white group-hover:text-cyan-200 transition-colors leading-tight">
+                        {asset.name}
+                      </h4>
+                      <span className="text-[10px] text-slate-400 uppercase">{asset.type} • {asset.district}</span>
+                    </div>
+                  </div>
+
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase shadow-sm ${
+                    isCritical ? 'bg-rose-950/90 text-rose-300 border border-rose-500 alert-beacon' :
+                    isHigh ? 'bg-amber-950/90 text-amber-300 border border-amber-500' :
+                    'bg-cyan-950 text-cyan-300 border border-cyan-500'
+                  }`}>
+                    {asset.risk_category} ({asset.risk_score})
+                  </span>
+                </div>
+
+                <div className="bg-[#0f1a30] p-2.5 rounded-lg border border-[#1e293b] space-y-1 text-xs mt-3">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Track Distance:</span>
+                    <strong className="text-cyan-300">{asset.distance_from_track_km} km</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Landfall Distance:</span>
+                    <strong className="text-rose-400">{asset.distance_from_landfall_km} km</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Wind Exposure:</span>
+                    <strong className="text-amber-400">{asset.wind_exposure_kmh} km/h</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Elevation:</span>
+                    <strong className="text-slate-200">{asset.elevation_m}m</strong>
+                  </div>
+                </div>
+
+                {/* Vulnerability factors */}
+                <div className="mt-2.5 space-y-1">
+                  <div className="text-[10px] text-slate-400 uppercase font-semibold">Identified Vulnerabilities:</div>
+                  <ul className="text-xs text-slate-300 list-disc list-inside space-y-0.5 font-sans">
+                    {asset.risk_factors.map((f, i) => (
+                      <li key={i}>{f}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-4 mt-2 border-t border-[#1e293b]">
+                <button
+                  onClick={() => handleViewOnMap(asset)}
+                  className="flex-1 py-1.5 rounded-lg bg-[#0f1a30] hover:bg-[#13223f] border border-[#1e293b] text-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1.5"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-[#00e5ff]" />
+                  <span>ON MAP</span>
+                </button>
+
+                <button
+                  onClick={() => handleExplainAsset(asset)}
+                  className="flex-1 py-1.5 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] text-xs font-headline font-bold shadow-sm transition flex items-center justify-center gap-1.5 hover:opacity-95"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>AI EXPLAIN</span>
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
+
+export default Infrastructure;

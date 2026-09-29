@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Satellite, 
   Layers, 
@@ -6,8 +6,11 @@ import {
   AlertTriangle, 
   Sparkles, 
   Compass, 
-  ShieldCheck,
-  RefreshCw
+  ShieldCheck, 
+  RefreshCw,
+  Radar,
+  Radio,
+  Eye
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { aiApi } from '../services/aiApi';
@@ -31,137 +34,146 @@ export const SatellitePage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-            <Satellite className="w-5 h-5 text-cyan-400" />
-            <span>SATELLITE REMOTE SENSING & SAR FLOOD ARCHITECTURE</span>
+          <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+            <Satellite className="w-6 h-6 text-[#00e5ff]" />
+            <span>SATELLITE REMOTE SENSING & SAR FLOOD INTELLIGENCE</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Cloud-penetrating Synthetic Aperture Radar (Sentinel-1 SAR) and multispectral optical imaging pipeline.
+            Cloud-penetrating Synthetic Aperture Radar (Sentinel-1 SAR) and INSAT-3D multispectral optical imaging pipeline.
           </p>
         </div>
 
         <button
           onClick={handleMultimodalAiAnalysis}
           disabled={analyzing}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow-md transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline text-xs font-bold shadow-[0_0_16px_rgba(0,229,255,0.4)] transition hover:opacity-95 disabled:opacity-50"
         >
           <Sparkles className="w-4 h-4" />
-          <span>RUN GEMINI MULTIMODAL SAR ANALYSIS</span>
+          <span>{analyzing ? 'INFERRING MULTIMODAL SAR...' : 'RUN GEMINI SAR ANALYSIS'}</span>
         </button>
       </div>
 
       {/* Sensor Specs Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400">ACTIVE SENSOR</span>
-          <div className="text-sm font-bold text-white mt-1">Copernicus Sentinel-1A SAR</div>
-          <div className="text-[10px] text-cyan-400">C-band 5.405 GHz (VV+VH)</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3.5">
+          <span className="text-slate-400 text-[10px] uppercase">Active Constellation</span>
+          <div className="font-headline text-base font-bold text-white mt-1">Sentinel-1A + 1B</div>
+          <div className="text-emerald-400 text-[11px] mt-0.5">C-Band SAR Polarimetric</div>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400">CLOUD PENETRATION</span>
-          <div className="text-sm font-bold text-emerald-400 mt-1">100% All-Weather Penetration</div>
-          <div className="text-[10px] text-slate-400">Operates through cyclone clouds</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3.5">
+          <span className="text-slate-400 text-[10px] uppercase">Optical Satellite</span>
+          <div className="font-headline text-base font-bold text-cyan-300 mt-1">INSAT-3DR Geostationary</div>
+          <div className="text-slate-400 text-[11px] mt-0.5">TIR1/TIR2 15-min interval</div>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400">GROUND RESOLUTION</span>
-          <div className="text-sm font-bold text-white mt-1">10.0m Spatial Grid</div>
-          <div className="text-[10px] text-slate-400">Interferometric Wide Swath</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3.5">
+          <span className="text-slate-400 text-[10px] uppercase">Spatial Ground Resolution</span>
+          <div className="font-headline text-base font-bold text-white mt-1">10 Meters / Pixel</div>
+          <div className="text-cyan-300 text-[11px] mt-0.5">High-Res Inundation Map</div>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400">INUNDATION DETECTED</span>
-          <div className="text-sm font-bold text-rose-400 mt-1">342.8 sq km (+18.4%)</div>
-          <div className="text-[10px] text-rose-300">Active coastal inundation</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3.5">
+          <span className="text-slate-400 text-[10px] uppercase">Cloud Penetration</span>
+          <div className="font-headline text-base font-bold text-emerald-400 mt-1">100% All-Weather</div>
+          <div className="text-slate-400 text-[11px] mt-0.5">Microwave Synthetic Aperture</div>
         </div>
       </div>
 
-      {/* Radar Flood Map Preview Simulation */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Synthetic Radar Backscatter Frame */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
-              <Layers className="w-4 h-4 text-cyan-400" />
-              <span>SAR BACKSCATTER INTENSITY (VV POLARIZATION)</span>
+      {/* Synthetic Aperture Radar Pipeline View */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Main Radar Feed Showcase (7 Cols) */}
+        <div className="lg:col-span-7 bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div className="flex items-center gap-2">
+              <Radar className="w-5 h-5 text-[#00e5ff]" />
+              <span className="font-headline text-sm font-bold text-white uppercase">
+                SENTINEL-1 SAR CALIBRATED BACKSCATTER (VV/VH RATIO)
+              </span>
             </div>
-            <span className="text-[10px] font-mono bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-800">
-              GEE PIPELINE READY
+            <span className="text-[10px] text-cyan-300 font-bold bg-[#13223f] px-2 py-0.5 rounded border border-cyan-400/40">
+              POLARIMETRIC DECOMPOSITION
             </span>
           </div>
 
-          <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-700 bg-slate-950 flex items-center justify-center">
-            {/* Visual radar texture simulation */}
-            <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-70"></div>
-            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-950/40 via-slate-900/60 to-rose-950/40"></div>
+          <div className="relative h-72 rounded-lg bg-[#070d18] border border-[#1e293b] flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0e2238_0%,#070d18_80%)]" />
             
-            {/* Coastline & Swath contour simulation */}
-            <div className="relative z-10 text-center p-6 space-y-2">
-              <div className="w-12 h-12 rounded-full border border-cyan-400 flex items-center justify-center text-cyan-400 mx-auto animate-pulse">
-                <Satellite className="w-6 h-6" />
+            {/* Synthetic radar pulse overlay */}
+            <div className="relative flex flex-col items-center gap-3 z-10 text-center p-4">
+              <div className="w-20 h-20 rounded-full border border-cyan-500/40 flex items-center justify-center relative">
+                <div className="w-16 h-16 rounded-full border border-cyan-400/60 flex items-center justify-center animate-ping opacity-20" />
+                <Satellite className="w-8 h-8 text-[#00e5ff]" />
               </div>
-              <div className="font-mono text-xs font-bold text-white">
-                SENTINEL-1A SAR CALIBRATED BACKSCATTER
+              <div className="font-headline text-sm font-bold text-white">
+                Co-Polarized Gamma0 Surface Roughness Grid
               </div>
-              <p className="text-[11px] text-slate-300 max-w-sm mx-auto font-sans">
-                Dark specular backscatter pixels (&lt; -18 dB) indicate open surface water flood inundation over Dhamra-Bhitarkanika delta.
+              <p className="text-xs text-slate-400 max-w-sm">
+                Specular reflectance thresholding isolates open-water flood extent against permanent inland water baselines.
               </p>
             </div>
-          </div>
 
-          <div className="text-[11px] text-slate-400 font-mono">
-            Pipeline: Earth Engine ImageCollection('COPERNICUS/S1_GRD') &gt; Speckle Filter (Lee 7x7) &gt; Otsu Inundation Thresholding.
+            {/* Corner telemetry coordinates */}
+            <div className="absolute bottom-3 left-3 text-[10px] text-cyan-300 bg-[#070d18]/90 px-2 py-1 rounded border border-[#1e293b]">
+              LAT: 21.32°N • LON: 87.15°E • PASS: ASCENDING 128
+            </div>
           </div>
         </div>
 
-        {/* Embankment Breach Detection Report */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
-              <Droplets className="w-4 h-4 text-cyan-400" />
-              <span>COASTAL EMBANKMENT & WATER INGRESS MONITORING</span>
-            </div>
-            <span className="text-[10px] font-mono text-rose-400 font-bold">2 CRITICAL BREACHES</span>
-          </div>
-
+        {/* Multimodal Analysis Capabilities (5 Cols) */}
+        <div className="lg:col-span-5 bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="bg-slate-900 border border-red-900/60 p-3 rounded-lg space-y-1">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-red-400">1. Dhamra Estuary North Embankment</span>
-                <span className="bg-red-950 text-red-300 px-1.5 py-0.2 rounded text-[10px]">CRITICAL</span>
-              </div>
-              <div className="text-xs text-slate-300">Coordinates: 20.842°N, 86.915°E</div>
-              <p className="text-[11px] text-slate-400">
-                SAR change detection reveals 420m embankment breach with active saltwater ingress extending 1.8km inland into agricultural polders.
-              </p>
-            </div>
+            <h3 className="font-headline text-sm font-bold text-white uppercase tracking-wider">
+              MULTIMODAL SATELLITE ENGINE CAPABILITIES
+            </h3>
 
-            <div className="bg-slate-900 border border-orange-900/60 p-3 rounded-lg space-y-1">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-orange-400">2. Bhitarkanika Creek Saline Ingress</span>
-                <span className="bg-orange-950 text-orange-300 px-1.5 py-0.2 rounded text-[10px]">HIGH RISK</span>
+            <div className="space-y-2.5 text-xs">
+              <div className="p-3 rounded-lg bg-[#0f1a30] border border-[#1e293b] space-y-1">
+                <div className="text-cyan-300 font-bold flex items-center gap-1.5">
+                  <Droplets className="w-4 h-4 text-[#00e5ff]" />
+                  <span>Permanent vs Flood Inundation Separation</span>
+                </div>
+                <p className="text-slate-300 font-sans">
+                  Otsu bimodal thresholding segments waterbodies from pre-event radar imagery to prevent false positives.
+                </p>
               </div>
-              <div className="text-xs text-slate-300">Coordinates: 20.612°N, 86.832°E</div>
-              <p className="text-[11px] text-slate-400">
-                Tidal backflow through mangrove creek systems causing water logging along Rajnagar evacuation access artery.
-              </p>
+
+              <div className="p-3 rounded-lg bg-[#0f1a30] border border-[#1e293b] space-y-1">
+                <div className="text-rose-300 font-bold flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-rose-400" />
+                  <span>Submerged Infrastructure & Road Breach Detection</span>
+                </div>
+                <p className="text-slate-300 font-sans">
+                  Intersects SAR flood polygons with highway network lines (NH-16, SH-5) to locate breached culverts.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#0f1a30] border border-[#1e293b] space-y-1">
+                <div className="text-emerald-300 font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Gemini Vision AI Scene Synthesis</span>
+                </div>
+                <p className="text-slate-300 font-sans">
+                  Produces multi-paragraph commander situational briefs linking radar backscatter to ground ground-truth damage.
+                </p>
+              </div>
             </div>
           </div>
 
           <button
             onClick={handleMultimodalAiAnalysis}
-            className="w-full py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow"
+            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline text-xs font-bold shadow-[0_0_16px_rgba(0,229,255,0.3)] transition hover:opacity-95"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Generate Full SAR Radar Briefing</span>
+            EXECUTE GEMINI SAR RECONNAISSANCE
           </button>
         </div>
       </div>
     </div>
   );
 };
+
+export default SatellitePage;

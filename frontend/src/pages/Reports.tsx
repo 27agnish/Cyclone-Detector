@@ -7,7 +7,11 @@ import {
   AlertTriangle, 
   CheckCircle2, 
   ShieldAlert, 
-  Download 
+  Download,
+  Check,
+  Building2,
+  Users,
+  Compass
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { aiApi } from '../services/aiApi';
@@ -32,162 +36,176 @@ export const Reports: React.FC = () => {
   };
 
   const handleCopy = () => {
-    if (report?.content) {
-      navigator.clipboard.writeText(report.content);
+    const text = report?.content || '';
+    if (text) {
+      navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
+  const handleDownload = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+      cyclone: cycloneDetail,
+      infrastructure: infrastructure,
+      population: populationExposure,
+      ai_report: report,
+      generated_at: new Date().toISOString()
+    }, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `cycloneshield_sitrep_${selectedCycloneId}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-5xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full max-w-5xl mx-auto bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-cyan-400" />
-            <span>AI DISASTER BRIEFING & INCIDENT ACTION PLAN</span>
+          <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+            <FileText className="w-6 h-6 text-[#00e5ff]" />
+            <span>AI INCIDENT ACTION PLAN & SITUATION REPORT (SITREP)</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1">
             Automated executive intelligence synthesis combining track history, forecast uncertainty, landfall impact zones, and emergency triage.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={handleGenerateReport}
             disabled={generating}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow-md transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline text-xs font-bold shadow-[0_0_16px_rgba(0,229,255,0.4)] transition hover:opacity-95 disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4" />
             <span>{generating ? 'SYNTHESIZING REPORT...' : 'GENERATE AI BRIEFING'}</span>
           </button>
 
           {report && (
-            <button
-              onClick={() => window.print()}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono transition flex items-center gap-1.5"
-            >
-              <Printer className="w-4 h-4" />
-              <span>PRINT</span>
-            </button>
+            <>
+              <button
+                onClick={handleCopy}
+                className="p-2 rounded-lg bg-[#0f1a30] hover:bg-[#13223f] border border-[#1e293b] text-slate-200 transition"
+                title="Copy Briefing"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              </button>
+
+              <button
+                onClick={handleDownload}
+                className="p-2 rounded-lg bg-[#0f1a30] hover:bg-[#13223f] border border-[#1e293b] text-slate-200 transition"
+                title="Export JSON SITREP"
+              >
+                <Download className="w-4 h-4 text-[#00e5ff]" />
+              </button>
+            </>
           )}
         </div>
       </div>
 
-      {/* Official Transparency and Limitations Legend */}
-      <div className="bg-slate-900 border border-command-border rounded-xl p-4 text-xs space-y-2 font-mono">
-        <div className="font-bold text-slate-200 uppercase text-[11px] flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-cyan-400" />
-          <span>DATA SOURCE & TRANSPARENCY PROTOCOL:</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
-          <div className="bg-slate-950 p-2 rounded border border-cyan-900/40">
-            <span className="text-cyan-400 font-bold block">OBSERVED DATA:</span>
-            <span className="text-slate-300">IMD RSMC / IBTrACS historical track & telemetry</span>
+      {/* Report Document Shell */}
+      <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-6 shadow-2xl space-y-6">
+        {/* Document Header */}
+        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-[#1e293b] text-xs">
+          <div>
+            <div className="font-headline text-base font-bold text-white">
+              INCIDENT ACTION PLAN: {cycloneDetail?.name || selectedCycloneId.toUpperCase()}
+            </div>
+            <div className="text-slate-400 mt-0.5">
+              Target Basin: {cycloneDetail?.basin || 'Bay of Bengal'} • Classified Category: {cycloneDetail?.category || 'Category 4'}
+            </div>
           </div>
-          <div className="bg-slate-950 p-2 rounded border border-rose-900/40">
-            <span className="text-rose-400 font-bold block">FORECAST DATA:</span>
-            <span className="text-slate-300">Numerical weather prediction track positions</span>
-          </div>
-          <div className="bg-slate-950 p-2 rounded border border-yellow-900/40">
-            <span className="text-yellow-400 font-bold block">MODEL-DERIVED:</span>
-            <span className="text-slate-300">CycloneShield AI risk scores, cones & surge</span>
-          </div>
-          <div className="bg-slate-950 p-2 rounded border border-emerald-900/40">
-            <span className="text-emerald-400 font-bold block">DEMO DATA:</span>
-            <span className="text-slate-300">Simulated operational training scenario</span>
+          <div className="text-right text-slate-400">
+            <div>Clearance: <strong className="text-cyan-300">DISASTER MGMT OPERATIONAL</strong></div>
+            <div>Generated: <strong className="text-white">{new Date().toLocaleString()}</strong></div>
           </div>
         </div>
-      </div>
 
-      {/* Report Display */}
-      {generating ? (
-        <div className="py-20 flex flex-col items-center justify-center space-y-4 bg-command-card border border-command-border rounded-xl">
-          <div className="w-12 h-12 rounded-full border-4 border-cyan-500/20 border-t-cyan-400 animate-spin" />
-          <div className="font-mono text-sm text-cyan-300 font-semibold">
-            Synthesizing Complete Incident Action Plan...
+        {/* Snapshot Metrics Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="bg-[#0f1a30] border border-[#1e293b] p-3 rounded-lg">
+            <span className="text-slate-400 uppercase text-[10px]">Peak Intensity</span>
+            <div className="font-headline text-lg font-bold text-rose-400 mt-0.5">
+              {cycloneDetail?.wind_speed || 215} km/h
+            </div>
+          </div>
+
+          <div className="bg-[#0f1a30] border border-[#1e293b] p-3 rounded-lg">
+            <span className="text-slate-400 uppercase text-[10px]">Barometric Min</span>
+            <div className="font-headline text-lg font-bold text-cyan-300 mt-0.5">
+              {cycloneDetail?.central_pressure || 942} hPa
+            </div>
+          </div>
+
+          <div className="bg-[#0f1a30] border border-[#1e293b] p-3 rounded-lg">
+            <span className="text-slate-400 uppercase text-[10px]">Critical Population</span>
+            <div className="font-headline text-lg font-bold text-white mt-0.5">
+              {populationExposure?.critical.toLocaleString() || '485,000'}
+            </div>
+          </div>
+
+          <div className="bg-[#0f1a30] border border-[#1e293b] p-3 rounded-lg">
+            <span className="text-slate-400 uppercase text-[10px]">Critical Assets</span>
+            <div className="font-headline text-lg font-bold text-amber-400 mt-0.5">
+              {infrastructure?.critical_assets || 4} at risk
+            </div>
           </div>
         </div>
-      ) : report ? (
-        <div className="bg-command-card border border-command-border rounded-xl p-8 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between border-b border-command-border pb-4">
-            <div>
-              <span className="text-[10px] font-mono uppercase bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded font-bold">
-                INCIDENT ACTION PLAN
+
+        {/* Report Narrative Content */}
+        {generating ? (
+          <div className="p-12 text-center space-y-3">
+            <div className="w-10 h-10 rounded-full border-4 border-cyan-500/20 border-t-[#00e5ff] animate-spin mx-auto" />
+            <div className="text-xs text-cyan-300">Synthesizing multi-hazard operational incident action report...</div>
+          </div>
+        ) : report ? (
+          <div className="space-y-4 font-sans text-xs leading-relaxed text-slate-200">
+            <div className="p-4 bg-[#0b1326] border border-cyan-500/40 rounded-xl space-y-2">
+              <span className="font-telemetry text-[11px] text-[#00e5ff] font-bold uppercase tracking-wider block">
+                EXECUTIVE SUMMARY & SITUATION BRIEF
               </span>
-              <h3 className="text-xl font-mono font-bold text-white mt-1.5">{report.title}</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Generated: {report.generated_at} | Model: {report.model_used}</p>
+              <p className="text-white font-medium text-sm leading-relaxed">{report.content}</p>
             </div>
 
-            <button
-              onClick={handleCopy}
-              className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono flex items-center gap-1.5 transition"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              <span>{copied ? 'Copied!' : 'Copy Markdown'}</span>
-            </button>
-          </div>
-
-          {/* Key Findings */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-4 space-y-2">
-            <div className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
-              Executive Takeaways:
-            </div>
-            <ul className="space-y-1.5 text-xs text-slate-200">
-              {report.key_findings.map((item, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-cyan-400 font-bold">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Content Body */}
-          <div className="prose prose-invert max-w-none text-sm leading-relaxed whitespace-pre-wrap font-sans text-slate-200">
-            {report.content}
-          </div>
-
-          {/* Recommended Operational Directives */}
-          {report.recommended_actions && report.recommended_actions.length > 0 && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-4 space-y-2">
-              <div className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
-                Prioritized Action Checklist:
+            {report.key_findings && report.key_findings.length > 0 && (
+              <div className="space-y-2">
+                <span className="font-telemetry text-[11px] text-slate-400 font-bold uppercase tracking-wider block">
+                  HAZARD & VULNERABILITY KEY FINDINGS
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {report.key_findings.map((d: string, i: number) => (
+                    <div key={i} className="p-3 bg-[#0f1a30] border border-[#1e293b] rounded-lg">
+                      {d}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <ol className="space-y-1.5 text-xs text-slate-200 font-mono">
-                {report.recommended_actions.map((act, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-emerald-400 font-bold">{i + 1}.</span>
-                    <span>{act}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
+            )}
 
-          {/* Disclaimer */}
-          <div className="p-3 rounded bg-amber-950/30 border border-amber-900/60 text-[11px] text-amber-300 font-mono">
-            <strong>NOTICE:</strong> {report.disclaimer}
+            {report.recommended_actions && report.recommended_actions.length > 0 && (
+              <div className="p-4 bg-emerald-950/30 border border-emerald-500/40 rounded-xl space-y-2">
+                <span className="font-telemetry text-[11px] text-emerald-300 font-bold uppercase tracking-wider block">
+                  TACTICAL INCIDENT DIRECTIVES (SOP ACTION LIST)
+                </span>
+                <ul className="list-disc list-inside space-y-1 text-slate-200">
+                  {report.recommended_actions.map((r: string, i: number) => (
+                    <li key={i}>{r}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        </div>
-      ) : (
-        <div className="bg-command-card border border-command-border/80 border-dashed rounded-xl p-12 text-center space-y-3">
-          <FileText className="w-12 h-12 text-slate-600 mx-auto" />
-          <h3 className="font-mono text-sm font-semibold text-slate-300">
-            No Briefing Report Generated Yet
-          </h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Click "GENERATE AI BRIEFING" above to synthesize an automated incident action plan for the active cyclone system.
-          </p>
-          <button
-            onClick={handleGenerateReport}
-            className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-semibold shadow transition"
-          >
-            Generate Briefing Now
-          </button>
-        </div>
-      )}
+        ) : (
+          <div className="p-12 text-center text-slate-400 text-xs">
+            Click "Generate AI Briefing" to compile a real-time Incident Action Plan for {cycloneDetail?.name || selectedCycloneId}.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
+export default Reports;

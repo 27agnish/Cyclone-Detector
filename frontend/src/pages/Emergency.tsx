@@ -6,8 +6,10 @@ import {
   MapPin, 
   Sparkles, 
   AlertTriangle, 
-  Send, 
-  RefreshCw 
+  RefreshCw,
+  Radio,
+  ShieldAlert,
+  ArrowRight
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { aiApi } from '../services/aiApi';
@@ -34,14 +36,16 @@ export const Emergency: React.FC = () => {
     loadPriorities();
   }, [selectedCycloneId]);
 
+  const priorities = priorityData?.priorities || [];
+
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-            <AlertOctagon className="w-5 h-5 text-red-500" />
-            <span>AI EMERGENCY PRIORITY ACTION ENGINE</span>
+          <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+            <AlertOctagon className="w-6 h-6 text-rose-500 alert-beacon" />
+            <span>AI EMERGENCY TRIAGE & INCIDENT ACTION MATRIX</span>
           </h2>
           <p className="text-xs text-slate-400 mt-1">
             Automated operational ranking of vulnerable lifeline infrastructure and population sectors by lead time and severity.
@@ -51,84 +55,97 @@ export const Emergency: React.FC = () => {
         <button
           onClick={loadPriorities}
           disabled={loading}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:opacity-95 text-white font-headline text-xs font-bold shadow-[0_0_16px_rgba(255,51,102,0.4)] transition disabled:opacity-50"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
-          <span>RE-COMPUTE PRIORITIES</span>
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <span>RE-COMPUTE TRIAGE (FASTAPI)</span>
         </button>
       </div>
 
-      {/* Official Disclaimer Banner */}
-      <div className="bg-amber-950/40 border border-amber-800/80 rounded-lg p-3.5 flex items-start gap-3 text-xs text-amber-200">
-        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-        <div>
-          <strong className="font-mono font-bold">AI-GENERATED PROTOTYPE PRIORITY ANALYSIS:</strong>
-          <span className="ml-1 text-slate-300">
-            These priorities are algorithmically ranked decision-support suggestions for incident command teams. Do not present or interpret as binding official emergency evacuation or civil defense orders.
+      {/* Triage Status Banner */}
+      <div className="bg-[#0d1527] border border-rose-500/40 rounded-xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-rose-600/30 border border-rose-500 flex items-center justify-center shrink-0">
+            <Radio className="w-5 h-5 text-rose-400 animate-pulse" />
+          </div>
+          <div>
+            <div className="font-headline text-sm font-bold text-white">
+              SOP Level 4 Mandatory Evacuation Staging Active
+            </div>
+            <div className="text-xs text-slate-300">
+              National Highway NH-16 resupply convoy staging at Jajpur Sector Buffer.
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs">
+          <span className="text-slate-400">Total Prioritized Directives:</span>
+          <span className="px-3 py-1 rounded-full bg-rose-950 text-rose-300 border border-rose-500 font-bold">
+            {priorities.length} DIRECTIVES
           </span>
         </div>
       </div>
 
-      {/* Priorities List */}
-      {loading ? (
-        <div className="py-16 flex flex-col items-center justify-center space-y-3">
-          <div className="w-10 h-10 rounded-full border-4 border-cyan-500/20 border-t-cyan-400 animate-spin" />
-          <div className="font-mono text-xs text-cyan-300">Ranking lifelines against predicted landfall corridor...</div>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {priorityData?.priorities.map((item) => (
-            <div
-              key={item.rank}
-              className="bg-command-card border border-command-border hover:border-slate-700 rounded-xl p-4 shadow-xl transition space-y-3"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-mono font-extrabold text-cyan-400 text-sm shadow">
-                    {item.rank < 10 ? `0${item.rank}` : item.rank}
+      {/* Priority Action List */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="space-y-3">
+            <div className="h-24 bg-[#0d1527] rounded-xl animate-pulse" />
+            <div className="h-24 bg-[#0d1527] rounded-xl animate-pulse" />
+            <div className="h-24 bg-[#0d1527] rounded-xl animate-pulse" />
+          </div>
+        ) : priorities.length > 0 ? (
+          priorities.map((item, idx) => {
+            const isImmediate = item.urgency === 'IMMEDIATE' || item.urgency === 'URGENT' || item.risk_level === 'CRITICAL';
+
+            return (
+              <div
+                key={idx}
+                className={`bg-[#0d1527] border rounded-xl p-5 shadow-xl transition space-y-3 ${
+                  isImmediate ? 'border-rose-500/50 shadow-[0_0_16px_rgba(255,51,102,0.15)]' : 'border-[#1e293b]'
+                }`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg bg-[#0f1a30] border border-[#1e293b] flex items-center justify-center font-headline text-xs font-bold text-white">
+                      #{item.rank || idx + 1}
+                    </span>
+                    <h3 className="font-headline text-base font-bold text-white">{item.priority_action}</h3>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white font-mono flex items-center gap-2">
-                      <span>{item.name}</span>
-                      <span className="text-[10px] text-slate-400 font-normal">({item.type})</span>
-                    </h4>
-                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-                      <MapPin className="w-3 h-3 text-cyan-400" />
-                      <span>{item.district}</span>
-                    </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                      isImmediate 
+                        ? 'bg-rose-950 text-rose-300 border border-rose-500 alert-beacon' 
+                        : 'bg-amber-950 text-amber-300 border border-amber-500'
+                    }`}>
+                      {item.urgency || item.risk_level}
+                    </span>
+
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#13223f] text-cyan-300 border border-cyan-400/40 uppercase">
+                      LEVEL: {item.risk_level}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                    item.risk_level === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' :
-                    'bg-orange-950 text-orange-300 border border-orange-800'
-                  }`}>
-                    {item.risk_level}
-                  </span>
+                <p className="text-xs text-slate-200 font-sans leading-relaxed">{item.rationale}</p>
 
-                  <span className="text-[10px] font-mono bg-slate-900 border border-slate-800 text-cyan-300 px-2 py-0.5 rounded flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{item.urgency}</span>
-                  </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-[#1e293b] text-xs text-slate-400">
+                  <div>Target Asset: <strong className="text-white font-mono">{item.name}</strong></div>
+                  <div>Type: <strong className="text-cyan-300 font-mono uppercase">{item.type}</strong></div>
+                  <div>District: <strong className="text-emerald-400 font-mono">{item.district}</strong></div>
                 </div>
               </div>
-
-              {/* Priority Action Directive */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg text-xs space-y-1">
-                <div className="text-cyan-400 font-mono font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Immediate Tactical Action:</span>
-                </div>
-                <p className="text-slate-200 leading-relaxed font-sans">{item.priority_action}</p>
-                <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
-                  <strong className="text-slate-300">Technical Rationale:</strong> {item.rationale}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            );
+          })
+        ) : (
+          <div className="p-8 text-center text-slate-400 bg-[#0d1527] rounded-xl border border-[#1e293b]">
+            No urgent emergency priorities found for current cyclone scenario.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
+export default Emergency;

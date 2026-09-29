@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   Wind, 
-  Gauge, 
   Compass, 
   Activity, 
   MapPin, 
@@ -10,11 +9,10 @@ import {
   Sparkles, 
   Layers, 
   ArrowLeft,
-  ChevronRight
+  ChevronRight,
+  Radar
 } from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -38,13 +36,13 @@ export const CycloneDetails: React.FC = () => {
 
   if (!cycloneDetail) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3 font-mono text-center">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-3 font-telemetry text-center bg-[#070d18] text-[#dee2f1]">
         <div className="text-slate-400 text-sm">No cyclone details loaded.</div>
         <button
           onClick={() => setActiveTab('cyclones')}
-          className="px-3.5 py-1.5 rounded bg-cyan-600 text-white text-xs font-semibold"
+          className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] text-xs font-bold"
         >
-          SELECT CYCLONE
+          SELECT ACTIVE CYCLONE
         </button>
       </div>
     );
@@ -58,8 +56,8 @@ export const CycloneDetails: React.FC = () => {
       wind: p.wind_speed,
       pressure: p.pressure,
       type: 'Observed',
-      category: p.category,
-      coords: `${p.latitude}°N, ${p.longitude}°E`
+      lat: p.latitude,
+      lon: p.longitude
     })),
     ...(cycloneDetail.forecast_track || []).map(p => ({
       time: p.timestamp.split(' ')[1] || p.timestamp,
@@ -67,15 +65,15 @@ export const CycloneDetails: React.FC = () => {
       wind: p.wind_speed,
       pressure: p.pressure,
       type: 'Forecast',
-      category: p.category,
-      coords: `${p.latitude}°N, ${p.longitude}°E`
+      lat: p.latitude,
+      lon: p.longitude
     }))
   ];
 
   const handleExplain = async () => {
     setIsAiLoading(true);
     try {
-      const res = await aiApi.explainLandfall(selectedCycloneId);
+      const res = await aiApi.explainRisk(selectedCycloneId);
       openAiModal(res);
     } catch (e) {
       console.error(e);
@@ -85,21 +83,21 @@ export const CycloneDetails: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setActiveTab('cyclones')}
-              className="text-slate-400 hover:text-white transition p-1 rounded hover:bg-slate-800"
-              title="Back to Active Cyclones"
+              className="p-1.5 rounded-lg bg-[#0f1a30] text-slate-400 hover:text-white border border-[#1e293b]"
+              title="Back to fleet"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
               <span>{cycloneDetail.name}</span>
-              <span className="text-xs font-mono font-normal text-cyan-400 bg-cyan-950/80 border border-cyan-800 px-2 py-0.5 rounded">
+              <span className="text-xs font-telemetry text-cyan-300 bg-cyan-950/80 border border-cyan-400 px-2.5 py-0.5 rounded-full font-bold">
                 {cycloneDetail.category}
               </span>
             </h2>
@@ -109,57 +107,61 @@ export const CycloneDetails: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-mono text-xs transition"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0f1a30] hover:bg-[#13223f] text-slate-200 border border-[#1e293b] text-xs font-semibold transition"
           >
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
+            <Layers className="w-4 h-4 text-[#00e5ff]" />
             <span>VIEW ON GIS MAP</span>
           </button>
 
           <button
             onClick={handleExplain}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow transition"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline text-xs font-bold shadow-[0_0_16px_rgba(0,229,255,0.4)] transition"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             <span>AI RISK BRIEFING</span>
           </button>
         </div>
       </div>
 
       {/* Primary Telemetry Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 font-mono text-xs">
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400 text-[10px]">CURRENT POSITION</span>
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3">
+          <span className="text-slate-400 text-[10px] uppercase">Current Position</span>
           <div className="text-white font-bold text-sm mt-1">{cycloneDetail.current_latitude}°N</div>
-          <div className="text-slate-400 text-[11px]">{cycloneDetail.current_longitude}°E</div>
+          <div className="text-cyan-300 text-[11px]">{cycloneDetail.current_longitude}°E</div>
         </div>
 
-        <div className="bg-command-card border border-amber-900/40 rounded-lg p-3">
-          <span className="text-amber-400 text-[10px]">SUSTAINED WIND</span>
-          <div className="text-amber-300 font-bold text-lg mt-1">{cycloneDetail.wind_speed} <span className="text-xs font-normal">km/h</span></div>
-          <div className="text-slate-400 text-[10px]">Category {cycloneDetail.category.split(' ')[0]}</div>
+        <div className="bg-[#0d1527] border border-rose-500/40 rounded-xl p-3">
+          <span className="text-rose-400 text-[10px] uppercase">Sustained Wind</span>
+          <div className="text-white font-bold text-lg mt-1 font-headline">
+            {cycloneDetail.wind_speed} <span className="text-xs font-normal text-slate-400">km/h</span>
+          </div>
+          <div className="text-rose-300 text-[10px] uppercase">Category {cycloneDetail.category.split(' ')[0]}</div>
         </div>
 
-        <div className="bg-command-card border border-sky-900/40 rounded-lg p-3">
-          <span className="text-sky-400 text-[10px]">CENTRAL PRESSURE</span>
-          <div className="text-sky-300 font-bold text-lg mt-1">{cycloneDetail.central_pressure} <span className="text-xs font-normal">hPa</span></div>
-          <div className="text-slate-400 text-[10px]">Deep depression</div>
+        <div className="bg-[#0d1527] border border-cyan-500/40 rounded-xl p-3">
+          <span className="text-cyan-400 text-[10px] uppercase">Central Pressure</span>
+          <div className="text-cyan-300 font-bold text-lg mt-1 font-headline">
+            {cycloneDetail.central_pressure} <span className="text-xs font-normal text-slate-400">hPa</span>
+          </div>
+          <div className="text-slate-400 text-[10px]">Deep barometric drop</div>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-lg p-3">
-          <span className="text-slate-400 text-[10px]">MOVEMENT</span>
-          <div className="text-cyan-300 font-bold text-sm mt-1">{cycloneDetail.movement_direction}</div>
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-3">
+          <span className="text-slate-400 text-[10px] uppercase">Movement</span>
+          <div className="text-[#00e5ff] font-bold text-sm mt-1">{cycloneDetail.movement_direction}</div>
           <div className="text-slate-300 text-[11px]">@ {cycloneDetail.movement_speed} km/h</div>
         </div>
 
-        <div className="bg-command-card border border-red-900/40 rounded-lg p-3 col-span-2">
-          <span className="text-red-400 text-[10px]">PREDICTED LANDFALL</span>
+        <div className="bg-[#0d1527] border border-rose-500/40 rounded-xl p-3 col-span-2">
+          <span className="text-rose-400 text-[10px] uppercase font-bold">Predicted Landfall</span>
           <div className="text-white font-bold text-sm mt-1 truncate">
-            {cycloneDetail.landfall ? cycloneDetail.landfall.location_name : 'Tracking over Bay'}
+            {cycloneDetail.landfall ? cycloneDetail.landfall.location_name : 'Tracking over Bay of Bengal'}
           </div>
-          <div className="text-rose-400 text-[11px]">
+          <div className="text-rose-300 text-[11px]">
             {cycloneDetail.landfall ? `${cycloneDetail.landfall.estimated_time} (${cycloneDetail.landfall.district})` : 'Under observation'}
           </div>
         </div>
@@ -168,13 +170,13 @@ export const CycloneDetails: React.FC = () => {
       {/* Intensity Curves: Wind & Pressure Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Wind Speed Evolution */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3">
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
+            <div className="flex items-center gap-2 text-sm font-headline font-bold text-white">
               <Wind className="w-4 h-4 text-amber-400" />
               <span>WIND SPEED TRAJECTORY (KM/H)</span>
             </div>
-            <span className="text-[10px] font-mono text-slate-400">Observed → Forecast</span>
+            <span className="text-[10px] text-slate-400">Observed → Forecast</span>
           </div>
 
           <div className="h-60 w-full">
@@ -188,120 +190,93 @@ export const CycloneDetails: React.FC = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis dataKey="time" stroke="#64748b" textAnchor="end" />
-                <YAxis stroke="#64748b" unit=" km/h" domain={[0, 160]} />
+                <YAxis stroke="#64748b" unit=" km/h" domain={[0, 240]} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#0f1a30', borderColor: '#1e293b', borderRadius: '8px' }}
                   labelStyle={{ color: '#f8fafc', fontWeight: 'bold' }}
                 />
                 <Area type="monotone" dataKey="wind" stroke="#f59e0b" strokeWidth={2.5} fillOpacity={1} fill="url(#windGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="text-[11px] text-slate-400 font-mono">
-            Peak winds modeled at landfall (~130 km/h) before gradual inland frictional dissipation.
-          </div>
         </div>
 
-        {/* Central Barometric Pressure Evolution */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3">
+        {/* Central Pressure Evolution */}
+        <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
-              <Gauge className="w-4 h-4 text-sky-400" />
-              <span>CENTRAL PRESSURE PROFILE (HPA)</span>
+            <div className="flex items-center gap-2 text-sm font-headline font-bold text-white">
+              <Activity className="w-4 h-4 text-cyan-400" />
+              <span>CENTRAL MINIMUM PRESSURE (HPA)</span>
             </div>
-            <span className="text-[10px] font-mono text-slate-400">Atmospheric Deepening</span>
+            <span className="text-[10px] text-slate-400">Barometric Depression</span>
           </div>
 
           <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={combinedPoints}>
+              <AreaChart data={combinedPoints}>
+                <defs>
+                  <linearGradient id="pressGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#00e5ff" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis dataKey="time" stroke="#64748b" textAnchor="end" />
-                <YAxis stroke="#64748b" unit=" hPa" domain={[960, 1010]} />
+                <YAxis stroke="#64748b" unit=" hPa" domain={[920, 1010]} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: '#0f1a30', borderColor: '#1e293b', borderRadius: '8px' }}
                   labelStyle={{ color: '#f8fafc', fontWeight: 'bold' }}
                 />
-                <Line type="monotone" dataKey="pressure" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 3 }} />
-              </LineChart>
+                <Area type="monotone" dataKey="pressure" stroke="#00e5ff" strokeWidth={2.5} fillOpacity={1} fill="url(#pressGrad)" />
+              </AreaChart>
             </ResponsiveContainer>
-          </div>
-          <div className="text-[11px] text-slate-400 font-mono">
-            Minimum central pressure corresponds with maximum eyewall intensity and storm surge generation.
           </div>
         </div>
       </div>
 
-      {/* Uncertainty Cone & Landfall Details */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Forecast Cone Specification */}
-        <div className="bg-command-card border border-command-border rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
-              FORECAST UNCERTAINTY CONE MODEL
-            </h4>
-            <span className="text-[10px] font-mono text-slate-400">
-              {cycloneDetail.forecast_cone ? cycloneDetail.forecast_cone.label : 'GEOMETRIC ENVELOPE'}
+      {/* Trajectory Point Log Table */}
+      <div className="bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Radar className="w-5 h-5 text-[#00e5ff]" />
+            <span className="font-headline text-sm font-bold text-white">
+              SYNOPTIC TRACK POINT TELEMETRY LOGS ({combinedPoints.length} SAMPLES)
             </span>
           </div>
-
-          <p className="text-xs text-slate-300 leading-relaxed font-sans">
-            The spatial uncertainty cone represents the 67% probability envelope of cyclone center location expanding with lead time:
-          </p>
-
-          <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono pt-1">
-            <div className="bg-slate-900 p-2 rounded border border-slate-800">
-              <div className="text-slate-400 text-[10px]">T+12H LEAD</div>
-              <div className="text-cyan-300 font-bold">± 68.6 km</div>
-            </div>
-            <div className="bg-slate-900 p-2 rounded border border-slate-800">
-              <div className="text-slate-400 text-[10px]">T+24H LEAD</div>
-              <div className="text-cyan-300 font-bold">± 102.2 km</div>
-            </div>
-            <div className="bg-slate-900 p-2 rounded border border-slate-800">
-              <div className="text-slate-400 text-[10px]">T+48H LEAD</div>
-              <div className="text-cyan-300 font-bold">± 169.4 km</div>
-            </div>
-          </div>
+          <span className="text-xs text-cyan-300">GEOJSON PARSED</span>
         </div>
 
-        {/* Landfall Impact Assessment */}
-        <div className="bg-command-card border border-command-border rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-mono font-bold text-rose-400 uppercase tracking-wider">
-              LANDFALL IMPACT FORECAST
-            </h4>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
-              {cycloneDetail.landfall ? cycloneDetail.landfall.risk_category : 'CRITICAL'}
-            </span>
-          </div>
-
-          {cycloneDetail.landfall ? (
-            <div className="space-y-2 text-xs font-mono">
-              <div className="flex justify-between border-b border-slate-800 pb-1">
-                <span className="text-slate-400">Target Coastal Sector:</span>
-                <span className="text-white font-bold">{cycloneDetail.landfall.location_name}</span>
-              </div>
-              <div className="flex justify-between border-b border-slate-800 pb-1">
-                <span className="text-slate-400">Estimated Landfall Time:</span>
-                <span className="text-cyan-300 font-bold">{cycloneDetail.landfall.estimated_time}</span>
-              </div>
-              <div className="flex justify-between border-b border-slate-800 pb-1">
-                <span className="text-slate-400">Expected Landfall Wind:</span>
-                <span className="text-amber-400 font-bold">{cycloneDetail.landfall.expected_wind_speed} km/h</span>
-              </div>
-              <div className="flex justify-between border-b border-slate-800 pb-1">
-                <span className="text-slate-400">Estimated Storm Surge:</span>
-                <span className="text-sky-300 font-bold">{cycloneDetail.landfall.expected_storm_surge_m} meters</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Population in Danger Zone:</span>
-                <span className="text-rose-400 font-bold">{cycloneDetail.landfall.population_exposed.toLocaleString()}</span>
-              </div>
-            </div>
-          ) : (
-            <p className="text-xs text-slate-400">Landfall modeling active.</p>
-          )}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-[#0f1a30] text-slate-400 border-b border-[#1e293b]">
+              <tr>
+                <th className="p-3">Type</th>
+                <th className="p-3">Timestamp</th>
+                <th className="p-3">Coordinates</th>
+                <th className="p-3">Wind Speed</th>
+                <th className="p-3">Pressure</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#1e293b]">
+              {combinedPoints.map((pt, i) => (
+                <tr key={i} className="hover:bg-[#0f1a30]/60 transition-colors">
+                  <td className="p-3">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      pt.type === 'Observed' 
+                        ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' 
+                        : 'bg-amber-950 text-amber-300 border border-amber-500/40'
+                    }`}>
+                      {pt.type}
+                    </span>
+                  </td>
+                  <td className="p-3 text-slate-300 font-mono">{pt.fullTime}</td>
+                  <td className="p-3 text-white font-mono">{pt.lat.toFixed(2)}°N, {pt.lon.toFixed(2)}°E</td>
+                  <td className="p-3 text-rose-300 font-bold">{pt.wind} km/h</td>
+                  <td className="p-3 text-cyan-300 font-mono">{pt.pressure} hPa</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

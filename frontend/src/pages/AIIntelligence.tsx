@@ -7,10 +7,12 @@ import {
   AlertOctagon, 
   FileText, 
   Copy, 
-  CheckCircle2, 
+  Check, 
   RefreshCw,
   Terminal,
-  Send
+  Send,
+  Brain,
+  Layers
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { aiApi } from '../services/aiApi';
@@ -60,249 +62,239 @@ export const AIIntelligence: React.FC = () => {
   };
 
   const handleCopy = () => {
-    if (aiResponse?.content) {
-      navigator.clipboard.writeText(aiResponse.content);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+    const text = aiResponse?.content || JSON.stringify(emergencyResponse, null, 2);
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const isGeminiConfigured = healthStatus?.services?.gemini === 'configured';
+  const assets = infrastructure?.assets || [];
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto w-full bg-[#070d18] text-[#dee2f1] select-none font-telemetry">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
-              <span>AI INTELLIGENCE & NATURAL LANGUAGE ENGINE</span>
-            </h2>
-            <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase ${
-              isGeminiConfigured 
-                ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                : 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-            }`}>
-              {isGeminiConfigured ? 'GEMINI 2.5 ACTIVE' : 'EXPERT DETERMINISTIC FALLBACK READY'}
-            </span>
-          </div>
+          <h2 className="text-xl lg:text-2xl font-headline font-bold text-white flex items-center gap-2.5">
+            <Brain className="w-6 h-6 text-[#00e5ff]" />
+            <span>AI REASONING & EXPLAINABLE INTELLIGENCE STUDIO</span>
+          </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Zero-credential client architecture: All prompts are processed server-side through FastAPI with deterministic fallback.
+            Google Gemini Pro / Flash synthesis engine with heuristic deterministic meteorological fallback.
           </p>
         </div>
 
-        <button
-          onClick={handleRunAi}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow-lg transition"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'PROCESSING ON BACKEND...' : 'RUN AI INFERENCE'}</span>
-        </button>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-slate-400">AI Core Status:</span>
+          <span className="px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-400/50 font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 pulse-beacon" />
+            ONLINE (GEMINI + DETERMINISTIC)
+          </span>
+        </div>
       </div>
 
-      {/* Module Selector Ribbon */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 font-mono text-xs">
+      {/* Module Selector Toolbar */}
+      <div className="flex flex-wrap items-center gap-2.5 bg-[#0d1527] p-2 rounded-xl border border-[#1e293b]">
         <button
-          onClick={() => { setActiveModule('landfall'); setAiResponse(null); setEmergencyResponse(null); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition whitespace-nowrap ${
+          onClick={() => setActiveModule('landfall')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-headline font-bold transition ${
             activeModule === 'landfall'
-              ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow'
-              : 'bg-command-card border-command-border text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+              : 'text-slate-300 hover:bg-[#0f1a30]'
           }`}
         >
-          <MapPin className="w-4 h-4 text-rose-400" />
-          <span>Explain Landfall Risk</span>
+          <MapPin className="w-4 h-4" />
+          <span>Explain Landfall</span>
         </button>
 
         <button
-          onClick={() => { setActiveModule('risk'); setAiResponse(null); setEmergencyResponse(null); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition whitespace-nowrap ${
+          onClick={() => setActiveModule('risk')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-headline font-bold transition ${
             activeModule === 'risk'
-              ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow'
-              : 'bg-command-card border-command-border text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+              : 'text-slate-300 hover:bg-[#0f1a30]'
           }`}
         >
-          <ShieldAlert className="w-4 h-4 text-amber-400" />
+          <ShieldAlert className="w-4 h-4" />
           <span>Explain Asset Risk</span>
         </button>
 
         <button
-          onClick={() => { setActiveModule('satellite'); setAiResponse(null); setEmergencyResponse(null); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition whitespace-nowrap ${
+          onClick={() => setActiveModule('satellite')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-headline font-bold transition ${
             activeModule === 'satellite'
-              ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow'
-              : 'bg-command-card border-command-border text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+              : 'text-slate-300 hover:bg-[#0f1a30]'
           }`}
         >
-          <Satellite className="w-4 h-4 text-cyan-400" />
-          <span>Analyze SAR Satellite</span>
+          <Satellite className="w-4 h-4" />
+          <span>Multimodal SAR Flood</span>
         </button>
 
         <button
-          onClick={() => { setActiveModule('emergency'); setAiResponse(null); setEmergencyResponse(null); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition whitespace-nowrap ${
+          onClick={() => setActiveModule('emergency')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-headline font-bold transition ${
             activeModule === 'emergency'
-              ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow'
-              : 'bg-command-card border-command-border text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+              : 'text-slate-300 hover:bg-[#0f1a30]'
           }`}
         >
-          <AlertOctagon className="w-4 h-4 text-red-500" />
-          <span>Generate Emergency Plan</span>
+          <AlertOctagon className="w-4 h-4" />
+          <span>Emergency Priorities</span>
         </button>
 
         <button
-          onClick={() => { setActiveModule('report'); setAiResponse(null); setEmergencyResponse(null); }}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition whitespace-nowrap ${
+          onClick={() => setActiveModule('report')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-headline font-bold transition ${
             activeModule === 'report'
-              ? 'bg-cyan-950/80 border-cyan-500 text-cyan-300 shadow'
-              : 'bg-command-card border-command-border text-slate-400 hover:text-white'
+              ? 'bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+              : 'text-slate-300 hover:bg-[#0f1a30]'
           }`}
         >
-          <FileText className="w-4 h-4 text-emerald-400" />
-          <span>Generate Action Briefing</span>
+          <FileText className="w-4 h-4" />
+          <span>Incident Action Report</span>
         </button>
       </div>
 
-      {/* Target Context Selector (if asset risk) */}
-      {activeModule === 'risk' && infrastructure && (
-        <div className="bg-command-card border border-command-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <span className="text-slate-300">Select Lifeline Infrastructure Asset for Deep Risk Evaluation:</span>
-          <select
-            value={selectedAssetId}
-            onChange={(e) => setSelectedAssetId(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-cyan-300 px-3 py-1.5 rounded focus:outline-none focus:border-cyan-500"
-          >
-            {infrastructure.assets.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name} ({a.type} | Risk: {a.risk_category} {a.risk_score})
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Main Studio Viewport */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Controls & Configuration (4 Cols) */}
+        <div className="lg:col-span-4 bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl space-y-4">
+          <h3 className="font-headline text-sm font-bold text-white uppercase tracking-wider">
+            INFERENCE PARAMETERS
+          </h3>
 
-      {/* AI Output Console */}
-      <div className="bg-command-card border border-command-border rounded-xl shadow-2xl p-6 min-h-[420px] flex flex-col justify-between space-y-4">
-        {loading ? (
-          <div className="py-24 flex flex-col items-center justify-center space-y-3 font-mono">
-            <div className="w-12 h-12 rounded-full border-4 border-cyan-500/20 border-t-cyan-400 animate-spin" />
-            <div className="text-cyan-300 text-sm font-semibold">
-              Querying FastAPI Backend AI Gateway...
+          <div className="space-y-3 text-xs">
+            <div>
+              <label className="text-slate-400 block mb-1">Target Active Cyclone</label>
+              <input
+                type="text"
+                readOnly
+                value={`${cycloneDetail?.name || selectedCycloneId} (${cycloneDetail?.category || 'Active'})`}
+                className="w-full bg-[#0f1a30] border border-[#1e293b] rounded-lg p-2 text-white font-mono"
+              />
             </div>
-            <p className="text-xs text-slate-400">
-              Generating synoptic explanation and vulnerability factors
-            </p>
-          </div>
-        ) : aiResponse ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-command-border pb-3">
-              <div>
-                <span className="text-[10px] font-mono uppercase bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded font-bold">
-                  MODEL: {aiResponse.model_used}
-                </span>
-                <h3 className="text-lg font-mono font-bold text-white mt-1">{aiResponse.title}</h3>
-                <span className="text-xs text-slate-400">Generated: {aiResponse.generated_at}</span>
-              </div>
 
+            {activeModule === 'risk' && (
+              <div>
+                <label className="text-slate-400 block mb-1">Target Infrastructure Asset</label>
+                <select
+                  value={selectedAssetId}
+                  onChange={(e) => setSelectedAssetId(e.target.value)}
+                  className="w-full bg-[#0f1a30] border border-[#1e293b] rounded-lg p-2 text-cyan-300"
+                >
+                  {assets.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name} ({a.type} • {a.risk_category})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="p-3 bg-[#0b1326] rounded-lg border border-[#1e293b] space-y-1">
+              <span className="text-[10px] text-slate-400 uppercase font-bold">FastAPI Endpoint</span>
+              <div className="text-cyan-300 font-mono text-[11px]">
+                {activeModule === 'landfall' && 'POST /api/v1/ai/explain-landfall'}
+                {activeModule === 'risk' && 'POST /api/v1/ai/explain-risk'}
+                {activeModule === 'satellite' && 'POST /api/v1/ai/analyze-satellite'}
+                {activeModule === 'emergency' && 'POST /api/v1/ai/generate-emergency-plan'}
+                {activeModule === 'report' && 'POST /api/v1/ai/generate-report'}
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={handleRunAi}
+            disabled={loading}
+            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline text-xs font-bold shadow-[0_0_16px_rgba(0,229,255,0.4)] transition hover:opacity-95 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            <Send className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>{loading ? 'EXECUTING INFERENCE...' : 'SUBMIT REASONING REQUEST'}</span>
+          </button>
+        </div>
+
+        {/* Output Console (8 Cols) */}
+        <div className="lg:col-span-8 bg-[#0d1527] border border-[#1e293b] rounded-xl p-5 shadow-xl flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div className="flex items-center gap-2 text-white font-headline text-sm font-bold">
+              <Terminal className="w-5 h-5 text-[#00e5ff]" />
+              <span>NEURAL SYNTHESIS DOSSIER</span>
+            </div>
+            {(aiResponse || emergencyResponse) && (
               <button
                 onClick={handleCopy}
-                className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono flex items-center gap-1.5 transition"
+                className="flex items-center gap-1.5 px-3 py-1 rounded bg-[#0f1a30] hover:bg-[#13223f] border border-[#1e293b] text-xs text-slate-300 hover:text-white transition"
               >
-                <Copy className="w-3.5 h-3.5" />
-                <span>{copied ? 'Copied' : 'Copy'}</span>
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? 'COPIED' : 'COPY'}</span>
               </button>
-            </div>
-
-            {/* Key Findings Strip */}
-            {aiResponse.key_findings && aiResponse.key_findings.length > 0 && (
-              <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-3.5 space-y-1.5 font-mono text-xs">
-                <span className="text-cyan-400 font-bold uppercase tracking-wider text-[11px]">Primary Findings:</span>
-                <ul className="space-y-1 text-slate-200">
-                  {aiResponse.key_findings.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-cyan-400 font-bold">✓</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             )}
-
-            {/* Content Body */}
-            <div className="prose prose-invert max-w-none text-sm leading-relaxed whitespace-pre-wrap font-sans text-slate-200 bg-slate-950/60 p-4 rounded-lg border border-slate-900">
-              {aiResponse.content}
-            </div>
-
-            {/* Recommended Actions */}
-            {aiResponse.recommended_actions && aiResponse.recommended_actions.length > 0 && (
-              <div className="bg-slate-900/80 border border-slate-800 rounded-lg p-3.5 space-y-1.5 font-mono text-xs">
-                <span className="text-emerald-400 font-bold uppercase tracking-wider text-[11px]">Recommended Protocols:</span>
-                <ol className="space-y-1 text-slate-200">
-                  {aiResponse.recommended_actions.map((act, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-emerald-400 font-bold">{i + 1}.</span>
-                      <span>{act}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-
-            {/* Mandatory Disclaimer */}
-            <div className="p-3 rounded bg-amber-950/30 border border-amber-900/60 text-[11px] text-amber-300 font-mono">
-              <strong>DISCLAIMER:</strong> {aiResponse.disclaimer}
-            </div>
           </div>
-        ) : emergencyResponse ? (
-          <div className="space-y-4">
-            <div className="border-b border-command-border pb-3">
-              <span className="text-[10px] font-mono uppercase bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded font-bold">
-                EMERGENCY PRIORITY CHECKLIST
-              </span>
-              <h3 className="text-lg font-mono font-bold text-white mt-1">
-                Ranked Lifeline Directives for {selectedCycloneId}
-              </h3>
-              <span className="text-xs text-slate-400">Generated: {emergencyResponse.generated_at}</span>
-            </div>
 
-            <div className="space-y-2.5">
-              {emergencyResponse.priorities.map((item) => (
-                <div key={item.rank} className="bg-slate-900/90 border border-slate-800 p-3 rounded-lg text-xs font-mono space-y-1">
-                  <div className="flex justify-between items-center text-white">
-                    <span className="font-bold text-cyan-300">#{item.rank} - {item.name} ({item.type})</span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      item.risk_level === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-orange-950 text-orange-300'
-                    }`}>
-                      {item.risk_level} | {item.urgency}
-                    </span>
+          {loading ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-12 space-y-3">
+              <div className="w-10 h-10 rounded-full border-4 border-cyan-500/20 border-t-[#00e5ff] animate-spin" />
+              <div className="text-xs text-cyan-300">FastAPI AI Engine synthesizing situational brief...</div>
+            </div>
+          ) : aiResponse ? (
+            <div className="space-y-4 text-xs font-sans leading-relaxed">
+              <div className="p-3.5 rounded-lg bg-[#0b1326] border border-cyan-500/30">
+                <span className="text-[10px] font-telemetry uppercase font-bold text-[#00e5ff] block mb-1">
+                  EXECUTIVE BRIEF
+                </span>
+                <p className="text-slate-100 font-semibold">{aiResponse.content}</p>
+              </div>
+
+              {aiResponse.key_findings && aiResponse.key_findings.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-[10px] font-telemetry uppercase text-slate-400 font-bold block">
+                    TACTICAL REASONING POINTS
+                  </span>
+                  <div className="space-y-2">
+                    {aiResponse.key_findings.map((d: string, i: number) => (
+                      <div key={i} className="p-3 rounded-lg bg-[#0f1a30] border border-[#1e293b] text-slate-200">
+                        {d}
+                      </div>
+                    ))}
                   </div>
-                  <div className="text-slate-300 font-sans">{item.priority_action}</div>
-                  <div className="text-[11px] text-slate-400 italic">{item.rationale}</div>
+                </div>
+              )}
+
+              {aiResponse.recommended_actions && aiResponse.recommended_actions.length > 0 && (
+                <div className="p-3 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-200">
+                  <span className="text-[10px] font-telemetry uppercase font-bold block mb-1">
+                    OPERATIONAL DIRECTIVES
+                  </span>
+                  <ul className="list-disc list-inside space-y-1">
+                    {aiResponse.recommended_actions.map((r: string, i: number) => (
+                      <li key={i}>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : emergencyResponse ? (
+            <div className="space-y-3">
+              {emergencyResponse.priorities.map((p, i) => (
+                <div key={i} className="p-3 rounded-lg bg-[#0f1a30] border border-[#1e293b] space-y-1 text-xs">
+                  <div className="flex justify-between font-bold text-white">
+                    <span>{p.priority_action}</span>
+                    <span className="text-rose-400 font-telemetry uppercase">{p.urgency}</span>
+                  </div>
+                  <p className="text-slate-300 font-sans">{p.rationale}</p>
+                  <div className="text-[10px] text-cyan-300 font-telemetry pt-1">
+                    Target: {p.name} ({p.type}) • District: {p.district}
+                  </div>
                 </div>
               ))}
             </div>
-
-            <div className="p-3 rounded bg-amber-950/30 border border-amber-900/60 text-[11px] text-amber-300 font-mono">
-              <strong>DISCLAIMER:</strong> {emergencyResponse.disclaimer}
+          ) : (
+            <div className="p-12 text-center text-slate-400 text-xs">
+              Select an AI module and click "Submit Reasoning Request" to query the live FastAPI AI endpoint.
             </div>
-          </div>
-        ) : (
-          <div className="my-auto text-center space-y-3 py-16">
-            <Terminal className="w-12 h-12 text-slate-600 mx-auto" />
-            <h4 className="font-mono text-sm font-bold text-slate-300">AI Inference Console Ready</h4>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Select an AI module above and click "RUN AI INFERENCE" to execute the analysis through the FastAPI backend.
-            </p>
-            <button
-              onClick={handleRunAi}
-              className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-semibold shadow transition"
-            >
-              Run Inference Now
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
