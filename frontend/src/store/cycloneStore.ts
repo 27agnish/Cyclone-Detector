@@ -124,7 +124,10 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
   isPlaying: false,
   playbackSpeed: 1600,
 
-  activeTab: 'dashboard',
+  activeTab: (typeof window !== 'undefined' 
+    ? (new URLSearchParams(window.location.search).get('tab') as TabType || 
+       (window.location.hash ? window.location.hash.replace('#', '') as TabType : 'dashboard'))
+    : 'dashboard'),
   isAiLoading: false,
   aiModalOpen: false,
   aiModalData: null,
@@ -366,7 +369,12 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
       layers: { ...state.layers, [layerName]: !state.layers[layerName] }
     })),
 
-  setActiveTab: (tab) => set({ activeTab: tab }),
+  setActiveTab: (tab) => {
+    if (typeof window !== 'undefined') {
+      window.location.hash = tab;
+    }
+    set({ activeTab: tab });
+  },
 
   setMapViewMode: (mode) => set({ mapViewMode: mode }),
 

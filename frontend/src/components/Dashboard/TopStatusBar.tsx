@@ -89,24 +89,24 @@ export const TopStatusBar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-16 bg-[#070d18]/90 backdrop-blur-xl px-4 lg:px-6 flex items-center justify-between border-b border-[#1e293b]/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)] select-none">
+      <header className="sticky top-0 z-30 h-16 bg-surface-container-lowest/90 backdrop-blur-2xl px-space-md lg:px-space-lg flex items-center justify-between border-b border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.6)] select-none">
         {/* Left: Active Cyclone Telemetry Pill */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#0b1326] border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-rose-500 alert-beacon"></span>
-            <span className="font-telemetry text-[11px] text-rose-300 tracking-wider uppercase font-bold">
+        <div className="flex items-center gap-space-sm">
+          <div className="flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-low border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)]">
+            <span className="w-2 h-2 rounded-full bg-rose-500 alert-beacon shadow-[0_0_8px_#ff3366]"></span>
+            <span className="font-badge text-badge text-rose-300 tracking-wider uppercase font-bold">
               {activeName} ({activeCat})
             </span>
-            <span className="text-slate-500 text-xs">•</span>
-            <span className="font-telemetry text-[11px] text-cyan-300 font-semibold">
+            <span className="text-outline text-body-sm">•</span>
+            <span className="font-data-value text-data-label text-cyan-300 font-bold">
               {activeWind} KM/H
             </span>
-            <span className="text-slate-500 text-xs hidden sm:inline">•</span>
-            <span className="font-telemetry text-[11px] text-slate-200 font-semibold hidden sm:inline">
+            <span className="text-outline text-body-sm hidden sm:inline">•</span>
+            <span className="font-data-value text-data-label text-secondary font-semibold hidden sm:inline">
               {activePressure} HPA
             </span>
-            <span className="text-slate-500 text-xs hidden md:inline">•</span>
-            <span className="font-telemetry text-[10px] text-amber-300 font-semibold uppercase hidden md:inline">
+            <span className="text-outline text-body-sm hidden md:inline">•</span>
+            <span className="font-data-label text-[10px] text-amber-300 font-semibold uppercase hidden md:inline">
               TRACKING {activeDir} @ {activeSpeed} KM/H
             </span>
           </div>
@@ -116,10 +116,10 @@ export const TopStatusBar: React.FC = () => {
             <select
               value={selectedCycloneId}
               onChange={(e) => selectCyclone(e.target.value)}
-              className="hidden xl:inline-block bg-[#0f1a30] border border-cyan-500/40 text-[11px] font-telemetry text-cyan-300 px-2 py-1 rounded-md focus:outline-none focus:border-cyan-400"
+              className="hidden 2xl:inline-block bg-surface-container-high border border-cyan-500/40 text-[11px] font-data-label text-cyan-300 px-2 py-1 rounded-md focus:outline-none focus:border-cyan-400"
             >
               {activeCyclones.map(c => (
-                <option key={c.id} value={c.id}>
+                <option key={c.id} value={c.id} className="bg-surface-container-lowest text-on-surface">
                   Switch to {c.name}
                 </option>
               ))}
@@ -128,17 +128,17 @@ export const TopStatusBar: React.FC = () => {
         </div>
 
         {/* Center: Command Palette Trigger */}
-        <div className="flex-1 max-w-lg mx-4 hidden lg:block">
+        <div className="flex-1 max-w-md mx-space-md hidden lg:block">
           <button
             onClick={() => setCommandPaletteOpen(true)}
             type="button"
-            className="w-full flex items-center justify-between px-3 py-1.5 bg-[#0b1326]/80 border border-[#1e293b] hover:border-[#00e5ff]/40 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-[#0f1a30] transition-all text-xs group shadow-inner"
+            className="w-full h-9 flex items-center justify-between px-space-sm bg-surface-container-low/80 border border-outline-variant/40 hover:border-primary-container/40 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-all font-body-sm shadow-inner group"
           >
-            <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-[#00e5ff] group-hover:scale-110 transition-transform" />
-              <span>Search cyclones, coordinates, critical facilities, radar towers...</span>
+            <div className="flex items-center gap-space-xs overflow-hidden">
+              <span className="material-symbols-outlined text-[18px] text-primary shrink-0">search</span>
+              <span className="truncate text-xs text-outline group-hover:text-on-surface">Search cyclones, coordinates, radar towers...</span>
             </div>
-            <kbd className="font-telemetry text-[10px] px-1.5 py-0.5 rounded bg-[#1e293b] text-[#00e5ff] border border-[#334155]">
+            <kbd className="font-data-label text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest border border-outline-variant/40 text-primary-fixed-dim font-bold shrink-0 ml-2">
               ⌘K
             </kbd>
           </button>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><style>
+@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}
+::-webkit-scrollbar{display:none;}
+@keyframes radar-pulse{0%{box-shadow:0 0 0 0 rgba(0,229,255,0.7);}70%{box-shadow:0 0 0 9px rgba(0,229,255,0);}100%{box-shadow:0 0 0 0 rgba(0,229,255,0);}}
+@keyframes critical-pulse{0%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.96);}100%{opacity:1;transform:scale(1);}}
+@keyframes neon-glow{0%,100%{filter:drop-shadow(0 0 6px rgba(0,229,255,0.6));}50%{filter:drop-shadow(0 0 14px rgba(0,229,255,0.9));}}
+@keyframes alert-glow{0%,100%{filter:drop-shadow(0 0 6px rgba(255,51,102,0.6));}50%{filter:drop-shadow(0 0 16px rgba(255,51,102,0.9));}}
+.pulse-beacon{animation:radar-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;}
+.alert-beacon{animation:critical-pulse 1.4s ease-in-out infinite;}
+.glow-cyan{box-shadow: 0 0 20px -3px rgba(0,229,255,0.25);}
+.glow-crimson{box-shadow: 0 0 24px -2px rgba(255,51,102,0.35);}
+.glass-panel{background: rgba(13, 19, 31, 0.78); backdrop-filter: blur(16px); border: 1px solid rgba(0, 229, 255, 0.12);}
+.glass-card{background: linear-gradient(135deg, rgba(22, 28, 40, 0.85) 0%, rgba(13, 19, 31, 0.95) 100%); border: 1px solid rgba(59, 73, 76, 0.45);}
+.glass-card:hover{border-color: rgba(0, 229, 255, 0.35); box-shadow: 0 4px 20px -2px rgba(0, 229, 255, 0.1);}
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-tint":"#00daf3","surface-container-highest":"#2f3542","surface-variant":"#2f3542","on-tertiary":"#003824","on-error":"#690005","on-background":"#dde2f4","secondary-container":"#00a6e0","surface-container-low":"#161c28","tertiary-fixed":"#6ffbbe","on-primary-fixed-variant":"#004f58","on-surface-variant":"#bac9cc","surface-bright":"#333947","primary-fixed":"#9cf0ff","tertiary-fixed-dim":"#4edea3","surface-container-high":"#242a37","surface-container":"#1a202c","on-error-container":"#ffdad6","on-secondary-container":"#00374d","background":"#0d131f","inverse-surface":"#dde2f4","on-tertiary-container":"#006645","inverse-primary":"#006875","surface-dim":"#0d131f","outline":"#849396","surface":"#0d131f","on-primary-container":"#00626e","on-surface":"#dde2f4","primary-container":"#00e5ff","secondary":"#7bd0ff","outline-variant":"#3b494c","tertiary":"#a8ffd2","secondary-fixed-dim":"#7bd0ff","on-secondary-fixed-variant":"#004c69","tertiary-container":"#5be9ad","on-secondary":"#00354a","primary":"#c3f5ff","surface-container-lowest":"#080e1a","on-primary-fixed":"#001f24","error-container":"#93000a","on-secondary-fixed":"#001e2c","on-tertiary-fixed":"#002113","error":"#ff5370","secondary-fixed":"#c4e7ff","primary-fixed-dim":"#00daf3","on-primary":"#00363d","inverse-on-surface":"#2a303e","on-tertiary-fixed-variant":"#005236"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"gutter-md":"1.5rem","space-md":"1rem","margin":"1rem","margin-lg":"3rem","space-xl":"2.5rem","gutter":"1rem","space-lg":"1.5rem","margin-md":"2rem","space-sm":"0.5rem","space-xs":"0.25rem","space-2xs":"0.125rem"},fontFamily:{"headline-sm":["Space Grotesk"],"body-md":["Inter"],"label-lg":["JetBrains Mono"],"headline-lg-mobile":["Space Grotesk"],"label-md":["JetBrains Mono"],"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"headline-md":["Space Grotesk"],"headline-lg":["Space Grotesk"],"display-mobile":["Space Grotesk"],"body-lg":["Inter"],"display":["Space Grotesk"],"data-label":["JetBrains Mono"],"data-metric-lg":["JetBrains Mono"],"data-value":["JetBrains Mono"],"badge":["JetBrains Mono"]},fontSize:{"headline-sm":["1.25rem",{"lineHeight":"1.75rem","fontWeight":"600"}],"body-md":["0.9375rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.05em","fontWeight":"500"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.06em","fontWeight":"500"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.08em","fontWeight":"600"}],"body-sm":["0.8125rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"headline-md":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-lg":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"display-mobile":["2rem",{"lineHeight":"2.5rem","letterSpacing":"-0.02em","fontWeight":"700"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"display":["3rem",{"lineHeight":"3.5rem","letterSpacing":"-0.03em","fontWeight":"700"}],"data-label":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"500"}],"data-metric-lg":["28px",{"lineHeight":"32px","letterSpacing":"-0.03em","fontWeight":"700"}],"data-value":["13px",{"lineHeight":"18px","letterSpacing":"-0.01em","fontWeight":"500"}],"badge":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"700"}]}}}};</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased select-none bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,229,255,0.08),rgba(8,14,26,1))]"><aside class="fixed left-0 top-0 h-full w-80 bg-surface-container-lowest/95 backdrop-blur-xl border-r border-outline-variant/30 z-40 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.6)]"><div class="flex flex-col h-[calc(100vh-140px)] overflow-hidden"><div class="p-space-lg flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant/20"><div class="flex items-center gap-space-md"><img alt="CycloneShield AI Tactical Shield Logo" class="h-8 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]" src="https://lh3.googleusercontent.com/aida/AEtjO1UeEoOcvVglWG2qRQi7xo-cA72BXtKnqhJ7kAaq3ggfmzjy4UEidB4fji4WzBiH9H-b3DCdI3SjV-zRlBn5AE0x159wNoWojV3mYadjS41_YUVByBKueLJTDvps81M6I3iKaGGPEZepKTrwK1BIuOyD8T6mmc8KpI6VVR9w6-TSDZ5VLbBGWz3JNmkrlpfTcsdZm2jsADfPQ4TVTVRNxyB9K5tzkCbNhWpE6-lw1g0A5dUkIIOhnd6mD6Qx"/><div class="flex flex-col"><span class="font-headline-sm text-sm uppercase tracking-wider text-primary font-bold">CYCLONESHIELD AI</span><span class="font-data-label text-[10px] text-primary-fixed-dim uppercase tracking-widest flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Predict Path • Protect Assets</span></div></div><button class="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container-low border border-outline-variant/40 text-on-surface-variant hover:text-primary hover:border-primary-container/50 hover:bg-surface-container transition-all" title="Collapse Tactical Dock" type="button"><span class="material-symbols-outlined text-[18px]">dock_to_left</span></button></div><nav class="flex-1 overflow-y-auto px-space-md py-space-sm space-y-space-md" data-active-classes="bg-surface-container-high text-primary font-semibold shadow-[inset_2px_0_0_0_#00e5ff]"><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">OVERVIEW</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all group" data-path="dashboard" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] group-hover:text-primary transition-colors">grid_view</span><span class="font-body-md text-body-md">Dashboard</span></div></a></div><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">CYCLONE INTELLIGENCE</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all group" data-path="cyclones" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] group-hover:text-primary transition-colors">cyclone</span><span class="font-body-md text-body-md">Active Cyclones</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest border border-cyan-500/30 text-cyan-400 font-bold">3 ACTIVE</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-space-xs rounded-lg transition-all bg-gradient-to-r from-surface-container-high to-surface-container text-primary font-semibold shadow-[inset_3px_0_0_0_#00e5ff] border-l border-primary-container/60" data-path="cyclone-details" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-primary-container filter drop-shadow-[0_0_6px_rgba(0,229,255,0.7)]">my_location</span><span class="font-body-md text-body-md text-primary font-semibold">Cyclone Details</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold tracking-wider">TC-HELEN</span></a></div><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">RISK INTELLIGENCE</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="risk-analysis" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-rose-400">gshield</span><span class="font-body-md text-body-md">Risk Analysis</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/40 text-rose-300 font-bold">CRITICAL 88</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="landfall-analysis" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-amber-400">adjust</span><span class="font-body-md text-body-md">Landfall Analysis</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-amber-950/60 border border-amber-500/40 text-amber-300 font-bold">T-14h</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="infrastructure" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">domain</span><span class="font-body-md text-body-md">Infrastructure</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">142 ASSETS</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="population-exposure" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-secondary">groups</span><span class="font-body-md text-body-md">Population Exposure</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 font-bold">1.4M</span></a></div><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">SATELLITE &amp; AI</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="satellite-intelligence" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-emerald-400">satellite_alt</span><span class="font-body-md text-body-md">Satellite Intelligence</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 font-bold">INSAT-3D</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="ai-intelligence" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-cyan-400">auto_awesome</span><span class="font-body-md text-body-md">AI Intelligence</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-primary-container/20 border border-primary-container/40 text-primary font-bold">FASTAPI</span></a></div><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">RESPONSE</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="emergency-priorities" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-rose-400">notification_important</span><span class="font-body-md text-body-md">Emergency Priorities</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/40 text-rose-300 font-bold">7 URGENT</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="reports" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">description</span><span class="font-body-md text-body-md">Reports</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">PDF/JSON</span></a></div><div class="space-y-space-2xs"><div class="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">SYSTEM</div><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-md text-body-md">Settings</span></div></a></div></nav></div><div class="p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]"><div class="flex items-center gap-space-xs bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30"><button class="flex-1 flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 font-badge text-badge uppercase font-bold shadow-[0_0_10px_rgba(0,229,255,0.25)]" type="button"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>LIVE MODE</button><button class="flex-1 flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded text-outline hover:text-on-surface transition-colors font-badge text-badge uppercase" type="button"><span class="w-1.5 h-1.5 rounded-full bg-outline"></span>SIMULATION</button></div><div class="flex items-center justify-between px-space-xs py-space-2xs text-outline font-data-label text-[10px]"><span class="flex items-center gap-space-2xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span><span class="text-on-surface-variant font-semibold">FASTAPI CORE</span></span><span class="font-data-value text-data-label text-emerald-400 font-bold">18ms • ONLINE</span></div><div class="flex items-center justify-between pt-space-xs border-t border-outline-variant/20"><div class="flex items-center gap-space-sm"><div class="relative w-9 h-9 rounded-full ring-2 ring-primary-container/70 overflow-hidden shadow-[0_0_12px_rgba(0,229,255,0.4)] flex-shrink-0"><img alt="Ocean Low Pressure Vortex Satellite Imagery" class="w-full h-full object-cover scale-110" src="https://lh3.googleusercontent.com/aida/AEtjO1V0ocYCgkg7EMNDFekG6e14K_BrHNIPfpapo9R3kZ1UD5_Er8gLqmpM4WnPCJ0J7ZE3Mzg1hg84doaF3ijPuC1MqH1Sf2G-7jxl9IfGZkWP_o5O2SxoO1Hukq1S6dAuW1XiuSMms5P7ZH3j3BXuVwR7eJ3zYxUnfwiK8rTiR6ymhdkcDviDFZVIi0wjShoiep6QWe9-zmNlahLT3TlMnttetWENGj3itQCFYP0KBJdWIRyuciwI8g2KguPk"/></div><div class="flex flex-col"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Cmdr. Elena Rostova</span><span class="font-data-label text-[10px] text-primary leading-tight font-medium">Dir. Met. Command</span></div></div><button class="text-outline hover:text-primary p-space-2xs transition-colors" title="Operational Lock State" type="button"><span class="material-symbols-outlined text-[18px]">lock</span></button></div></div></aside><div class="pl-80"><header class="fixed top-0 left-80 right-0 h-16 bg-surface-container-lowest/85 backdrop-blur-2xl z-30 px-space-lg flex items-center justify-between border-b border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.6)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-2xs rounded-full bg-surface-container-low border border-cyan-500/30 shadow-[0_0_12px_rgba(0,229,255,0.15)]"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 alert-beacon shadow-[0_0_8px_#ff3366]"></span><span class="font-badge text-badge text-rose-300 tracking-wider uppercase font-bold">TC HELEN (CAT 4)</span><span class="text-outline text-body-sm">•</span><span class="font-data-value text-data-label text-cyan-300 font-bold">215 KM/H</span><span class="text-outline text-body-sm">•</span><span class="font-data-value text-data-label text-secondary font-semibold">942 HPA</span><span class="text-outline text-body-sm">•</span><span class="font-data-label text-[10px] text-amber-300 uppercase font-semibold">TRACKING NW @ 18 KM/H</span></div></div><div class="flex-1 max-w-xl mx-space-lg"><button class="w-full flex items-center justify-between px-space-md py-space-xs bg-surface-container-low/80 border border-outline-variant/40 rounded-lg text-outline hover:text-on-surface hover:border-primary-container/40 hover:bg-surface-container transition-all font-body-sm shadow-inner" onclick="document.getElementById('command-palette').classList.remove('hidden')" type="button"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-primary">search</span><span>Search cyclones, coordinates, critical facilities, radar towers...</span></div><kbd class="font-data-label text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest border border-outline-variant/40 text-primary-fixed-dim font-bold">⌘K</kbd></button></div><div class="flex items-center gap-space-md"><div class="hidden xl:flex items-center gap-space-md text-outline font-data-label text-[11px]"><span class="flex items-center gap-space-2xs bg-surface-container-low px-2 py-1 rounded border border-outline-variant/30"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff]"></span><span class="text-cyan-300">UP: 2 MIN AGO</span></span><span class="flex items-center gap-space-2xs bg-surface-container-low px-2 py-1 rounded border border-outline-variant/30"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span><span class="text-emerald-300 font-semibold">API v1.4 LIVE</span></span></div><div class="flex items-center gap-space-xs"><button class="p-space-xs rounded-lg text-outline hover:text-primary hover:bg-surface-container-high transition-colors" title="Audio Warning Systems" type="button"><span class="material-symbols-outlined text-[20px]">volume_up</span></button><button class="relative p-space-xs rounded-lg text-outline hover:text-primary hover:bg-surface-container-high transition-colors" onclick="document.getElementById('notification-drawer').classList.remove('translate-x-full')" title="Threat Advisories" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-600 text-white font-badge text-[9px] flex items-center justify-center font-bold shadow-[0_0_8px_#ff3366]">5</span></button></div><button class="flex items-center gap-space-xs px-space-md py-space-xs rounded bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-body-sm font-bold tracking-wide uppercase shadow-[0_0_16px_rgba(255,51,102,0.45)] border border-rose-400/40 transition-all" type="button"><span class="material-symbols-outlined text-[18px]">podcasts</span><span>BROADCAST ADVISORY</span></button></div></header><main class="relative pt-16 min-h-screen bg-background text-on-surface"><div class="flex flex-col w-full">
+<!-- Top Command Action Bar -->
+<div class="px-space-md py-space-sm bg-surface-container-lowest/90 border-b border-outline-variant/20 flex flex-wrap items-center justify-between gap-space-sm backdrop-blur-sm">
+<div class="flex flex-col gap-space-2xs min-w-0">
+<div class="flex items-center gap-space-xs font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">
+<span class="text-on-surface-variant">Cyclone Intelligence</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant">Active Cyclones</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary-container font-bold tracking-widest filter drop-shadow-[0_0_4px_rgba(0,229,255,0.6)]">TC-04B-HELEN</span>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<h1 class="font-headline-md text-headline-md font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-cyan-300 tracking-tight">
+          CYCLONE HELEN (TC-04B) • CATEGORY 4 EXTREMELY SEVERE CYCLONIC STORM
+        </h1>
+<div class="flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container border border-cyan-500/40 rounded-lg text-cyan-300 font-badge text-badge shadow-[0_0_12px_rgba(0,229,255,0.15)]">
+<span class="w-2 h-2 rounded-full bg-cyan-400 pulse-beacon"></span>
+<span class="font-bold tracking-wider">ACTIVE INTENSIFYING • LAST ASSIMILATION 2 MIN AGO</span>
+</div>
+</div>
+</div>
+<!-- Action Trigger Cluster -->
+<div class="flex items-center gap-space-xs">
+<button class="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-low hover:bg-surface-container-high text-on-surface border border-outline-variant/40 rounded font-body-sm font-semibold transition-all hover:border-cyan-500/50" type="button">
+<span class="material-symbols-outlined text-[17px] text-cyan-400">description</span>
+<span>GENERATE HAZARD BRIEF</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-low hover:bg-surface-container-high text-on-surface border border-outline-variant/40 rounded font-body-sm font-semibold transition-all hover:border-primary-container/50" type="button">
+<span class="material-symbols-outlined text-[17px] text-primary-container">psychology</span>
+<span>AI TRACK FORECAST EXPLANATION</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-sm py-space-xs bg-gradient-to-r from-primary-container to-cyan-400 hover:from-cyan-300 hover:to-primary-container text-surface-container-lowest font-bold rounded font-body-sm transition-all shadow-[0_0_18px_rgba(0,229,255,0.4)]" type="button">
+<span class="material-symbols-outlined text-[17px]">download</span>
+<span>EXPORT SATELLITE TENSOR</span>
+</button>
+</div>
+</div>
+<!-- Primary Cockpit Telemetry Strip: 6 Key Metrics with Graphic Indicators -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-space-xs p-space-md bg-surface-dim">
+<!-- Metric 1 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-rose-500/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">MAX SUSTAINED WIND</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 uppercase font-bold tracking-wider">CAT 4</span>
+</div>
+<div class="my-space-xs flex items-baseline justify-between">
+<span class="font-data-metric-lg text-data-metric-lg text-rose-400 font-bold filter drop-shadow-[0_0_8px_rgba(255,51,102,0.4)]">215 <span class="text-body-sm font-data-label text-on-surface-variant font-normal">km/h</span></span>
+<span class="font-data-value text-data-label text-rose-400 font-semibold flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +35 in 12h
+        </span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>GUSTS: <strong class="text-rose-300">260 km/h</strong></span>
+<svg class="w-16 h-4 text-rose-400 filter drop-shadow-[0_0_4px_rgba(255,51,102,0.5)]" fill="none" viewbox="0 0 60 16">
+<path d="M0 14 Q 15 12, 28 8 T 60 2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">CENTRAL PRESSURE</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 uppercase font-bold">RAPID DROP</span>
+</div>
+<div class="my-space-xs flex items-baseline justify-between">
+<span class="font-data-metric-lg text-data-metric-lg text-cyan-300 font-bold filter drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]">942 <span class="text-body-sm font-data-label text-on-surface-variant font-normal">hPa</span></span>
+<span class="font-data-value text-data-label text-cyan-400 font-semibold flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span> -18 hPa/12h
+        </span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>EYE GRAD: 1.8 hPa/km</span>
+<svg class="w-16 h-4 text-cyan-400 filter drop-shadow-[0_0_4px_rgba(0,229,255,0.5)]" fill="none" viewbox="0 0 60 16">
+<path d="M0 2 Q 20 4, 38 9 T 60 14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">COORDINATES</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container border border-outline-variant/40 text-primary-fixed uppercase font-semibold">BAY OF BENGAL</span>
+</div>
+<div class="my-space-xs flex flex-col">
+<span class="font-data-metric-lg text-data-metric-lg text-white font-bold">20.12°N</span>
+<span class="font-data-value text-data-value text-cyan-200">88.38°E (Central Basin)</span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>GRID: IND-BOB-04</span>
+<span class="text-emerald-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>RADAR SYNCED</span>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">MOVEMENT VECTOR</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container border border-outline-variant/40 text-on-surface uppercase font-semibold">STABLE</span>
+</div>
+<div class="my-space-xs flex items-baseline justify-between">
+<span class="font-data-metric-lg text-data-metric-lg text-white font-bold">315° NW</span>
+<span class="font-data-value text-data-label text-emerald-400 font-bold">18.2 km/h</span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>TRANSLATION: STEADY</span>
+<span class="material-symbols-outlined text-[16px] text-cyan-400 rotate-[315deg] font-bold">north</span>
+</div>
+</div>
+<!-- Metric 5 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">EYE DIAMETER</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 uppercase font-bold">DOPPLER HQ</span>
+</div>
+<div class="my-space-xs flex items-baseline justify-between">
+<span class="font-data-metric-lg text-data-metric-lg text-cyan-300 font-bold">28 <span class="text-body-sm font-data-label text-on-surface-variant font-normal">km</span></span>
+<span class="font-data-value text-data-label text-amber-300 font-bold px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">PINHOLE</span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>EYEWALL: SYMMETRIC</span>
+<span class="text-cyan-300 font-bold">TIGHTENING</span>
+</div>
+</div>
+<!-- Metric 6 -->
+<div class="glass-card p-space-sm rounded-lg flex flex-col justify-between shadow-sm relative overflow-hidden group border-rose-500/30">
+<div class="absolute -right-6 -top-6 w-20 h-20 bg-rose-600/15 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">LANDFALL PROXIMITY</span>
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/60 text-rose-300 uppercase font-bold tracking-wider">CRITICAL</span>
+</div>
+<div class="my-space-xs flex items-baseline justify-between">
+<span class="font-data-metric-lg text-data-metric-lg text-rose-400 font-bold filter drop-shadow-[0_0_8px_rgba(255,51,102,0.4)]">185 <span class="text-body-sm font-data-label text-on-surface-variant font-normal">km</span></span>
+<span class="font-data-value text-data-label text-rose-300 font-bold tracking-wider">ETA: 14h 20m</span>
+</div>
+<div class="flex items-center justify-between font-data-label text-[11px] text-outline">
+<span>TARGET: BALASORE-DIGHA</span>
+<span class="text-rose-400 alert-beacon font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>WARNING</span>
+</div>
+</div>
+</div>
+<!-- Main Workspace: Visual GIS Multi-Model Forecast Viewport & Overlays -->
+<div class="p-space-md grid grid-cols-1 xl:grid-cols-4 gap-space-md bg-surface-dim">
+<!-- Central GIS Nautical Trajectory Stage (3 Columns on Desktop) -->
+<div class="xl:col-span-3 flex flex-col gap-space-xs">
+<div class="relative w-full h-[520px] rounded-xl overflow-hidden bg-surface-container-lowest border border-cyan-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.7)] flex flex-col justify-between">
+<!-- Google Map Canvas Hook with Satellite Bathymetry Backdrop -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center opacity-40 mix-blend-luminosity filter contrast-125" data-location="Bay of Bengal coastal waters India" style="background-image: radial-gradient(circle at 45% 55%, rgba(0,229,255,0.18), transparent 60%);"></div>
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(13,19,31,0.2)_0%,rgba(8,14,26,0.85)_80%,rgba(8,14,26,0.98)_100%)] pointer-events-none"></div>
+<!-- Tactical Trajectory & Uncertainty Vector HUD Overlay -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none" viewbox="0 0 1000 500">
+<defs>
+<!-- Uncertainty 70% Confidence Cone Gradient -->
+<radialgradient cx="0%" cy="50%" id="uncertaintyGlow" r="90%">
+<stop offset="0%" stop-color="#00e5ff" stop-opacity="0.32"></stop>
+<stop offset="50%" stop-color="#00a6e0" stop-opacity="0.16"></stop>
+<stop offset="100%" stop-color="#080e1a" stop-opacity="0.0"></stop>
+</radialgradient>
+<!-- Radar Beacon Sweep Effect -->
+<lineargradient id="sweepLine" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#00e5ff" stop-opacity="0.9"></stop>
+<stop offset="100%" stop-color="#00e5ff" stop-opacity="0"></stop>
+</lineargradient>
+<filter height="140%" id="neonGlowCyan" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<filter height="140%" id="neonGlowRose" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="4"></fegaussianblur>
+<femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+</defs>
+<!-- Coordinate grid lines -->
+<path d="M 0 100 L 1000 100 M 0 200 L 1000 200 M 0 300 L 1000 300 M 0 400 L 1000 400" stroke="#3b494c" stroke-dasharray="2 6" stroke-opacity="0.4" stroke-width="0.75"></path>
+<path d="M 200 0 L 200 500 M 400 0 L 400 500 M 600 0 L 600 500 M 800 0 L 800 500" stroke="#3b494c" stroke-dasharray="2 6" stroke-opacity="0.4" stroke-width="0.75"></path>
+<!-- 70% Uncertainty Cone Corridor Expanding forward to coastline -->
+<polygon fill="url(#uncertaintyGlow)" points="460,260 740,110 880,90 820,200 680,240 460,260" stroke="#00e5ff" stroke-dasharray="5 5" stroke-opacity="0.8" stroke-width="1.75"></polygon>
+<!-- Observed Track (Historical points) T-24h to T-0 -->
+<path d="M 120 410 L 210 370 L 290 330 L 370 295 L 460 260" fill="none" filter="url(#neonGlowCyan)" stroke="#38bdf8" stroke-linecap="round" stroke-width="3.5"></path>
+<!-- Ensemble Multi-Model Consensus Lines -->
+<!-- ECMWF Model (Cyan) -->
+<path d="M 460 260 Q 580 210 740 135 T 820 100" fill="none" stroke="#00e5ff" stroke-dasharray="4 4" stroke-width="2.5"></path>
+<!-- GFS Model (Purple/Violet) -->
+<path d="M 460 260 Q 590 230 755 170 T 845 130" fill="none" stroke="#a78bfa" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- IMD Official (Gold/Amber) -->
+<path d="M 460 260 Q 570 200 725 145 T 795 118" fill="none" stroke="#fbbf24" stroke-dasharray="2 2" stroke-width="2.2"></path>
+<!-- AI-NeuralTrack Consensus (Neon Crimson Solid Bold Landfall Vector) -->
+<path d="M 460 260 Q 565 195 710 130 T 765 108" fill="none" filter="url(#neonGlowRose)" stroke="#ff3366" stroke-linecap="round" stroke-width="4"></path>
+<!-- Past Observation Stations (T-24h, T-18h, T-12h, T-6h) -->
+<circle cx="120" cy="410" fill="#080e1a" r="5" stroke="#38bdf8" stroke-width="2.5"></circle>
+<text fill="#bac9cc" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="120" y="430">T-24h (120 km/h)</text>
+<circle cx="210" cy="370" fill="#080e1a" r="5" stroke="#38bdf8" stroke-width="2.5"></circle>
+<text fill="#bac9cc" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="210" y="390">T-18h (145 km/h)</text>
+<circle cx="290" cy="330" fill="#080e1a" r="5.5" stroke="#38bdf8" stroke-width="2.5"></circle>
+<text fill="#bac9cc" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="290" y="350">T-12h (165 km/h)</text>
+<circle cx="370" cy="295" fill="#080e1a" r="5.5" stroke="#38bdf8" stroke-width="2.5"></circle>
+<text fill="#bac9cc" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="370" y="315">T-6h (195 km/h)</text>
+<!-- Current Eye Location Pulsing Beacon (T-0) -->
+<circle cx="460" cy="260" fill="#00e5ff" fill-opacity="0.15" r="32" stroke="#00e5ff" stroke-width="1.5"></circle>
+<circle class="alert-beacon" cx="460" cy="260" fill="#ff3366" fill-opacity="0.3" r="18" stroke="#ff3366" stroke-width="2"></circle>
+<circle cx="460" cy="260" fill="#ffffff" filter="url(#neonGlowCyan)" r="5"></circle>
+<!-- Radar Sweep Beam rotating from eye -->
+<g transform="translate(460,260)">
+<line stroke="#00e5ff" stroke-width="2.5" x1="0" x2="70" y1="0" y2="-50"></line>
+<polygon fill="url(#sweepLine)" points="0,0 65,-55 35,-75"></polygon>
+</g>
+<!-- Predicted Landfall Target Impact Ring -->
+<circle class="alert-beacon" cx="765" cy="108" fill="#ff3366" fill-opacity="0.35" r="22" stroke="#ff3366" stroke-dasharray="3 3" stroke-width="2.5"></circle>
+<circle cx="765" cy="108" fill="#ff3366" filter="url(#neonGlowRose)" r="6"></circle>
+<line stroke="#ff3366" stroke-width="2" x1="765" x2="765" y1="108" y2="58"></line>
+</svg>
+<!-- Top Tactical Telemetry Watermark & Active Sensors -->
+<div class="relative z-10 p-space-md flex items-center justify-between pointer-events-auto">
+<div class="flex items-center gap-space-xs bg-surface-container-lowest/85 backdrop-blur-md px-space-sm py-space-xs rounded-lg border border-cyan-500/30 shadow-[0_0_12px_rgba(0,229,255,0.15)]">
+<span class="material-symbols-outlined text-cyan-400 text-[18px]">satellite_alt</span>
+<span class="font-data-label text-data-label text-on-surface font-semibold">INSAT-3D TIR-1 • DOPPLER PARADIP SYNCED</span>
+<span class="w-2 h-2 rounded-full bg-emerald-400 pulse-beacon ml-space-xs shadow-[0_0_6px_#10b981]"></span>
+</div>
+<!-- Model Legend Filter Box -->
+<div class="flex items-center gap-space-sm bg-surface-container-lowest/85 backdrop-blur-md px-space-sm py-space-xs rounded-lg border border-outline-variant/40 font-data-label text-[11px] shadow-lg">
+<div class="flex items-center gap-space-2xs text-cyan-400 font-bold">
+<span class="w-3 h-1 bg-cyan-400 inline-block rounded-full shadow-[0_0_6px_#00e5ff]"></span> ECMWF
+            </div>
+<div class="flex items-center gap-space-2xs text-purple-300 font-bold">
+<span class="w-3 h-1 bg-purple-400 inline-block rounded-full shadow-[0_0_6px_#a78bfa]"></span> GFS
+            </div>
+<div class="flex items-center gap-space-2xs text-amber-300 font-bold">
+<span class="w-3 h-1 bg-amber-400 inline-block rounded-full shadow-[0_0_6px_#fbbf24]"></span> IMD T+72
+            </div>
+<div class="flex items-center gap-space-2xs text-rose-400 font-bold">
+<span class="w-3 h-1 bg-rose-500 inline-block rounded-full shadow-[0_0_6px_#ff3366]"></span> AI-NeuralConsensus (96%)
+            </div>
+</div>
+</div>
+<!-- Floating Landfall Warning Pill -->
+<div class="relative z-10 mx-space-md mb-space-md self-start bg-gradient-to-r from-rose-950/95 via-surface-container-lowest/90 to-surface-container-lowest/90 backdrop-blur-md text-white border border-rose-500/50 px-space-md py-space-xs rounded-lg flex items-center gap-space-sm shadow-[0_0_24px_rgba(255,51,102,0.35)]">
+<span class="material-symbols-outlined text-rose-400 text-[22px] alert-beacon">farsight_digital</span>
+<div class="flex flex-col">
+<span class="font-badge text-badge uppercase tracking-wider text-rose-400 font-bold">PREDICTED LANDFALL ZONE</span>
+<span class="font-headline-sm text-headline-sm font-bold text-white leading-tight">
+              BALASORE-DIGHA COASTLINE (T+14h 20m)
+            </span>
+</div>
+<div class="ml-space-md pl-space-md border-l border-rose-500/30 py-space-2xs px-space-xs rounded font-data-label text-[11px] text-on-surface">
+            Surge Estimate: <span class="text-rose-400 font-bold text-sm">+4.8m Peak</span>
+</div>
+</div>
+</div>
+<!-- Real-Time Telemetry Timeline Horizon Controller Bar -->
+<div class="p-space-sm bg-surface-container-lowest/90 border border-outline-variant/30 rounded-lg flex flex-col gap-space-xs shadow-md">
+<div class="flex items-center justify-between font-data-label text-data-label text-outline">
+<span class="flex items-center gap-space-2xs text-cyan-400 font-bold tracking-wider">
+<span class="material-symbols-outlined text-[15px]">timeline</span> FORECAST RUNWAY [T-24h to T+48h]
+          </span>
+<span class="text-primary font-data-value font-semibold">ASSIMILATING CYCLE: 06:00 UTC ENSEMBLE</span>
+</div>
+<div class="relative w-full h-8 flex items-center">
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden flex shadow-inner">
+<div class="w-[46%] bg-gradient-to-r from-cyan-500 to-cyan-400 h-full shadow-[0_0_8px_rgba(0,229,255,0.6)]"></div>
+<div class="w-[30%] bg-gradient-to-r from-rose-500 to-amber-500 h-full shadow-[0_0_8px_rgba(255,51,102,0.5)]"></div>
+<div class="w-[24%] bg-surface-container h-full"></div>
+</div>
+<!-- Waypoint Pins -->
+<div class="absolute left-[12%] top-0 flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff]"></div>
+<span class="font-data-label text-[9px] text-outline mt-1 font-semibold">T-24h</span>
+</div>
+<div class="absolute left-[29%] top-0 flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff]"></div>
+<span class="font-data-label text-[9px] text-outline mt-1 font-semibold">T-12h</span>
+</div>
+<div class="absolute left-[46%] top-0 flex flex-col items-center">
+<div class="w-3.5 h-3.5 rounded-full bg-rose-500 alert-beacon shadow-[0_0_10px_#ff3366]"></div>
+<span class="font-data-label text-[9px] text-rose-400 font-bold mt-1">NOW (T-0)</span>
+</div>
+<div class="absolute left-[62%] top-0 flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]"></div>
+<span class="font-data-label text-[9px] text-amber-300 font-semibold mt-1">T+6h</span>
+</div>
+<div class="absolute left-[76%] top-0 flex flex-col items-center">
+<div class="w-3.5 h-3.5 rounded-full bg-rose-600 shadow-[0_0_10px_#ff3366]"></div>
+<span class="font-data-label text-[9px] text-rose-400 font-bold mt-1">LANDFALL (T+14h)</span>
+</div>
+<div class="absolute left-[95%] top-0 flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-outline"></div>
+<span class="font-data-label text-[9px] text-outline mt-1 font-semibold">T+48h</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Inspector & Real-Time Meteorological Sounding Panel (1 Column Desktop) -->
+<div class="flex flex-col gap-space-xs">
+<!-- Cyclone Eye Wall Doppler Profile Card -->
+<div class="p-space-sm bg-surface-container-low/90 border border-outline-variant/30 rounded-lg shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-cyan-400 text-[18px]">adjust</span>
+<span class="font-headline-sm text-body-md font-bold text-white">RADAR REFLECTIVITY &amp; WIND FIELD</span>
+</div>
+<span class="font-badge text-badge px-space-xs py-space-2xs bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold">55 dBZ</span>
+</div>
+<div class="relative h-44 rounded-lg bg-surface-container-lowest/90 border border-cyan-500/20 overflow-hidden flex items-center justify-center p-space-sm">
+<!-- Graphic representation of Doppler Eye Reflectivity Core -->
+<div class="absolute w-36 h-36 rounded-full bg-gradient-to-r from-rose-600/30 to-amber-500/20 border border-rose-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(255,51,102,0.3)]">
+<div class="w-24 h-24 rounded-full bg-rose-500/30 border border-rose-400/50 flex items-center justify-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest border border-cyan-400/60 flex items-center justify-center shadow-[inset_0_0_8px_rgba(0,229,255,0.5)]">
+<span class="font-data-label text-[9px] text-cyan-300 font-bold">28km EYE</span>
+</div>
+</div>
+</div>
+<!-- Quadrant Wind Barbs Annotation -->
+<div class="absolute top-2 left-2 font-data-label text-[10px] text-rose-400 font-bold drop-shadow-[0_0_4px_rgba(255,51,102,0.6)]">RMAX NE: 215 km/h</div>
+<div class="absolute top-2 right-2 font-data-label text-[10px] text-cyan-300 font-bold">RMAX NW: 195 km/h</div>
+<div class="absolute bottom-2 left-2 font-data-label text-[10px] text-amber-300 font-bold">RMAX SE: 175 km/h</div>
+<div class="absolute bottom-2 right-2 font-data-label text-[10px] text-outline font-bold">RMAX SW: 160 km/h</div>
+</div>
+<div class="grid grid-cols-2 gap-space-xs pt-space-xs font-data-label text-[11px]">
+<div class="bg-surface-container-lowest p-space-xs rounded border border-outline-variant/20 flex flex-col">
+<span class="text-outline">RADIUS MAX WIND</span>
+<span class="font-data-value text-data-value text-cyan-300 font-bold">32 km from Center</span>
+</div>
+<div class="bg-surface-container-lowest p-space-xs rounded border border-outline-variant/20 flex flex-col">
+<span class="text-outline">OUTER GALE RADIUS</span>
+<span class="font-data-value text-data-value text-on-surface font-semibold">260 km Quadrant NE</span>
+</div>
+</div>
+</div>
+<!-- Raw AI Model Telemetry JSON Hook Inspector -->
+<div class="p-space-sm bg-surface-container-low/90 border border-outline-variant/30 rounded-lg shadow-md flex flex-col flex-1 justify-between gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[18px]">code</span>
+<span class="font-headline-sm text-body-md font-bold text-white">FASTAPI REST HOOK</span>
+</div>
+<span class="font-badge text-badge px-space-xs py-space-2xs bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold">200 OK • 18ms</span>
+</div>
+<div class="bg-surface-container-lowest p-space-xs rounded border border-outline-variant/20 text-outline font-data-label text-[11px] overflow-x-auto leading-relaxed max-h-56">
+<p class="text-cyan-400 font-bold">GET /api/v1/cyclones/TC-04B/track</p>
+<pre class="text-cyan-100 font-data-label text-[10px] mt-space-2xs">{
+  "cyclone_id": "TC-04B-HELEN",
+  "category": 4,
+  "intensity": "EXTREMELY_SEVERE",
+  "coordinates": [20.12, 88.38],
+  "max_sustained_wind_kmh": 215,
+  "central_pressure_hpa": 942,
+  "heading_degrees": 315,
+  "speed_kmh": 18.2,
+  "models": {
+    "consensus_landfall_eta": "2025-05-18T20:20:00Z",
+    "uncertainty_cone_radius_km": 42.5,
+    "confidence_score": 0.942
+  }
+}</pre>
+</div>
+<button class="w-full py-space-xs bg-surface-container hover:bg-surface-container-high text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 rounded font-body-sm font-bold flex items-center justify-center gap-space-xs transition-all shadow-[0_0_12px_rgba(0,229,255,0.15)]" type="button">
+<span class="material-symbols-outlined text-[16px] text-cyan-400">terminal</span>
+<span>QUERY TENSOR STREAM</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Below Map: 3 Synoptic Analytical Charts -->
+<div class="p-space-md grid grid-cols-1 md:grid-cols-3 gap-space-md bg-surface-dim pt-0">
+<!-- Synoptic Chart 1: Wind Speed & Gust History + Forecast Curve -->
+<div class="glass-card p-space-sm rounded-lg shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex flex-col">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">WIND INTENSITY PROFILE</span>
+<span class="font-body-md text-body-md font-semibold text-white">Max Sustained &amp; Gust Trajectory</span>
+</div>
+<span class="font-data-value text-data-label text-rose-400 font-bold px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/40">PEAK 215 km/h</span>
+</div>
+<!-- Inline SVG Vector Curve Chart -->
+<div class="w-full h-36 bg-surface-container-lowest/90 border border-outline-variant/30 rounded p-space-xs relative flex items-end">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 300 120">
+<!-- Guide lines -->
+<line stroke="#1a202c" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="300" y1="30" y2="30"></line>
+<line stroke="#1a202c" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="300" y1="70" y2="70"></line>
+<line stroke="#849396" stroke-dasharray="4 2" stroke-width="1" x1="160" x2="160" y1="0" y2="120"></line>
+<!-- Gust Line (Upper, Vibrant Crimson Neon) -->
+<path d="M 0 95 L 45 80 L 100 65 L 160 20 L 220 28 L 300 60" fill="none" stroke="#ff3366" stroke-dasharray="4 3" stroke-width="2"></path>
+<!-- Sustained Wind Fill Gradient -->
+<defs>
+<lineargradient id="windGrad2" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#00e5ff" stop-opacity="0.5"></stop>
+<stop offset="100%" stop-color="#00e5ff" stop-opacity="0.02"></stop>
+</lineargradient>
+</defs>
+<path d="M 0 108 L 45 92 L 100 80 L 160 38 L 220 44 L 300 80 L 300 120 L 0 120 Z" fill="url(#windGrad2)"></path>
+<!-- Sustained Wind Stroke (Electric Cyan) -->
+<path d="M 0 108 L 45 92 L 100 80 L 160 38 L 220 44 L 300 80" fill="none" stroke="#00e5ff" stroke-width="3"></path>
+<!-- Current Position Indicator Dot -->
+<circle class="alert-beacon" cx="160" cy="38" fill="#ff3366" r="5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="flex items-center justify-between font-data-label text-[10px] text-outline mt-space-xs">
+<span>T-24h (120 km/h)</span>
+<span class="text-rose-400 font-bold">NOW (215 km/h)</span>
+<span>LANDFALL (185 km/h)</span>
+</div>
+</div>
+<!-- Synoptic Chart 2: Central Pressure Gradient (hPa) -->
+<div class="glass-card p-space-sm rounded-lg shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex flex-col">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">BAROMETRIC GRADIENT</span>
+<span class="font-body-md text-body-md font-semibold text-white">Central Eye Depletion (hPa)</span>
+</div>
+<span class="font-data-value text-data-label text-cyan-300 font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/40">MIN 942 hPa</span>
+</div>
+<!-- Inline SVG Pressure Gradient Drop -->
+<div class="w-full h-36 bg-surface-container-lowest/90 border border-outline-variant/30 rounded p-space-xs relative flex items-end">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 300 120">
+<line stroke="#1a202c" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="300" y1="40" y2="40"></line>
+<line stroke="#1a202c" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="300" y1="80" y2="80"></line>
+<line stroke="#849396" stroke-dasharray="4 2" stroke-width="1" x1="160" x2="160" y1="0" y2="120"></line>
+<defs>
+<lineargradient id="pressGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0 25 L 50 38 L 100 58 L 160 105 L 220 95 L 300 75 L 300 120 L 0 120 Z" fill="url(#pressGrad)"></path>
+<!-- Pressure Inversion Curve (Sharply dropping to 942) -->
+<path d="M 0 25 L 50 38 L 100 58 L 160 105 L 220 95 L 300 75" fill="none" stroke="#38bdf8" stroke-width="3"></path>
+<circle cx="160" cy="105" fill="#00e5ff" r="5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="flex items-center justify-between font-data-label text-[10px] text-outline mt-space-xs">
+<span>T-24h (988 hPa)</span>
+<span class="text-cyan-300 font-bold">MIN EYE (942 hPa)</span>
+<span>POST-LANDFALL (962 hPa)</span>
+</div>
+</div>
+<!-- Synoptic Chart 3: Forward Translation Speed & Heading Azimuth -->
+<div class="glass-card p-space-sm rounded-lg shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex flex-col">
+<span class="font-data-label text-data-label text-outline uppercase tracking-wider text-[11px]">TRANSLATION VELOCITY &amp; HEADING</span>
+<span class="font-body-md text-body-md font-semibold text-white">Kinetic Translation Vector</span>
+</div>
+<span class="font-data-value text-data-label text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40">315° @ 18.2 km/h</span>
+</div>
+<!-- Bar & Vector Dynamics -->
+<div class="w-full h-36 bg-surface-container-lowest/90 border border-outline-variant/30 rounded p-space-xs relative flex items-end">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 300 120">
+<!-- Translation speed bars -->
+<rect fill="#1a202c" height="60" rx="2" width="22" x="25" y="60"></rect>
+<rect fill="#1a202c" height="75" rx="2" width="22" x="75" y="45"></rect>
+<rect fill="#1a202c" height="88" rx="2" width="22" x="125" y="32"></rect>
+<rect fill="url(#cyanBar)" height="98" rx="2" width="22" x="175" y="22"></rect>
+<rect fill="#1a202c" height="92" rx="2" width="22" x="225" y="28"></rect>
+<rect fill="#1a202c" height="80" rx="2" width="22" x="275" y="40"></rect>
+<defs>
+<lineargradient id="cyanBar" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#00e5ff"></stop>
+<stop offset="100%" stop-color="#006875"></stop>
+</lineargradient>
+</defs>
+<!-- Heading Azimuth Overlay Line -->
+<path d="M 36 30 L 86 35 L 136 28 L 186 24 L 236 26 L 286 22" fill="none" stroke="#fbbf24" stroke-width="2.5"></path>
+<circle cx="186" cy="24" fill="#fbbf24" r="4.5" stroke="#080e1a" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="flex items-center justify-between font-data-label text-[10px] text-outline mt-space-xs">
+<span>T-24h (12.4 km/h)</span>
+<span class="text-cyan-300 font-bold">NOW (18.2 km/h)</span>
+<span>COASTAL SHOALING (14 km/h)</span>
+</div>
+</div>
+</div>
+<!-- Bottom Track-Point Telemetry Table & Inspection Record -->
+<div class="p-space-md bg-surface-dim pt-0">
+<div class="bg-surface-container-low/90 border border-outline-variant/30 rounded-lg p-space-sm shadow-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-space-xs border-b border-outline-variant/30">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-cyan-400 text-[18px]">table_rows</span>
+<span class="font-headline-sm text-body-md font-bold text-white tracking-wide">SYNOPTIC WAYPOINT TELEMETRY LOG</span>
+</div>
+<div class="flex items-center gap-space-xs font-data-label text-[11px] text-outline">
+<span>COORDINATE DATUM: <strong class="text-cyan-300">WGS84</strong></span>
+<span>•</span>
+<span>OBSERVATION NETWORK: GTS-IMD-NOAA</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-data-label text-data-label">
+<thead>
+<tr class="text-outline uppercase bg-surface-container-lowest/80 border-b border-outline-variant/30 text-[10px] tracking-wider">
+<th class="py-space-xs px-space-sm">TIMELINE REF</th>
+<th class="py-space-xs px-space-sm">COORDINATES</th>
+<th class="py-space-xs px-space-sm">MAX WIND</th>
+<th class="py-space-xs px-space-sm">CENTRAL PRESS</th>
+<th class="py-space-xs px-space-sm">INTENSITY</th>
+<th class="py-space-xs px-space-sm">VALIDATION SOURCE</th>
+<th class="py-space-xs px-space-sm text-right">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 font-data-value text-data-value">
+<!-- Row 1: T-12h -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-space-xs px-space-sm font-data-label text-outline">T-12h (18:00 UTC)</td>
+<td class="py-space-xs px-space-sm text-on-surface">18.4°N, 89.2°E</td>
+<td class="py-space-xs px-space-sm text-cyan-300 font-bold">165 km/h</td>
+<td class="py-space-xs px-space-sm text-on-surface">968 hPa</td>
+<td class="py-space-xs px-space-sm">
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-surface-container-highest border border-amber-500/40 text-amber-300 font-bold">CAT 3</span>
+</td>
+<td class="py-space-xs px-space-sm text-outline font-data-label text-[11px]">OBSERVED (Doppler Paradip)</td>
+<td class="py-space-xs px-space-sm text-right">
+<button class="text-cyan-400 hover:text-white font-data-label text-[11px] underline font-semibold transition-colors" type="button">Inspect</button>
+</td>
+</tr>
+<!-- Row 2: T-6h -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-space-xs px-space-sm font-data-label text-outline">T-6h (00:00 UTC)</td>
+<td class="py-space-xs px-space-sm text-on-surface">19.2°N, 88.8°E</td>
+<td class="py-space-xs px-space-sm text-rose-400 font-bold">195 km/h</td>
+<td class="py-space-xs px-space-sm text-on-surface">954 hPa</td>
+<td class="py-space-xs px-space-sm">
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold">CAT 4</span>
+</td>
+<td class="py-space-xs px-space-sm text-outline font-data-label text-[11px]">OBSERVED (INSAT-3D CIR)</td>
+<td class="py-space-xs px-space-sm text-right">
+<button class="text-cyan-400 hover:text-white font-data-label text-[11px] underline font-semibold transition-colors" type="button">Inspect</button>
+</td>
+</tr>
+<!-- Row 3: T-0 CURRENT ACTIVE EYE -->
+<tr class="bg-gradient-to-r from-rose-950/40 via-surface-container-highest/60 to-surface-container-highest/40 hover:bg-surface-container-highest transition-colors border-y border-rose-500/40">
+<td class="py-space-xs px-space-sm font-data-label text-rose-400 font-bold flex items-center gap-space-2xs">
+<span class="w-2.5 h-2.5 rounded-full bg-rose-500 alert-beacon shadow-[0_0_8px_#ff3366]"></span> T-0 (CURRENT)
+              </td>
+<td class="py-space-xs px-space-sm text-white font-bold">20.1°N, 88.4°E</td>
+<td class="py-space-xs px-space-sm text-rose-400 font-bold filter drop-shadow-[0_0_4px_rgba(255,51,102,0.6)]">215 km/h</td>
+<td class="py-space-xs px-space-sm text-cyan-300 font-bold">942 hPa</td>
+<td class="py-space-xs px-space-sm">
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-600 text-white font-bold shadow-[0_0_10px_rgba(255,51,102,0.6)]">CAT 4 SEVERE</span>
+</td>
+<td class="py-space-xs px-space-sm text-cyan-300 font-bold font-data-label text-[11px] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>ACTIVE EYE (DOPPLER + SAT)</td>
+<td class="py-space-xs px-space-sm text-right">
+<span class="font-badge text-badge px-space-xs py-space-2xs bg-cyan-500 text-surface-container-lowest rounded font-bold shadow-[0_0_10px_rgba(0,229,255,0.5)]">LOCKED</span>
+</td>
+</tr>
+<!-- Row 4: T+6h -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-space-xs px-space-sm font-data-label text-outline">T+6h (12:00 UTC)</td>
+<td class="py-space-xs px-space-sm text-on-surface-variant">20.9°N, 87.9°E</td>
+<td class="py-space-xs px-space-sm text-rose-300 font-semibold">210 km/h</td>
+<td class="py-space-xs px-space-sm text-on-surface">948 hPa</td>
+<td class="py-space-xs px-space-sm">
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold">CAT 4</span>
+</td>
+<td class="py-space-xs px-space-sm text-outline font-data-label text-[11px]">FORECAST (Ensemble Mean)</td>
+<td class="py-space-xs px-space-sm text-right">
+<button class="text-cyan-400 hover:text-white font-data-label text-[11px] underline font-semibold transition-colors" type="button">Inspect</button>
+</td>
+</tr>
+<!-- Row 5: T+14h PREDICTED LANDFALL -->
+<tr class="hover:bg-surface-container-high/60 transition-colors bg-rose-950/20 border-t border-rose-500/20">
+<td class="py-space-xs px-space-sm font-data-label text-rose-400 font-bold">T+14h (20:20 UTC)</td>
+<td class="py-space-xs px-space-sm text-on-surface font-semibold">21.4°N, 87.2°E</td>
+<td class="py-space-xs px-space-sm text-rose-400 font-bold">185 km/h</td>
+<td class="py-space-xs px-space-sm text-on-surface font-semibold">962 hPa</td>
+<td class="py-space-xs px-space-sm">
+<span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-amber-950/80 border border-amber-500/50 text-amber-300 font-bold">CAT 3 PEAK SURGE</span>
+</td>
+<td class="py-space-xs px-space-sm text-rose-400 font-bold font-data-label text-[11px]">PREDICTED LANDFALL</td>
+<td class="py-space-xs px-space-sm text-right">
+<button class="px-space-xs py-space-2xs rounded bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-badge text-[10px] font-bold shadow-[0_0_10px_rgba(255,51,102,0.4)] transition-all" type="button">STAGING</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div></main></div><div class="hidden fixed inset-0 z-50 flex items-start justify-center pt-24 bg-surface-dim/80 backdrop-blur-md" id="command-palette"><div class="w-full max-w-2xl bg-surface-container-lowest/95 backdrop-blur-xl rounded-xl shadow-[0_20px_50px_-8px_rgba(0,0,0,0.9)] border border-cyan-500/30 overflow-hidden"><div class="flex items-center px-space-md py-space-sm border-b border-outline-variant/30"><span class="material-symbols-outlined text-cyan-400 mr-space-sm">terminal</span><input class="w-full bg-transparent font-data-value text-data-value text-on-surface outline-none placeholder:text-outline" placeholder="Search cyclones, radar telemetry, hospitals, evacuation corridors..." type="text"/><button class="text-outline hover:text-white font-data-label text-badge px-space-xs py-space-2xs rounded bg-surface-container border border-outline-variant/30" onclick="document.getElementById('command-palette').classList.add('hidden')" type="button">ESC</button></div><div class="p-space-sm max-h-96 overflow-y-auto space-y-space-sm"><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">Active Systems</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-surface-container-high transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-rose-400 text-[18px]">warning</span><span class="font-body-md text-on-surface">Cyclone Helen — Cat 4 Superstorm Tracking NW</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold">CRITICAL</span></a></div><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">Critical Facilities</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-surface-container-high transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-amber-400 text-[18px]">local_hospital</span><span class="font-body-md text-on-surface">Port Blair General Hospital — Zone A Evacuation</span></div><span class="font-badge text-badge px-space-xs py-space-2xs rounded bg-amber-950/80 border border-amber-500/50 text-amber-300 font-bold">IN DANGER</span></a></div><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">Tactical Tools</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-surface-container-high transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-cyan-400 text-[18px]">calculate</span><span class="font-body-md text-on-surface">Compute Storm Surge Vector Profile (SLOSH)</span></div><span class="font-data-label text-data-label text-primary-container font-semibold">TOOL</span></a></div></div></div></div><div class="fixed top-0 right-0 h-full w-96 bg-surface-container-lowest/95 backdrop-blur-2xl z-50 shadow-[0_8px_32px_rgba(0,0,0,0.9)] border-l border-cyan-500/20 transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="notification-drawer"><div class="p-space-lg border-b border-outline-variant/30 flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-cyan-400">notifications_active</span><span class="font-headline-sm text-headline-sm text-white font-bold">Advisory Stream</span></div><button class="text-outline hover:text-white" onclick="document.getElementById('notification-drawer').classList.add('translate-x-full')" type="button"><span class="material-symbols-outlined">close</span></button></div><div class="flex-1 overflow-y-auto p-space-md space-y-space-sm"><div class="p-space-sm rounded-lg bg-surface-container-low border border-rose-500/40 flex flex-col gap-space-2xs shadow-[0_0_12px_rgba(255,51,102,0.15)]"><div class="flex items-center justify-between"><span class="font-badge text-badge text-rose-400 uppercase font-bold tracking-wider">LANDFALL ESCALATION</span><span class="font-data-label text-data-label text-outline">12M AGO</span></div><span class="font-body-md text-body-md font-semibold text-white">Eye wall contracted to 24km. Landfall predicted 2h ahead of timeline.</span></div><div class="p-space-sm rounded-lg bg-surface-container-low border border-outline-variant/30 flex flex-col gap-space-2xs"><div class="flex items-center justify-between"><span class="font-badge text-badge text-cyan-300 uppercase font-bold tracking-wider">INFRASTRUCTURE NOTICE</span><span class="font-data-label text-data-label text-outline">38M AGO</span></div><span class="font-body-md text-body-md font-semibold text-on-surface">Grid Station Alpha isolated to prevent cascade surge damage.</span></div><div class="p-space-sm rounded-lg bg-surface-container-low border border-outline-variant/30 flex flex-col gap-space-2xs"><div class="flex items-center justify-between"><span class="font-badge text-badge text-emerald-400 uppercase font-bold tracking-wider">AI ENSEMBLE SYNC</span><span class="font-data-label text-data-label text-outline">1H AGO</span></div><span class="font-body-md text-body-md font-semibold text-on-surface">ECMWF and GFS models merged. Path confidence index up to 94.2%.</span></div></div><div class="p-space-md border-t border-outline-variant/30 flex gap-space-sm"><button class="flex-1 py-space-xs rounded bg-surface-container-high hover:bg-surface-container-highest text-white border border-outline-variant/40 text-body-sm font-bold transition-colors" type="button">ACKNOWLEDGE ALL</button></div></div></body></html>

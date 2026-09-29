@@ -1,0 +1,669 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><svg class="inline-defs-container" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"></svg><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;background-color:#070d18;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}@keyframes radar-pulse{0%{box-shadow:0 0 0 0 rgba(0,229,255,0.6);}70%{box-shadow:0 0 0 8px rgba(0,229,255,0);}100%{box-shadow:0 0 0 0 rgba(0,229,255,0);}}@keyframes critical-pulse{0%{opacity:1;filter:drop-shadow(0 0 6px rgba(255,51,102,0.8));}50%{opacity:0.4;filter:drop-shadow(0 0 1px rgba(255,51,102,0.3));}100%{opacity:1;filter:drop-shadow(0 0 6px rgba(255,51,102,0.8));}}.pulse-beacon{animation:radar-pulse 2s infinite;}.alert-beacon{animation:critical-pulse 1.4s ease-in-out infinite;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-tint":"#00daf3","surface-container-highest":"#1e293b","surface-variant":"#162137","on-tertiary":"#003824","on-error":"#690005","on-background":"#dee2f1","secondary-container":"#00a6e0","surface-container-low":"#0b1326","tertiary-fixed":"#6ffbbe","on-primary-fixed-variant":"#004f58","on-surface-variant":"#bac9cc","surface-bright":"#1e2c4a","primary-fixed":"#9cf0ff","tertiary-fixed-dim":"#4edea3","surface-container-high":"#152037","surface-container":"#0f1a30","on-error-container":"#ffdad6","on-secondary-container":"#00374d","background":"#070d18","inverse-surface":"#dee2f1","on-tertiary-container":"#006645","inverse-primary":"#006875","surface-dim":"#070d18","outline":"#475569","surface":"#0b1326","on-primary-container":"#00626e","on-surface":"#dee2f1","primary-container":"#00e5ff","secondary":"#7bd0ff","outline-variant":"#1e293b","tertiary":"#a8ffd2","secondary-fixed-dim":"#7bd0ff","on-secondary-fixed-variant":"#004c69","tertiary-container":"#5be9ad","on-secondary":"#00354a","primary":"#c3f5ff","surface-container-lowest":"#070d18","on-primary-fixed":"#001f24","error-container":"#93000a","on-secondary-fixed":"#001e2c","on-tertiary-fixed":"#002113","error":"#ff5370","secondary-fixed":"#c4e7ff","primary-fixed-dim":"#00daf3","on-primary":"#00363d","inverse-on-surface":"#2c303c","on-tertiary-fixed-variant":"#005236"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"gutter-md":"1.5rem","space-md":"1rem","margin":"1rem","margin-lg":"3rem","space-xl":"2.5rem","gutter":"1rem","space-lg":"1.5rem","margin-md":"2rem","space-sm":"0.5rem","space-xs":"0.25rem"},fontFamily:{"headline-sm":["Space Grotesk"],"body-md":["Inter"],"label-lg":["JetBrains Mono"],"headline-lg-mobile":["Space Grotesk"],"label-md":["JetBrains Mono"],"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"headline-md":["Space Grotesk"],"headline-lg":["Space Grotesk"],"display-mobile":["Space Grotesk"],"body-lg":["Inter"],"display":["Space Grotesk"],"data-label":["JetBrains Mono"],"data-value":["JetBrains Mono"],"data-metric-lg":["Space Grotesk"],"data-metric-md":["Space Grotesk"],"badge":["JetBrains Mono"]},fontSize:{"headline-sm":["1.25rem",{"lineHeight":"1.75rem","fontWeight":"600"}],"body-md":["0.9375rem",{"lineHeight":"1.5rem","fontWeight":"400"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.05em","fontWeight":"500"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"700"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.06em","fontWeight":"500"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.08em","fontWeight":"600"}],"body-sm":["0.8125rem",{"lineHeight":"1.25rem","fontWeight":"400"}],"headline-md":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-lg":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"display-mobile":["2rem",{"lineHeight":"2.5rem","letterSpacing":"-0.02em","fontWeight":"700"}],"body-lg":["1.125rem",{"lineHeight":"1.75rem","fontWeight":"400"}],"display":["3rem",{"lineHeight":"3.5rem","letterSpacing":"-0.03em","fontWeight":"700"}],"data-label":["11px",{"lineHeight":"14px","letterSpacing":"0.05em","fontWeight":"500"}],"data-value":["13px",{"lineHeight":"18px","letterSpacing":"-0.01em","fontWeight":"500"}],"badge":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"700"}],"data-metric-md":["20px",{"lineHeight":"24px","letterSpacing":"-0.02em","fontWeight":"700"}],"data-metric-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.03em","fontWeight":"700"}]}}};</script></head><body class="bg-[#070d18] font-body-md text-on-surface antialiased select-none selection:bg-primary-container selection:text-surface-container-lowest"><aside class="fixed left-0 top-0 h-full w-80 bg-[#070d18] border-r border-[#1e293b] z-40 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.7)]"><div class="flex flex-col h-[calc(100vh-140px)] overflow-hidden"><div class="p-space-lg flex items-center justify-between bg-[#070d18] border-b border-[#1e293b]/70"><div class="flex items-center gap-space-md"><img alt="CycloneShield AI Tactical Shield Logo" class="h-8 w-auto object-contain drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]" src="https://lh3.googleusercontent.com/aida/AEtjO1UeEoOcvVglWG2qRQi7xo-cA72BXtKnqhJ7kAaq3ggfmzjy4UEidB4fji4WzBiH9H-b3DCdI3SjV-zRlBn5AE0x159wNoWojV3mYadjS41_YUVByBKueLJTDvps81M6I3iKaGGPEZepKTrwK1BIuOyD8T6mmc8KpI6VVR9w6-TSDZ5VLbBGWz3JNmkrlpfTcsdZm2jsADfPQ4TVTVRNxyB9K5tzkCbNhWpE6-lw1g0A5dUkIIOhnd6mD6Qx"><div class="flex flex-col"><span class="font-headline-sm text-headline-sm uppercase tracking-wider text-on-surface font-semibold bg-gradient-to-r from-white via-primary to-primary-container bg-clip-text text-transparent">CYCLONESHIELD AI</span><span class="font-data-label text-data-label text-surface-tint text-[10px] uppercase tracking-widest">Predict Path • Protect Assets</span></div></div><button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[#0f1a30] text-cyan-300 hover:text-white hover:bg-[#13223f] border border-cyan-500/30 transition-colors shadow-sm" title="Collapse Tactical Dock" type="button"><span class="material-symbols-outlined text-[18px] text-cyan-300 drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">dock_to_left</span></button></div><nav class="flex-1 overflow-y-auto px-space-md py-space-sm space-y-space-md" data-active-classes="bg-[#152037] text-primary font-semibold shadow-[inset_2px_0_0_0_#00e5ff]"><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">OVERVIEW</div><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-500/30 transition-all group" data-path="dashboard" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-cyan-400 group-hover:text-primary-container drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">grid_view</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Dashboard</span></div></a></div><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">CYCLONE INTELLIGENCE</div><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-500/30 transition-all group" data-path="cyclones" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-primary-container group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">cyclone</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Active Cyclones</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-400 text-cyan-200 font-bold shadow-[0_0_10px_rgba(0,229,255,0.6)]">3 ACTIVE</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-rose-500/30 transition-all group" data-path="cyclone-details" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-rose-400 group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,51,102,0.6)]">my_location</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Cyclone Details</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-400 text-rose-200 font-bold shadow-[0_0_10px_rgba(255,51,102,0.6)]">TC-HELEN</span></a></div><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">RISK INTELLIGENCE</div><a aria-current="page" class="flex items-center justify-between px-space-sm py-1.5 rounded-lg transition-all bg-gradient-to-r from-[#13223f] to-[#0f1a30] text-primary-container font-semibold border-l-4 border-primary-container shadow-[0_0_16px_rgba(0,229,255,0.4)] border-y border-r border-cyan-400/40" data-path="risk-analysis" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px] text-primary-container drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]">gshield</span><span class="font-body-md text-body-md text-white font-bold tracking-wide">Risk Analysis</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-red-950/90 border border-red-500 text-white font-bold alert-beacon shadow-[0_0_10px_rgba(239,68,68,0.8)]">CRITICAL 88</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-amber-500/40 transition-all group" data-path="landfall-analysis" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-amber-300 group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(245,158,11,0.6)]">adjust</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Landfall Analysis</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-400 text-amber-300 font-bold shadow-[0_0_8px_rgba(245,158,11,0.3)]">T-14h</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-500/40 transition-all group" data-path="infrastructure" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-secondary group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(123,208,255,0.6)]">domain</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Infrastructure</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-[#13223f] text-cyan-200 border border-cyan-400/40 font-bold shadow-[0_0_8px_rgba(0,229,255,0.2)]">142 ASSETS</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-emerald-500/40 transition-all group" data-path="population-exposure" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-tertiary group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(168,255,210,0.6)]">groups</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Population Exposure</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-400 text-emerald-200 font-bold shadow-[0_0_8px_rgba(16,185,129,0.3)]">1.4M</span></a></div><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">SATELLITE &amp; AI</div><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-emerald-500/40 transition-all group" data-path="satellite-intelligence" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-tertiary group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(168,255,210,0.6)]">satellite_alt</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Satellite Intelligence</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-400 text-emerald-200 font-bold shadow-[0_0_8px_rgba(16,185,129,0.3)]">INSAT-3D</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-400/40 transition-all group" data-path="ai-intelligence" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-primary-container group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">auto_awesome</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">AI Intelligence</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-400 text-cyan-200 font-bold shadow-[0_0_8px_rgba(0,229,255,0.3)]">FASTAPI</span></a></div><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">RESPONSE</div><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-rose-500/40 transition-all group" data-path="emergency-priorities" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-rose-400 group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,51,102,0.6)]">notification_important</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Emergency Priorities</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-400 text-rose-200 font-bold shadow-[0_0_8px_rgba(255,51,102,0.4)]">7 URGENT</span></a><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-500/40 transition-all group" data-path="reports" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-secondary group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(123,208,255,0.6)]">description</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Reports</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-[#13223f] text-cyan-200 border border-cyan-500/40 font-bold shadow-[0_0_8px_rgba(0,229,255,0.2)]">PDF/JSON</span></a></div><div class="space-y-1"><div class="px-space-sm py-1 font-data-label text-data-label text-cyan-300/80 font-bold uppercase tracking-wider">SYSTEM</div><a class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-slate-200 hover:bg-[#0f1a30] hover:text-white border border-transparent hover:border-cyan-500/40 transition-all group" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-cyan-300 group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">tune</span><span class="font-body-md text-body-md text-slate-200 font-medium group-hover:text-white">Settings</span></div></a></div></nav></div><div class="p-space-md bg-[#0b1326] border-t border-[#1e293b]/70 flex flex-col gap-space-xs shadow-[0_-2px_12px_rgba(0,0,0,0.5)]"><div class="flex items-center gap-1 bg-[#070d18] p-1 rounded-lg border border-[#1e293b]/60"><button class="flex-1 flex items-center justify-center gap-1.5 py-1 px-2 rounded-md bg-gradient-to-r from-cyan-950 to-[#0f1a30] border border-cyan-500/40 text-primary-container font-badge text-badge uppercase shadow-[0_0_10px_rgba(0,229,255,0.2)]" type="button"><span class="w-1.5 h-1.5 rounded-full bg-primary-container pulse-beacon"></span>LIVE MODE</button><button class="flex-1 flex items-center justify-center gap-1.5 py-1 px-2 rounded-md text-outline hover:text-on-surface transition-colors font-badge text-badge uppercase" type="button"><span class="w-1.5 h-1.5 rounded-full bg-outline"></span>SIMULATION</button></div><div class="flex items-center justify-between px-1 py-1 text-outline font-data-label text-[10px]"><span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>FASTAPI CORE</span><span class="font-data-value text-data-label text-emerald-300">18ms • ONLINE</span></div><div class="flex items-center justify-between pt-2 border-t border-[#1e293b]/60"><div class="flex items-center gap-space-sm"><div class="relative w-8 h-8 rounded-full ring-2 ring-primary-container/40 p-0.5 overflow-hidden"><img alt="Meteorological Command Telemetry" class="w-full h-full rounded-full object-cover shadow-[0_0_10px_rgba(0,229,255,0.6)]" src="https://lh3.googleusercontent.com/aida/AEtjO1V0ocYCgkg7EMNDFekG6e14K_BrHNIPfpapo9R3kZ1UD5_Er8gLqmpM4WnPCJ0J7ZE3Mzg1hg84doaF3ijPuC1MqH1Sf2G-7jxl9IfGZkWP_o5O2SxoO1Hukq1S6dAuW1XiuSMms5P7ZH3j3BXuVwR7eJ3zYxUnfwiK8rTiR6ymhdkcDviDFZVIi0wjShoiep6QWe9-zmNlahLT3TlMnttetWENGj3itQCFYP0KBJdWIRyuciwI8g2KguPk"></div><div class="flex flex-col"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Cmdr. Elena Rostova</span><span class="font-data-label text-[10px] text-surface-tint leading-tight">Dir. Met. Command</span></div></div><button class="text-cyan-300 hover:text-white p-1 transition-colors drop-shadow-[0_0_6px_rgba(0,229,255,0.4)]" title="Operational Lock State" type="button"><span class="material-symbols-outlined text-[18px] text-cyan-300">lock</span></button></div></div></aside><div class="pl-80"><header class="fixed top-0 left-80 right-0 h-16 bg-[#070d18]/90 backdrop-blur-xl z-30 px-space-lg flex items-center justify-between border-b border-[#1e293b]/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-2 px-3 py-1 rounded-full bg-[#0b1326] border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)]"><span class="w-2 h-2 rounded-full bg-rose-500 alert-beacon"></span><span class="font-badge text-badge text-rose-300 tracking-wider uppercase font-bold">TC HELEN (CAT 4)</span><span class="text-outline text-body-sm">•</span><span class="font-data-value text-data-label text-cyan-300 font-semibold">215 KM/H</span><span class="text-outline text-body-sm">•</span><span class="font-data-value text-data-label text-on-surface font-semibold">942 HPA</span><span class="text-outline text-body-sm">•</span><span class="font-data-label text-[10px] text-amber-300 font-semibold uppercase">TRACKING NW @ 18 KM/H</span></div></div><div class="flex-1 max-w-xl mx-space-lg"><button class="w-full flex items-center justify-between px-space-md py-1.5 bg-[#0b1326]/80 border border-[#1e293b] hover:border-primary-container/40 rounded-lg text-outline hover:text-on-surface hover:bg-[#0f1a30] transition-all font-body-sm group shadow-inner" onclick="document.getElementById('command-palette').classList.remove('hidden')" type="button"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px] text-primary-container group-hover:scale-110 transition-transform">search</span><span class="text-outline group-hover:text-on-surface transition-colors">Search cyclones, coordinates, critical facilities, radar towers...</span></div><kbd class="font-data-label text-badge px-1.5 py-0.5 rounded bg-[#1e293b] text-primary-container border border-[#334155]">⌘K</kbd></button></div><div class="flex items-center gap-space-md"><div class="hidden xl:flex items-center gap-space-md text-outline font-data-label text-[11px]"><span class="flex items-center gap-1.5 text-secondary"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>UP: 2 MIN AGO</span><span class="flex items-center gap-1.5 text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>API v1.4 LIVE</span></div><div class="flex items-center gap-1"><button class="p-2 rounded-lg text-outline hover:text-cyan-300 hover:bg-[#0b1326] border border-transparent hover:border-[#1e293b] transition-colors" title="Audio Warning Systems" type="button"><span class="material-symbols-outlined text-[20px]">volume_up</span></button><button class="relative p-2 rounded-lg text-outline hover:text-cyan-300 hover:bg-[#0b1326] border border-transparent hover:border-[#1e293b] transition-colors" onclick="document.getElementById('notification-drawer').classList.remove('translate-x-full')" title="Threat Advisories" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white font-badge text-[9px] flex items-center justify-center font-bold shadow-[0_0_8px_rgba(244,63,94,0.6)]">5</span></button></div><button class="flex items-center gap-2 px-4 py-2 rounded bg-rose-500 hover:from-red-500 hover:to-rose-500 text-white font-bold tracking-wide uppercase shadow-[0_0_16px_rgba(255,51,102,0.6)] transition-all hover:scale-[1.02]" type="button"><span class="material-symbols-outlined text-[18px]">podcasts</span><span class="font-bold">BROADCAST ADVISORY</span></button></div></header><main class="relative pt-16 min-h-screen bg-[#070d18] text-on-surface"><div class="flex flex-col w-full">
+<!-- Top Command & Status Ribbon -->
+<div class="p-space-lg flex flex-col xl:flex-row xl:items-center justify-between gap-space-md bg-gradient-to-r from-[#070d18] via-[#0b1326] to-[#070d18] border-b border-[#1e293b] shadow-lg relative overflow-hidden">
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-transparent to-transparent pointer-events-none"></div>
+<div class="flex flex-col gap-1 relative z-10">
+<div class="flex items-center gap-2 font-data-label text-data-label text-outline uppercase tracking-wider">
+<span class="hover:text-primary transition-colors">Risk Intelligence</span>
+<span class="text-[#334155]">/</span>
+<span class="text-primary-container font-semibold">Multi-Hazard Vulnerability Matrix</span>
+<span class="text-[#334155]">/</span>
+<span class="text-surface-tint font-data-value px-1.5 py-0.5 rounded bg-[#13223f] border border-cyan-500/30">TC-HELEN-2025-04A</span>
+</div>
+<div class="flex flex-wrap items-center gap-3 pt-1">
+<h1 class="font-headline-lg text-headline-lg text-white font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-200 bg-clip-text text-transparent">
+          PROTOTYPE MULTI-HAZARD RISK ANALYSIS
+        </h1>
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-cyan-950/70 border border-cyan-400/40 shadow-[0_0_12px_rgba(0,229,255,0.2)]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container pulse-beacon"></span>
+<span class="font-badge text-badge text-cyan-300 uppercase tracking-wider font-semibold">CYCLONESHIELD AI PROTOTYPE RISK ENGINE v2.1 • FASTAPI INFERENCE</span>
+</div>
+</div>
+</div>
+<!-- Action Toolbar -->
+<div class="flex flex-wrap items-center gap-2 relative z-10">
+<button class="flex items-center gap-2 px-4 py-2 rounded bg-gradient-to-r from-cyan-400 to-primary-container text-surface-container-lowest font-bold text-body-md shadow-[0_0_18px_rgba(0,229,255,0.4)] hover:shadow-[0_0_24px_rgba(0,229,255,0.6)] hover:-translate-y-0.5 transition-all" id="rerun-sim-btn" type="button"><span class="material-symbols-outlined text-[18px]">sync</span><span class="tracking-wide">RUN AI RISK SIMULATION</span></button>
+<button class="flex items-center gap-2 px-4 py-2 rounded bg-cyan-950/60 border border-cyan-400 text-cyan-200 font-semibold hover:from-cyan-900/80 hover:bg-[#13223f] transition-all shadow-sm group" id="export-geojson-btn" type="button"><span class="material-symbols-outlined text-[18px] text-cyan-400 group-hover:scale-110 transition-transform">download</span><span class="font-semibold text-white">EXPORT RISK GEOJSON</span></button>
+<button class="flex items-center gap-2 px-4 py-2 rounded bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-200 font-semibold border border-cyan-400 hover:border-cyan-300 transition-all shadow-[0_0_12px_rgba(0,229,255,0.25)]" id="open-explain-btn" type="button"><span class="material-symbols-outlined text-[18px] text-primary-container">psychology</span><span class="text-white font-bold">EXPLAIN RISK WITH AI</span></button>
+<button class="px-3 py-2 rounded bg-[#1e293b] hover:bg-[#152037] text-slate-200 border border-[#334155] text-data-label font-data-label uppercase transition-colors font-medium" id="toggle-skeleton-btn" title="Toggle Skeleton Loading State" type="button">DEV: SIMULATE LATENCY</button>
+</div>
+</div>
+<!-- Non-official Model Warning Banner -->
+<div class="px-space-lg py-2 bg-gradient-to-r from-red-950/80 via-rose-950/70 to-red-950/80 border-y border-rose-500/40 text-red-200 flex items-center justify-between shadow-[0_0_16px_rgba(255,51,102,0.15)]"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-rose-400 text-[18px] alert-beacon drop-shadow-[0_0_8px_rgba(255,51,102,0.8)]">warning</span><span class="font-data-label text-data-label uppercase tracking-widest font-bold text-rose-200">MODEL-DERIVED PROTOTYPE OUTPUT — NOT OFFICIAL EMERGENCY ORDERS. MANDATORY SYNCHRONIZATION WITH NATIONAL DISASTER MANAGEMENT DIRECTIVES REQUIRED.</span></div><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500 pulse-beacon"></span><span class="font-data-value text-data-label hidden md:inline-block text-cyan-300 font-mono">API: GET /api/v1/risk/helen_cat4</span></div></div>
+<!-- Main Grid Content Area -->
+<div class="p-space-lg space-y-space-lg bg-[#070d18]" id="content-container">
+<!-- Hero Risk Score Showcase & Critical Indicators -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg">
+<!-- Primary Composite Dial Card -->
+<div class="xl:col-span-4 bg-[#0d1527] border border-rose-500/30 rounded-xl p-space-lg shadow-[0_8px_32px_rgba(255,51,102,0.12)] relative overflow-hidden flex flex-col justify-between"><div class="absolute -right-10 -top-10 w-64 h-64 bg-gradient-to-br from-rose-500/25 via-red-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div><div class="absolute -left-12 -bottom-12 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div><div class="relative z-10"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500 alert-beacon"></span><span class="font-data-label text-data-label uppercase tracking-widest text-slate-300 font-bold">COMPOSITE SEVERITY INDEX</span></div><span class="px-3 py-1 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-red-500 border border-rose-400 text-white font-badge text-badge alert-beacon uppercase font-bold tracking-wider shadow-[0_0_16px_rgba(255,51,102,0.8)]">CRITICAL HAZARD</span></div><div class="relative my-space-md flex flex-col items-center justify-center"><div class="relative w-52 h-52 flex items-center justify-center filter drop-shadow-[0_0_24px_rgba(255,51,102,0.6)]"><svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160"><defs><linearGradient id="gaugeGradientObsidian" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#00e5ff"></stop><stop offset="35%" stop-color="#ff5370"></stop><stop offset="100%" stop-color="#ff3366"></stop></linearGradient></defs><circle class="text-[#1e293b]" cx="80" cy="80" fill="transparent" r="66" stroke="currentColor" stroke-width="12"></circle><circle class="transition-all duration-1000 ease-out" cx="80" cy="80" fill="transparent" r="66" stroke="url(#gaugeGradientObsidian)" stroke-dasharray="414.69" stroke-dashoffset="49.76" stroke-linecap="round" stroke-width="12"></circle></svg><div class="absolute inset-0 flex flex-col items-center justify-center text-center"><span class="font-data-metric-lg text-4xl text-white font-extrabold tracking-tight drop-shadow-[0_0_12px_rgba(255,51,102,0.8)]">88</span><span class="font-data-label text-data-label text-cyan-300 uppercase tracking-widest -mt-1 font-semibold">/ 100</span><span class="font-badge text-[10px] text-rose-300 uppercase font-bold tracking-wider mt-1 px-2.5 py-0.5 rounded-full bg-rose-950/90 border border-rose-500 shadow-[0_0_8px_rgba(255,51,102,0.6)]">CAT 4 SEVERITY</span></div></div></div></div><div class="space-y-2 pt-space-sm bg-[#070d18]/90 border border-rose-500/40 rounded-xl p-space-sm relative z-10 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.6)]"><div class="flex items-start gap-2 text-rose-200 font-body-sm"><span class="material-symbols-outlined text-[18px] text-rose-400 shrink-0 mt-0.5 drop-shadow-[0_0_8px_rgba(255,51,102,0.8)]">trending_up</span><span class=""><strong class="text-rose-300">+24 points</strong> above 24h baseline due to coastal high-tide alignment and squall intensification.</span></div><div class="flex items-center justify-between pt-2 border-t border-[#1e293b] text-outline font-data-label text-data-label"><span class="">MODEL CONFIDENCE</span><span class="text-primary-container font-data-value font-bold drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]">94.2% AI Ensemble Convergence</span></div></div></div>
+<!-- Live Vector & Meteorological Dynamics -->
+<div class="xl:col-span-8 bg-[#0d1527] border border-[#1e293b] rounded-xl p-space-lg shadow-xl flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-cyan-500/10 via-transparent to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between pb-space-sm border-b border-[#1e293b]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px] drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]">radar</span>
+<span class="font-headline-sm text-headline-sm text-white font-semibold tracking-wide">SYNCHRONIZED METEOROLOGICAL TELEMETRY</span>
+</div>
+<span class="font-badge text-badge px-2.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-400/50 text-cyan-300 font-bold shadow-[0_0_10px_rgba(0,229,255,0.2)]">LANDFALL: T-13H 45M</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-space-sm mt-space-sm">
+<div class="bg-[#0f1a30] border border-[#1e293b] hover:border-rose-500/50 p-space-sm rounded-lg flex flex-col gap-1 transition-all group">
+<span class="font-data-label text-data-label text-outline uppercase">Sustained Wind Speed</span>
+<span class="font-data-metric-md text-data-metric-md text-white font-bold group-hover:text-rose-300 transition-colors">215 <span class="text-data-label font-normal text-outline">km/h</span></span>
+<span class="font-badge text-badge px-1.5 py-0.5 rounded bg-rose-950/80 border border-rose-500/40 text-rose-300 uppercase w-fit font-bold">GUSTS 260 KM/H</span>
+</div>
+<div class="bg-[#0f1a30] border border-[#1e293b] hover:border-amber-500/50 p-space-sm rounded-lg flex flex-col gap-1 transition-all group">
+<span class="font-data-label text-data-label text-outline uppercase">Central Minimum Pressure</span>
+<span class="font-data-metric-md text-data-metric-md text-white font-bold group-hover:text-amber-300 transition-colors">942 <span class="text-data-label font-normal text-outline">hPa</span></span>
+<span class="font-badge text-badge px-1.5 py-0.5 rounded bg-amber-950/80 border border-amber-500/40 text-amber-300 uppercase w-fit font-bold">-14 HPA / 6H DROP</span>
+</div>
+<div class="bg-[#0f1a30] border border-[#1e293b] hover:border-cyan-500/50 p-space-sm rounded-lg flex flex-col gap-1 transition-all group">
+<span class="font-data-label text-data-label text-outline uppercase">Max Storm Surge Vector</span>
+<span class="font-data-metric-md text-data-metric-md text-white font-bold group-hover:text-cyan-300 transition-colors">4.2 <span class="text-data-label font-normal text-outline">meters</span></span>
+<span class="font-badge text-badge px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 uppercase w-fit font-bold">HIGH TIDE CONCURRENCY</span>
+</div>
+<div class="bg-[#0f1a30] border border-[#1e293b] hover:border-emerald-500/50 p-space-sm rounded-lg flex flex-col gap-1 transition-all group">
+<span class="font-data-label text-data-label text-outline uppercase">Expected Cumulative Rain</span>
+<span class="font-data-metric-md text-data-metric-md text-white font-bold group-hover:text-emerald-300 transition-colors">420 <span class="text-data-label font-normal text-outline">mm</span></span>
+<span class="font-badge text-badge px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 uppercase w-fit font-bold">36H RUNOFF TOTAL</span>
+</div>
+</div>
+</div>
+<!-- Real-time Threat Escalation Corridor -->
+<div class="mt-space-md p-space-md bg-gradient-to-r from-red-950/60 via-[#0f1a30] to-[#0f1a30] border border-rose-500/40 rounded-lg flex flex-col md:flex-row items-center justify-between gap-space-md relative z-10 shadow-[0_0_16px_rgba(255,51,102,0.15)]">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-rose-600/30 border border-rose-500 flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.4)]">
+<span class="material-symbols-outlined text-rose-400 text-[22px] alert-beacon">warning</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-body-md font-bold text-white">Immediate Evacuation Advisory Initiated</span>
+<span class="font-body-sm text-slate-300">Coastal Zone Sector D-4 through B-12 placed on Level 4 Mandatory Relocation status.</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-data-label text-data-label text-outline uppercase font-semibold">IMPACT VECTOR:</span>
+<span class="px-2.5 py-1 rounded bg-[#13223f] border border-cyan-400/40 font-data-value text-data-label text-cyan-300 font-bold shadow-[0_0_8px_rgba(0,229,255,0.2)]">BALASORE-DIGHA AXIS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Multi-Hazard Risk Breakdown Modules (6 Cards) -->
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container pulse-beacon"></span>
+<h2 class="font-headline-md text-headline-md text-white font-bold tracking-tight">
+          MULTI-HAZARD RISK BREAKDOWN
+        </h2>
+</div>
+<span class="font-data-label text-data-label text-cyan-300/80 uppercase font-semibold tracking-wider">6 DISCRETE THREAT DIMENSIONS SCANNED</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md">
+<!-- Module 1: Wind Hazard -->
+<div class="bg-[#0d1527] border border-rose-500/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-rose-400 hover:shadow-[0_0_20px_rgba(255,51,102,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-rose-400 text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,51,102,0.6)]">air</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">WIND HAZARD RISK</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-500 text-rose-200 font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.4)]">CRITICAL</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">94</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-rose-500 to-red-500 h-full rounded-full shadow-[0_0_10px_rgba(255,51,102,0.8)]" style="width: 94%"></div>
+</div>
+<p class="font-body-sm text-slate-300">Sustained 215 km/h, gusting 260 km/h. Catastrophic roof peeling and structural failure for light/masonry frames within 50km radius.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">AERODYNAMIC DAMAGE</span>
+<span class="text-rose-400 font-data-value font-bold">GRADE 5 PEAK</span>
+</div>
+</div>
+<!-- Module 2: Storm Surge -->
+<div class="bg-[#0d1527] border border-rose-500/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-rose-400 hover:shadow-[0_0_20px_rgba(255,51,102,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-rose-400 text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,51,102,0.6)]">tsunami</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">STORM SURGE RISK</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-500 text-rose-200 font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.4)]">CRITICAL</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">88</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 h-full rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" style="width: 88%"></div>
+</div>
+<p class="font-body-sm text-slate-300">Peak 4.2m sea inundation over astronomical tide. Severe low-lying coastal delta overflow penetrating up to 8.5km inland.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">SLOSH MODEL DEPTH</span>
+<span class="text-cyan-300 font-data-value font-bold">+4.2M INUNDATION</span>
+</div>
+</div>
+<!-- Module 3: Rainfall & Flood -->
+<div class="bg-[#0d1527] border border-cyan-500/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,229,255,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(0,229,255,0.6)]">rainy</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">RAINFALL &amp; FLOOD RISK</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-cyan-950/90 border border-cyan-400 text-cyan-200 font-bold uppercase shadow-[0_0_8px_rgba(0,229,255,0.3)]">HIGH RISK</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">82</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-cyan-500 to-primary-container h-full rounded-full shadow-[0_0_10px_rgba(0,229,255,0.8)]" style="width: 82%"></div>
+</div>
+<p class="font-body-sm text-slate-300">350-420mm accumulated in 36h period. Extreme flash flooding predicted along Subarnarekha and Budhabalanga river basins.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">RIVERINE CREST</span>
+<span class="text-cyan-300 font-data-value font-bold">+2.8M DANGER MARK</span>
+</div>
+</div>
+<!-- Module 4: Population Vulnerability -->
+<div class="bg-[#0d1527] border border-secondary/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-secondary hover:shadow-[0_0_20px_rgba(123,208,255,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(123,208,255,0.6)]">groups</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">POPULATION VULNERABILITY</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-sky-950/90 border border-sky-400 text-sky-200 font-bold uppercase shadow-[0_0_8px_rgba(123,208,255,0.3)]">HIGH EXPOSURE</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">79</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-sky-400 to-secondary h-full rounded-full shadow-[0_0_10px_rgba(123,208,255,0.8)]" style="width: 79%"></div>
+</div>
+<p class="font-body-sm text-slate-300">1.42M individuals exposed in active swath; 310K vulnerable semi-pucca and kutcha housing structures requiring rapid extraction.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">SHELTER CAPACITY</span>
+<span class="text-amber-300 font-data-value font-bold">64% OCCUPIED</span>
+</div>
+</div>
+<!-- Module 5: Critical Infrastructure -->
+<div class="bg-[#0d1527] border border-rose-500/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-rose-400 hover:shadow-[0_0_20px_rgba(255,51,102,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-rose-400 text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,51,102,0.6)]">domain</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">CRITICAL INFRASTRUCTURE</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-500 text-rose-200 font-bold uppercase shadow-[0_0_8px_rgba(244,63,94,0.4)]">CRITICAL</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">85</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 h-full rounded-full shadow-[0_0_10px_rgba(255,51,102,0.8)]" style="width: 85%"></div>
+</div>
+<p class="font-body-sm text-slate-300">18 primary healthcare facilities, 3 high-voltage 220kV power substations, and NH-16 transport corridor in direct danger zone.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">POWER GRID STATUS</span>
+<span class="text-rose-400 font-data-value font-bold">ISOLATION ACTIVE</span>
+</div>
+</div>
+<!-- Module 6: Agricultural & Maritime -->
+<div class="bg-[#0d1527] border border-emerald-500/40 rounded-xl p-space-md shadow-lg flex flex-col justify-between hover:border-emerald-400 hover:shadow-[0_0_20px_rgba(168,255,210,0.25)] transition-all group">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px] group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(168,255,210,0.6)]">agriculture</span>
+<span class="font-headline-sm text-body-lg font-bold text-white">AGRICULTURE &amp; MARITIME</span>
+</div>
+<span class="font-badge text-badge px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-400 text-emerald-200 font-bold uppercase shadow-[0_0_8px_rgba(16,185,129,0.3)]">HIGH RISK</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-2">
+<span class="font-data-metric-lg text-2xl font-black text-white">72</span>
+<span class="font-data-label text-data-label text-outline font-semibold">/ 100</span>
+</div>
+<div class="w-full bg-[#1e293b] h-2 rounded-full overflow-hidden mb-space-sm border border-[#334155]/30">
+<div class="bg-gradient-to-r from-emerald-500 to-tertiary-container h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.8)]" style="width: 72%"></div>
+</div>
+<p class="font-body-sm text-slate-300">Saltwater intrusion verified across 42,000 hectares of paddy lands. 4 fishing harbors shut with 380 trawlers anchored at river mouths.</p>
+</div>
+<div class="mt-space-md pt-2 bg-[#0f1a30] border border-[#1e293b] rounded p-2 flex justify-between font-data-label text-data-label text-outline">
+<span class="">SALINITY THREAT</span>
+<span class="text-amber-300 font-data-value font-bold">LONG-TERM CROP DAMAGE</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visualizations Bento Grid: GIS Zonal Map & Risk Attribution -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg">
+<!-- GIS Heatmap & Zonal Boundary Map (Left Column) -->
+<div class="xl:col-span-7 bg-[#0d1527] border border-[#1e293b] rounded-xl p-space-lg shadow-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm border-b border-[#1e293b]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px] drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]">layers</span>
+<span class="font-headline-sm text-headline-sm text-white font-semibold">REGIONAL RISK HEATMAP &amp; ZONAL BOUNDARIES</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container pulse-beacon"></span>
+<span class="font-data-label text-data-label text-cyan-300 uppercase font-semibold">GIS LAYER 4/8</span>
+</div>
+</div>
+<!-- Synthetic GIS Map Canvas with Overlay Vectors -->
+<div class="relative w-full h-[400px] bg-[#070d18] rounded-xl overflow-hidden shadow-inner border border-[#1e293b] mt-space-sm">
+<div class="w-full h-full bg-cover bg-center opacity-70 filter contrast-125" data-location="Balasore, Odisha, India" style="background-image: radial-gradient(circle at 62% 48%, rgba(8, 14, 26, 0.3) 0%, rgba(7, 13, 24, 0.85) 80%), url(&quot;https://lh3.googleusercontent.com/aida/AEtjO1V0ocYCgkg7EMNDFekG6e14K_BrHNIPfpapo9R3kZ1UD5_Er8gLqmpM4WnPCJ0J7ZE3Mzg1hg84doaF3ijPuC1MqH1Sf2G-7jxl9IfGZkWP_o5O2SxoO1Hukq1S6dAuW1XiuSMms5P7ZH3j3BXuVwR7eJ3zYxUnfwiK8rTiR6ymhdkcDviDFZVIi0wjShoiep6QWe9-zmNlahLT3TlMnttetWENGj3itQCFYP0KBJdWIRyuciwI8g2KguPk&quot;);"></div>
+<!-- SVG Map Overlay: Radar Sweep & Threat Zones -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 700 400">
+<defs>
+<radialGradient cx="62%" cy="48%" id="criticalZoneGrad" r="35%">
+<stop offset="0%" stop-color="#ff3366" stop-opacity="0.85"></stop>
+<stop offset="50%" stop-color="#ef4444" stop-opacity="0.45"></stop>
+<stop offset="100%" stop-color="#93000a" stop-opacity="0.1"></stop>
+</radialGradient>
+<radialGradient cx="62%" cy="48%" id="highRiskGrad" r="65%">
+<stop offset="0%" stop-color="#00daf3" stop-opacity="0.55"></stop>
+<stop offset="100%" stop-color="#006875" stop-opacity="0.05"></stop>
+</radialGradient>
+<filter height="140%" id="radarGlow" width="140%" x="-20%" y="-20%">
+<feGaussianBlur result="blur" stdDeviation="3"></feGaussianBlur>
+<feMerge>
+<feMergeNode in="blur"></feMergeNode>
+<feMergeNode in="SourceGraphic"></feMergeNode>
+</feMerge>
+</filter>
+</defs>
+<!-- Concentric Range Rings (Radar Grid) -->
+<circle cx="434" cy="192" fill="none" opacity="0.6" r="180" stroke="#334155" stroke-dasharray="4,6" stroke-width="1"></circle>
+<circle cx="434" cy="192" fill="none" opacity="0.4" r="120" stroke="#00e5ff" stroke-dasharray="6,6" stroke-width="1"></circle>
+<circle cx="434" cy="192" fill="none" opacity="0.5" r="60" stroke="#ff3366" stroke-dasharray="3,3" stroke-width="1.2"></circle>
+<!-- Outer Moderate / Interior buffer zone (>160km) -->
+<circle class="text-[#152037]/40" cx="434" cy="192" fill="currentColor" r="180"></circle>
+<!-- High Risk Perimeter (35-80km) -->
+<ellipse cx="434" cy="192" fill="url(#highRiskGrad)" filter="url(#radarGlow)" rx="130" ry="100" stroke="#00e5ff" stroke-dasharray="6,4" stroke-width="1.8"></ellipse>
+<!-- Critical Zone (0-35km Landfall Corridor) -->
+<polygon fill="url(#criticalZoneGrad)" filter="url(#radarGlow)" points="434,110 500,160 520,240 430,270 360,220 380,140" stroke="#ff3366" stroke-width="2.5"></polygon>
+<!-- Storm Center Path Vector with Gradient Dash -->
+<path d="M 580 340 Q 510 260 434 192 T 320 80" fill="none" filter="url(#radarGlow)" stroke="#7bd0ff" stroke-linecap="round" stroke-width="3.5"></path>
+<!-- Predicted Eye Center Position -->
+<circle class="alert-beacon" cx="434" cy="192" fill="#ff3366" filter="url(#radarGlow)" r="9"></circle>
+<circle cx="434" cy="192" fill="none" opacity="0.8" r="22" stroke="#ff3366" stroke-dasharray="4,4" stroke-width="2"></circle>
+</svg>
+<!-- Map HUD Badges & Labels -->
+<div class="absolute top-4 left-4 bg-[#070d18]/90 backdrop-blur-md p-space-sm rounded-lg border border-cyan-500/40 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col gap-1 text-[11px] font-data-label">
+<span class="text-white font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span>COASTAL GIS SECTOR: BAY OF BENGAL NORTH</span>
+<span class="text-surface-tint font-mono">BOUNDING BOX: 21.14°N, 86.95°E TO 21.65°N, 87.52°E</span>
+</div>
+<!-- Floating Target Legend -->
+<div class="absolute bottom-4 right-4 bg-[#070d18]/95 backdrop-blur-md p-space-sm rounded-lg border border-[#1e293b] shadow-xl space-y-1.5">
+<div class="flex items-center gap-2 text-[11px] font-data-label">
+<span class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(255,51,102,0.8)] shrink-0"></span>
+<span class="text-white font-semibold">CRITICAL ZONE (0–35km from Landfall)</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] font-data-label">
+<span class="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(0,229,255,0.8)] shrink-0"></span>
+<span class="text-slate-200">HIGH RISK ZONE (35–80km Perimeter)</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] font-data-label">
+<span class="w-3 h-3 rounded-full bg-sky-400 shrink-0"></span>
+<span class="text-slate-300">MODERATE RISK ZONE (80–160km)</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] font-data-label">
+<span class="w-3 h-3 rounded-full bg-slate-500 shrink-0"></span>
+<span class="text-slate-400">LOW RISK / BUFFER (&gt;160km Interior)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry Coordinates Footer -->
+<div class="grid grid-cols-3 gap-space-sm mt-space-md pt-space-xs">
+<div class="bg-[#0f1a30] border border-[#1e293b] p-space-xs rounded flex flex-col">
+<span class="font-data-label text-[10px] text-outline uppercase font-semibold">Target Focal Point</span>
+<span class="font-data-value text-data-value text-white font-bold">Digha Delta (21.62°N)</span>
+</div>
+<div class="bg-[#0f1a30] border border-[#1e293b] p-space-xs rounded flex flex-col">
+<span class="font-data-label text-[10px] text-outline uppercase font-semibold">Bathymetry Slope</span>
+<span class="font-data-value text-data-value text-cyan-300 font-bold">Shallow Shelf (Amplifies Surge)</span>
+</div>
+<div class="bg-[#0f1a30] border border-[#1e293b] p-space-xs rounded flex flex-col">
+<span class="font-data-label text-[10px] text-outline uppercase font-semibold">Landfall Certainty</span>
+<span class="font-data-value text-data-value text-rose-400 font-bold">91.8% in Zone A</span>
+</div>
+</div>
+</div>
+<!-- Risk Factor Attribution & Sensitivity (Right Column) -->
+<div class="xl:col-span-5 bg-[#0d1527] border border-[#1e293b] rounded-xl p-space-lg shadow-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm border-b border-[#1e293b]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px] drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]">analytics</span>
+<span class="font-headline-sm text-headline-sm text-white font-semibold">FACTOR ATTRIBUTION &amp; SENSITIVITY</span>
+</div>
+<span class="font-badge text-badge px-2.5 py-1 rounded-full bg-[#13223f] border border-cyan-400/40 text-cyan-300 font-bold">WEIGHTED SUM: 88</span>
+</div>
+<p class="font-body-sm text-slate-300 my-space-md">
+            Contribution breakdown toward composite risk output using Gradient-Boosted Multi-Hazard Stacking:
+          </p>
+<!-- Horizontal Bar Breakdown Chart -->
+<div class="space-y-space-md">
+<!-- Wind -->
+<div class="space-y-1">
+<div class="flex justify-between font-data-label text-data-label">
+<span class="text-white font-semibold">1. Wind Destructive Potential (32% weight)</span>
+<span class="text-rose-400 font-data-value font-bold">Score: 94</span>
+</div>
+<div class="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden flex border border-[#334155]/30">
+<div class="bg-gradient-to-r from-rose-600 via-red-500 to-rose-400 h-full rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(255,51,102,0.6)]" style="width: 94%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-data-label text-outline">
+<span class="">IMPACT WEIGHT RATIO: 0.32</span>
+<span class="text-rose-300 font-semibold">ATTRIBUTED PTS: 30.08</span>
+</div>
+</div>
+<!-- Surge -->
+<div class="space-y-1">
+<div class="flex justify-between font-data-label text-data-label">
+<span class="text-white font-semibold">2. Surge Inundation Depth (28% weight)</span>
+<span class="text-rose-400 font-data-value font-bold">Score: 88</span>
+</div>
+<div class="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden flex border border-[#334155]/30">
+<div class="bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 h-full rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(239,68,68,0.6)]" style="width: 88%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-data-label text-outline">
+<span class="">IMPACT WEIGHT RATIO: 0.28</span>
+<span class="text-rose-300 font-semibold">ATTRIBUTED PTS: 24.64</span>
+</div>
+</div>
+<!-- Infrastructure -->
+<div class="space-y-1">
+<div class="flex justify-between font-data-label text-data-label">
+<span class="text-white font-semibold">3. Infrastructure Vulnerability (18% weight)</span>
+<span class="text-cyan-300 font-data-value font-bold">Score: 85</span>
+</div>
+<div class="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden flex border border-[#334155]/30">
+<div class="bg-gradient-to-r from-cyan-600 via-cyan-400 to-primary-container h-full rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(0,229,255,0.6)]" style="width: 85%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-data-label text-outline">
+<span class="">IMPACT WEIGHT RATIO: 0.18</span>
+<span class="text-cyan-200 font-semibold">ATTRIBUTED PTS: 15.30</span>
+</div>
+</div>
+<!-- Precipitation -->
+<div class="space-y-1">
+<div class="flex justify-between font-data-label text-data-label">
+<span class="text-white font-semibold">4. Precipitation Volume (12% weight)</span>
+<span class="text-primary-container font-data-value font-bold">Score: 82</span>
+</div>
+<div class="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden flex border border-[#334155]/30">
+<div class="bg-gradient-to-r from-teal-500 via-cyan-400 to-secondary h-full rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(0,229,255,0.6)]" style="width: 82%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-data-label text-outline">
+<span class="">IMPACT WEIGHT RATIO: 0.12</span>
+<span class="text-cyan-200 font-semibold">ATTRIBUTED PTS: 9.84</span>
+</div>
+</div>
+<!-- Population Density -->
+<div class="space-y-1">
+<div class="flex justify-between font-data-label text-data-label">
+<span class="text-white font-semibold">5. Population Density (10% weight)</span>
+<span class="text-secondary font-data-value font-bold">Score: 79</span>
+</div>
+<div class="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden flex border border-[#334155]/30">
+<div class="bg-gradient-to-r from-sky-600 to-secondary h-full rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(123,208,255,0.6)]" style="width: 79%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-data-label text-outline">
+<span class="">IMPACT WEIGHT RATIO: 0.10</span>
+<span class="text-secondary font-semibold">ATTRIBUTED PTS: 7.90</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sensitivity Insights Footer Box -->
+<div class="mt-space-md p-space-sm bg-[#0f1a30] border border-[#1e293b] rounded-lg space-y-1">
+<div class="flex items-center gap-2 text-cyan-300 font-data-label text-data-label font-bold uppercase">
+<span class="material-symbols-outlined text-[16px] text-primary-container">tune</span>
+<span class="">SHAP Sensitivity Analysis</span>
+</div>
+<p class="font-body-sm text-slate-300">
+            A ±10 km shift eastward decreases composite risk to 74 (-14 pts); an onshore shift westward exposes 240,000 additional residents in urban Kendrapara.
+          </p>
+</div>
+</div>
+</div>
+<!-- AI Explainability Section (Static Inline Card with Collapsible Detail) -->
+<div class="bg-[#0d1527] border border-[#1e293b] rounded-xl p-space-lg shadow-xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-md border-b border-[#1e293b]">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-950 to-[#13223f] border border-cyan-400/50 flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.3)]">
+<span class="material-symbols-outlined text-primary-container text-[22px]">psychology_alt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-white font-semibold">SYNTHETIC RISK NARRATIVE &amp; AI EXPLANATION</span>
+<span class="font-data-label text-data-label text-surface-tint uppercase">EXPLAINABLE AI ENGINE (XAI) • NATURAL LANGUAGE REASONING</span>
+</div>
+</div>
+<div class="flex items-center gap-2 font-data-label text-data-label text-emerald-300 bg-emerald-950/40 border border-emerald-500/30 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-emerald-400 text-[18px]">verified</span>
+<span class="">Validated against Historical Supercyclone Amphan (2020) Ground Truth</span>
+</div>
+</div>
+<!-- Query Box & Reasonings -->
+<div class="bg-[#0f1a30] border border-cyan-500/30 p-space-md rounded-xl space-y-space-md mt-space-md shadow-inner"><div class="flex items-center justify-between pb-1"><div class="flex items-center gap-2 text-white font-headline-sm text-body-lg font-bold"><span class="material-symbols-outlined text-rose-400 drop-shadow-[0_0_8px_rgba(255,51,102,0.8)]">help</span><span class="">Why is the Balasore-Digha sector rated CRITICAL 88 / 100?</span></div><span class="font-badge text-badge px-2.5 py-0.5 rounded-full bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold uppercase shadow-[0_0_8px_rgba(255,51,102,0.4)]">HIGHEST RISK ZONE</span></div><div class="grid grid-cols-1 md:grid-cols-3 gap-space-md"><div class="bg-[#0b1326] border-l-4 border-rose-500 border border-[#1e293b] p-space-sm rounded-lg flex flex-col justify-between shadow-[0_0_12px_rgba(255,51,102,0.15)]"><div class="space-y-1.5"><div class="flex items-center justify-between"><span class="font-badge text-badge text-rose-300 uppercase font-bold">FACTOR 1 • HYDRODYNAMIC COUPLING</span><span class="material-symbols-outlined text-rose-400 text-[18px]">tsunami</span></div><p class="font-body-sm text-slate-200"><strong class="text-white">Astronomical high tide coincides with peak storm surge.</strong> At 03:00 UTC, the Spring tide adds +1.1m to the 4.2m barometric surge, defeating existing embankment crests by 80cm.</p></div><span class="font-data-label text-[10px] text-rose-400 mt-space-sm font-semibold tracking-wide">SEVERITY IMPACT: HIGH (+11 PTS)</span></div><div class="bg-[#0b1326] border-l-4 border-amber-400 border border-[#1e293b] p-space-sm rounded-lg flex flex-col justify-between shadow-[0_0_12px_rgba(245,158,11,0.15)]"><div class="space-y-1.5"><div class="flex items-center justify-between"><span class="font-badge text-badge text-amber-300 uppercase font-bold">FACTOR 2 • STRUCTURAL RESILIENCE GAP</span><span class="material-symbols-outlined text-amber-400 text-[18px]">home_work</span></div><p class="font-body-sm text-slate-200"><strong class="text-white">High density of non-engineered housing.</strong> Over 48% of regional residential inventory in rural Digha comprises unreinforced masonry or thatched roofs susceptible to 180+ km/h shear force.</p></div><span class="font-data-label text-[10px] text-amber-300 mt-space-sm font-semibold tracking-wide">SEVERITY IMPACT: MODERATE (+8 PTS)</span></div><div class="bg-[#0b1326] border-l-4 border-cyan-400 border border-[#1e293b] p-space-sm rounded-lg flex flex-col justify-between shadow-[0_0_12px_rgba(0,229,255,0.15)]"><div class="space-y-1.5"><div class="flex items-center justify-between"><span class="font-badge text-badge text-cyan-300 uppercase font-bold">FACTOR 3 • LIFELINE CHOKEPOINTS</span><span class="material-symbols-outlined text-cyan-400 text-[18px]">alt_route</span></div><p class="font-body-sm text-slate-200"><strong class="text-white">National Highway NH-16 inundation threat.</strong> Predicted flooding spans 14km of primary arterial roadway, completely cutting off medical resupply routes between Cuttack and coastal evacuation staging areas.</p></div><span class="font-data-label text-[10px] text-cyan-300 mt-space-sm font-semibold tracking-wide">SEVERITY IMPACT: CRITICAL (+5 PTS)</span></div></div></div>
+</div>
+<!-- Backend Integration Info Footer -->
+<div class="p-space-md bg-[#070d18] border border-[#1e293b] rounded-xl flex flex-col md:flex-row items-center justify-between gap-space-md text-outline font-data-label text-data-label">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[18px]">dns</span>
+<span class="">FASTAPI ENDPOINT: <code class="text-cyan-300">GET /api/v1/risk/{cyclone_id}</code></span>
+<span class="">•</span>
+<span class="">LAST INFERENCE RUN: 48 SECONDS AGO</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="text-emerald-300 font-semibold">COMPUTE LATENCY: 238ms</span>
+<span class="text-slate-300">VERSION: v2.1.0-RC4</span>
+</div>
+</div>
+</div>
+<!-- Skeleton Loading State View (Hidden by Default) -->
+<div class="hidden p-space-lg space-y-space-lg" id="skeleton-container">
+<div class="h-64 bg-[#0d1527] rounded-xl animate-pulse"></div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="h-40 bg-[#0d1527] rounded-xl animate-pulse"></div>
+<div class="h-40 bg-[#0d1527] rounded-xl animate-pulse"></div>
+<div class="h-40 bg-[#0d1527] rounded-xl animate-pulse"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="h-96 bg-[#0d1527] rounded-xl animate-pulse"></div>
+<div class="h-96 bg-[#0d1527] rounded-xl animate-pulse"></div>
+</div>
+</div>
+<!-- Interactive Slide-Out AI Explain Panel / Modal -->
+<div class="fixed top-0 right-0 h-full w-full max-w-lg bg-[#070d18] border-l border-[#1e293b] z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between overflow-hidden" id="ai-explain-drawer">
+<div class="p-space-lg bg-[#0b1326] border-b border-[#1e293b] flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[24px]">psychology</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-white font-bold">CycloneShield XAI Inspector</h3>
+<span class="font-data-label text-data-label text-surface-tint uppercase font-semibold">Neural Decision Decomposition</span>
+</div>
+</div>
+<button class="p-1.5 rounded-lg bg-[#0f1a30] text-outline hover:text-white border border-[#1e293b] transition-colors" id="close-explain-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-space-lg space-y-space-md">
+<div class="p-space-sm bg-[#0b1326] border border-cyan-500/30 rounded-lg">
+<span class="font-data-label text-data-label text-primary-container uppercase font-bold">MODEL PIPELINE</span>
+<p class="font-body-sm text-slate-200 mt-1">
+          Ensemble weighting combines WRF-ARW atmospheric forecast, SLOSH hydrodynamic storm surge model, and OSM demographic vulnerability layers with 94.2% convergence.
+        </p>
+</div>
+<div class="space-y-space-xs">
+<span class="font-data-label text-data-label text-outline uppercase font-semibold">CRITICAL PATH REASONS</span>
+<div class="p-space-sm bg-[#0f1a30] border-l-4 border-rose-500 rounded-lg space-y-1">
+<div class="flex justify-between items-center">
+<span class="font-badge text-badge text-rose-300 uppercase font-bold">PRIMARY VULNERABILITY</span>
+<span class="font-data-value text-data-label text-white">WEIGHT: 32%</span>
+</div>
+<p class="font-body-sm text-slate-300">
+            Max core wind field of 215 km/h aligns exactly with densely populated settlements within a 35km coastal ribbon.
+          </p>
+</div>
+<div class="p-space-sm bg-[#0f1a30] border-l-4 border-cyan-400 rounded-lg space-y-1">
+<div class="flex justify-between items-center">
+<span class="font-badge text-badge text-cyan-300 uppercase font-bold">INUNDATION RISK</span>
+<span class="font-data-value text-data-label text-white">WEIGHT: 28%</span>
+</div>
+<p class="font-body-sm text-slate-300">
+            Bathymetric slope under 1:1200 will force sea water 8.5km inland, threatening 142 localized infrastructure installations.
+          </p>
+</div>
+<div class="p-space-sm bg-[#0f1a30] border-l-4 border-amber-400 rounded-lg space-y-1">
+<div class="flex justify-between items-center">
+<span class="font-badge text-badge text-amber-300 uppercase font-bold">ROAD NETWORK ISOLATION</span>
+<span class="font-data-value text-data-label text-white">WEIGHT: 18%</span>
+</div>
+<p class="font-body-sm text-slate-300">
+            NH-16 culverts lack capacity for simulated 420mm rain plus surge wave, leading to operational severed-link probability of 89.4%.
+          </p>
+</div>
+</div>
+<div class="p-space-sm bg-[#0b1326] border border-[#1e293b] rounded-lg flex flex-col gap-1">
+<span class="font-data-label text-data-label text-outline uppercase font-semibold">SIMULATION COUNTERFACTUAL</span>
+<p class="font-body-sm text-slate-200">
+          If eye-wall landfall speed decelerates by 6 km/h, surge amplitude falls to 3.1m, reducing composite severity from <strong class="text-rose-400">88 (Critical)</strong> to <strong class="text-amber-300">76 (High)</strong>.
+        </p>
+</div>
+</div>
+<div class="p-space-md bg-[#0b1326] border-t border-[#1e293b] flex gap-space-sm shadow-md">
+<button class="flex-1 py-2 rounded bg-[#0f1a30] hover:bg-[#13223f] border border-[#1e293b] text-white font-body-md font-semibold transition-colors flex items-center justify-center gap-2" id="copy-summary-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span class="">COPY BRIEFING</span>
+</button>
+<button class="flex-1 py-2 rounded bg-gradient-to-r from-primary-container to-cyan-400 hover:opacity-95 text-surface-container-lowest font-body-md font-bold transition-opacity" onclick="document.getElementById('ai-explain-drawer').classList.add('translate-x-full')" type="button">
+        CLOSE
+      </button>
+</div>
+</div>
+<!-- Interactive JavaScript micro-interactions -->
+<script>
+    (function initRiskDashboard() {
+      const explainDrawer = document.getElementById('ai-explain-drawer');
+      const openExplainBtn = document.getElementById('open-explain-btn');
+      const closeExplainBtn = document.getElementById('close-explain-btn');
+      const rerunBtn = document.getElementById('rerun-sim-btn');
+      const toggleSkeletonBtn = document.getElementById('toggle-skeleton-btn');
+      const contentContainer = document.getElementById('content-container');
+      const skeletonContainer = document.getElementById('skeleton-container');
+      const copyBtn = document.getElementById('copy-summary-btn');
+      const exportBtn = document.getElementById('export-geojson-btn');
+
+      // AI Explain Drawer Open/Close
+      if (openExplainBtn && explainDrawer) {
+        openExplainBtn.addEventListener('click', () => {
+          explainDrawer.classList.remove('translate-x-full');
+        });
+      }
+
+      if (closeExplainBtn && explainDrawer) {
+        closeExplainBtn.addEventListener('click', () => {
+          explainDrawer.classList.add('translate-x-full');
+        });
+      }
+
+      // Re-run simulation animation feedback
+      if (rerunBtn) {
+        rerunBtn.addEventListener('click', () => {
+          const originalText = rerunBtn.innerHTML;
+          rerunBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+            <span>INFERRING (FASTAPI)...</span>
+          `;
+          rerunBtn.disabled = true;
+
+          setTimeout(() => {
+            rerunBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              <span>SIMULATION CONVERGED</span>
+            `;
+            setTimeout(() => {
+              rerunBtn.innerHTML = originalText;
+              rerunBtn.disabled = false;
+            }, 1800);
+          }, 1200);
+        });
+      }
+
+      // GeoJSON export simulation
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const original = exportBtn.innerHTML;
+          exportBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px] animate-pulse">downloading</span>
+            <span>GENERATING GEOJSON...</span>
+          `;
+          setTimeout(() => {
+            exportBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[18px] text-cyan-300">file_download_done</span>
+              <span>GEOJSON EXPORTED</span>
+            `;
+            setTimeout(() => {
+              exportBtn.innerHTML = original;
+            }, 1800);
+          }, 900);
+        });
+      }
+
+      // Dev skeleton toggle
+      if (toggleSkeletonBtn && contentContainer && skeletonContainer) {
+        toggleSkeletonBtn.addEventListener('click', () => {
+          const isShowingSkeleton = !skeletonContainer.classList.contains('hidden');
+          if (isShowingSkeleton) {
+            skeletonContainer.classList.add('hidden');
+            contentContainer.classList.remove('hidden');
+          } else {
+            skeletonContainer.classList.remove('hidden');
+            contentContainer.classList.add('hidden');
+            setTimeout(() => {
+              skeletonContainer.classList.add('hidden');
+              contentContainer.classList.remove('hidden');
+            }, 1500);
+          }
+        });
+      }
+
+      // Copy Briefing to Clipboard
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          const summaryText = "CycloneShield AI: Balasore-Digha Sector Multi-Hazard Severity 88/100 (Critical). Surge: 4.2m with High-Tide Concurrency. Sustained: 215 km/h. Evacuation Corridor Active.";
+          navigator.clipboard.writeText(summaryText).then(() => {
+            const prevHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[18px] text-cyan-300">check</span>
+              <span>COPIED TO CLIPBOARD</span>
+            `;
+            setTimeout(() => {
+              copyBtn.innerHTML = prevHtml;
+            }, 1600);
+          });
+        });
+      }
+    })();
+  </script>
+</div></main></div><div class="hidden fixed inset-0 z-50 flex items-start justify-center pt-24 bg-[#070d18]/80 backdrop-blur-md" id="command-palette"><div class="w-full max-w-2xl bg-[#0b1326] rounded-xl shadow-[0_20px_40px_-8px_rgba(0,0,0,0.85)] border border-[#1e293b] overflow-hidden"><div class="flex items-center px-space-md py-space-sm border-b border-[#1e293b]"><span class="material-symbols-outlined text-primary-container mr-space-sm">terminal</span><input class="w-full bg-transparent font-data-value text-data-value text-on-surface outline-none placeholder:text-outline" placeholder="Search cyclones, radar telemetry, hospitals, evacuation corridors..." type="text"><button class="text-outline hover:text-on-surface font-data-label text-badge px-space-xs py-space-2xs rounded bg-[#0f1a30]" onclick="document.getElementById('command-palette').classList.add('hidden')" type="button">ESC</button></div><div class="p-space-sm max-h-96 overflow-y-auto space-y-space-sm"><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase">Active Systems</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-[#0f1a30] transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-rose-400 text-[18px]">warning</span><span class="font-body-md text-on-surface">Cyclone Helen — Cat 4 Superstorm Tracking NW</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-rose-950/80 border border-rose-500 text-rose-300 font-bold">CRITICAL</span></a></div><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase">Critical Facilities</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-[#0f1a30] transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary-container text-[18px]">local_hospital</span><span class="font-body-md text-on-surface">Port Blair General Hospital — Zone A Evacuation</span></div><span class="font-badge text-badge px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-500/50 text-amber-300 font-bold">IN DANGER</span></a></div><div class="space-y-space-2xs"><span class="px-space-xs font-data-label text-data-label text-outline uppercase">Tactical Tools</span><a class="flex items-center justify-between p-space-xs rounded-lg hover:bg-[#0f1a30] transition-colors" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[18px]">calculate</span><span class="font-body-md text-on-surface">Compute Storm Surge Vector Profile (SLOSH)</span></div><span class="font-data-label text-data-label text-outline">TOOL</span></a></div></div></div></div><div class="fixed top-0 right-0 h-full w-96 bg-[#070d18] z-50 shadow-[0_8px_32px_rgba(0,0,0,0.8)] border-l border-[#1e293b] transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="notification-drawer"><div class="p-space-lg border-b border-[#1e293b] flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary-container">notifications_active</span><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Advisory Stream</span></div><button class="text-outline hover:text-on-surface" onclick="document.getElementById('notification-drawer').classList.add('translate-x-full')" type="button"><span class="material-symbols-outlined">close</span></button></div><div class="flex-1 overflow-y-auto p-space-md space-y-space-sm"><div class="p-space-sm rounded-lg bg-[#0d1527] border border-rose-500/40 flex flex-col gap-space-2xs"><div class="flex items-center justify-between"><span class="font-badge text-badge text-rose-300 uppercase font-bold">LANDFALL ESCALATION</span><span class="font-data-label text-data-label text-outline">12M AGO</span></div><span class="font-body-md text-body-md font-semibold text-on-surface">Eye wall contracted to 24km. Landfall predicted 2h ahead of timeline.</span></div><div class="p-space-sm rounded-lg bg-[#0d1527] border border-[#1e293b] flex flex-col gap-space-2xs"><div class="flex items-center justify-between"><span class="font-badge text-badge text-primary-container uppercase font-bold">INFRASTRUCTURE NOTICE</span><span class="font-data-label text-data-label text-outline">38M AGO</span></div><span class="font-body-md text-body-md font-semibold text-on-surface">Grid Station Alpha isolated to prevent cascade surge damage.</span></div><div class="p-space-sm rounded-lg bg-[#0d1527] border border-[#1e293b] flex flex-col gap-space-2xs"><div class="flex items-center justify-between"><span class="font-badge text-badge text-tertiary uppercase font-bold">AI ENSEMBLE SYNC</span><span class="font-data-label text-data-label text-outline">1H AGO</span></div><span class="font-body-md text-body-md font-semibold text-on-surface">ECMWF and GFS models merged. Path confidence index up to 94.2%.</span></div></div><div class="p-space-md border-t border-[#1e293b] flex gap-space-sm"><button class="w-full py-2.5 rounded bg-primary-container text-surface-container-lowest font-bold text-body-sm hover:opacity-95 shadow-[0_0_16px_rgba(0,229,255,0.4)] tracking-wider uppercase transition-all" type="button">ACKNOWLEDGE ALL</button></div></div>
+
+
+</body></html>
