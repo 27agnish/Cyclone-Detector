@@ -144,7 +144,7 @@ export const SettingsPage: React.FC = () => {
             <div className="flex justify-between">
               <span className="text-slate-400">Tactical Mapping Engine:</span>
               <span className="text-emerald-400 font-bold">
-                MapLibre GL JS & OpenStreetMap (Active)
+                Leaflet & OpenStreetMap (Active)
               </span>
             </div>
             <div className="flex justify-between">

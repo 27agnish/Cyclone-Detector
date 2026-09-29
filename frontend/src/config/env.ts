@@ -30,10 +30,10 @@ const sanitizedBaseUrl = apiBase ? apiBase.replace(/\/api(\/v1)?$/, '') : '';
 
 export const env = {
   /**
-   * Tactical GIS Engine name (MapLibre GL JS with OpenStreetMap tiles).
-   * Does not require Google Maps or any secret API key.
+   * Tactical GIS Engine name (Leaflet with OpenStreetMap tiles).
+   * Free and open-source; does not require any secret API key.
    */
-  MAP_ENGINE: 'MapLibre GL JS (OpenStreetMap)',
+  MAP_ENGINE: 'Leaflet (OpenStreetMap)',
 
   /**
    * Production mode indicator.
