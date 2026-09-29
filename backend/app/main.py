@@ -78,6 +78,10 @@ async def normalize_api_path(request: Request, call_next):
     path = request.scope.get("path", "")
     if path in ("/api/index.py", "/api/index.py/"):
         request.scope["path"] = "/"
+    elif path.startswith("/api/v1/api/v1"):
+        request.scope["path"] = path.replace("/api/v1/api/v1", "/api/v1", 1)
+    elif path.startswith("/api/api/"):
+        request.scope["path"] = path.replace("/api/api/", "/api/", 1)
     elif path in ("/api/v1", "/api/v1/", "/api", "/api/", "/", "/docs", "/openapi.json"):
         pass
     elif path.startswith("/api/v1/"):
@@ -180,11 +184,26 @@ app.include_router(population_router, prefix=settings.API_V1_STR)
 app.include_router(maps_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
 
+# Direct detection endpoint aliases
+@app.get("/api/v1/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/api/detect", tags=["Cyclones"], include_in_schema=False)
+def direct_detect(force_refresh: bool = False):
+    from app.api.cyclones import trigger_detection
+    return trigger_detection(force_refresh=force_refresh)
+
 # SPA fallback for browser client routes (e.g. /cyclones, /analysis, /landfall)
 @app.get("/{full_path:path}", include_in_schema=False)
 def spa_fallback(full_path: str, request: Request):
-    if full_path.startswith("api") or full_path.startswith("docs") or full_path in ("health", "openapi.json"):
+    # API, docs, or health requests must NEVER return HTML index.html
+    api_prefixes = ("api", "docs", "health", "openapi.json", "cyclones", "risk", "infrastructure", "population", "map", "detect")
+    if any(full_path == p or full_path.startswith(f"{p}/") for p in api_prefixes):
+        raise HTTPException(status_code=404, detail=f"API route '/{full_path}' not found")
+
+    # Non-HTML requests (e.g. client API queries) must return 404 JSON, not HTML
+    accept = request.headers.get("accept", "")
+    if "text/html" not in accept:
         raise HTTPException(status_code=404, detail="Not Found")
+
     index_file = frontend_dist / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file))

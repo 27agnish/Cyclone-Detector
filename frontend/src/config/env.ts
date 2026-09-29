@@ -19,7 +19,9 @@ function resolveApiBaseUrl(): string {
 
   if (configured) {
     const clean = configured.replace(/\/+$/, '');
-    return clean.endsWith('/api/v1') ? clean : `${clean}/api/v1`;
+    if (clean.endsWith('/api/v1')) return clean;
+    if (clean.endsWith('/api')) return `${clean}/v1`;
+    return `${clean}/api/v1`;
   }
 
   // Same-origin relative path /api/v1: works seamlessly on the SAME port (e.g. 8000 direct, or 5173 via Vite proxy)

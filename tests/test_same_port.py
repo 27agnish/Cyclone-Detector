@@ -1,6 +1,20 @@
+import pytest
 import urllib.request
 import json
 import sys
+
+def is_live_server_running():
+    try:
+        req = urllib.request.Request("http://127.0.0.1:8000/api/v1/health")
+        with urllib.request.urlopen(req, timeout=1.0) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+pytestmark = pytest.mark.skipif(
+    not is_live_server_running(),
+    reason="Live server not running at http://127.0.0.1:8000"
+)
 
 def test_same_port():
     print("=== 1. Testing Root URL (Frontend served on Port 8000) ===")

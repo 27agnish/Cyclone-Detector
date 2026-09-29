@@ -187,13 +187,23 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
         console.warn('[CycloneShield] Health check probe warning:', healthErr);
       }
 
-      // 2. Next: GET /api/v1/cyclones/active / detect
+      // 2. Next: GET /api/v1/cyclones/detect (or active cyclones)
       const detectRes = await cycloneApi.detectCyclones();
       let cyclones: CycloneSummary[] = [];
       if (Array.isArray(detectRes)) {
         cyclones = detectRes;
-      } else if (detectRes && Array.isArray((detectRes as any).cyclones)) {
+      } else if (detectRes && typeof detectRes === 'object' && Array.isArray((detectRes as any).cyclones)) {
         cyclones = (detectRes as any).cyclones;
+      } else if (detectRes && typeof detectRes === 'object' && Array.isArray((detectRes as any).data)) {
+        cyclones = (detectRes as any).data;
+      } else if (typeof detectRes === 'string') {
+        throw new Error(
+          "Invalid cyclone detection response: received text/html instead of JSON. Please verify that the FastAPI backend is running on http://127.0.0.1:8000."
+        );
+      } else if (detectRes && typeof detectRes === 'object' && ((detectRes as any).detail || (detectRes as any).error || (detectRes as any).message)) {
+        throw new Error(
+          `Backend error: ${(detectRes as any).detail || (detectRes as any).error || (detectRes as any).message}`
+        );
       } else {
         throw new Error("Invalid cyclone detection response format");
       }
@@ -264,7 +274,7 @@ export const useCycloneStore = create<CycloneStoreState>((set, get) => ({
       
       let userFriendlyError = `Unable to connect to CycloneShield backend (${targetUrl}). ${errMsg}`;
       if (status) {
-        userFriendlyError = `Backend returned HTTP ${status}${statusText ? ` (${statusText})` : ''} at ${targetUrl}`;
+        userFriendlyError = `Backend returned HTTP ${status}${statusText ? ` (${statusText})` : ''} at ${targetUrl}: ${errMsg}`;
       } else if (err instanceof Error) {
         userFriendlyError = err.message;
       }

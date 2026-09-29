@@ -137,3 +137,34 @@ def test_vercel_serverless_entrypoint():
     assert pop_resp.status_code == 200
     assert "application/json" in pop_resp.headers.get("content-type", "")
 
+def test_detect_route_variations():
+    # Verify all detection route aliases return valid JSON with cyclones list
+    for route in ["/api/v1/cyclones/detect", "/api/v1/detect", "/api/v1/cyclones/cyclone-detection"]:
+        res = client.get(route)
+        assert res.status_code == 200
+        assert "application/json" in res.headers.get("content-type", "")
+        data = res.json()
+        assert "cyclones" in data
+        assert isinstance(data["cyclones"], list)
+
+def test_route_normalization_and_no_html_leak():
+    # Test duplicate prefix normalization
+    res_dup1 = client.get("/api/v1/api/v1/health")
+    assert res_dup1.status_code == 200
+    assert res_dup1.json()["status"] == "ok"
+
+    res_dup2 = client.get("/api/api/health")
+    assert res_dup2.status_code == 200
+    assert res_dup2.json()["status"] == "ok"
+
+    # Test that unknown API route returns 404 JSON, NEVER HTML index.html
+    res_unknown_api = client.get("/api/v1/nonexistent-route", headers={"Accept": "application/json"})
+    assert res_unknown_api.status_code == 404
+    assert "text/html" not in res_unknown_api.headers.get("content-type", "")
+
+    # Test that non-HTML request to non-existent route returns 404 JSON, not HTML
+    res_unknown_data = client.get("/cyclone-unknown", headers={"Accept": "application/json"})
+    assert res_unknown_data.status_code == 404
+    assert "text/html" not in res_unknown_data.headers.get("content-type", "")
+
+

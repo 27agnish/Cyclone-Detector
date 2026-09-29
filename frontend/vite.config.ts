@@ -5,16 +5,43 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '127.0.0.1',
     port: 5173,
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, res) => {
+            const httpRes = res as any;
+            if (httpRes && typeof httpRes.writeHead === 'function' && !httpRes.headersSent) {
+              httpRes.writeHead(502, { 'Content-Type': 'application/json' });
+              httpRes.end(JSON.stringify({
+                status: 'error',
+                message: 'FastAPI backend unreachable at http://127.0.0.1:8000. Please ensure the backend is running.',
+                detail: err.message
+              }));
+            }
+          });
+        }
       },
       '/health': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, res) => {
+            const httpRes = res as any;
+            if (httpRes && typeof httpRes.writeHead === 'function' && !httpRes.headersSent) {
+              httpRes.writeHead(502, { 'Content-Type': 'application/json' });
+              httpRes.end(JSON.stringify({
+                status: 'error',
+                message: 'FastAPI backend unreachable at http://127.0.0.1:8000.',
+                detail: err.message
+              }));
+            }
+          });
+        }
       }
     }
   }

@@ -20,6 +20,8 @@ def get_active_cyclones():
     return active
 
 @router.get("/detect", response_model=CycloneDetectionResponse)
+@router.get("/cyclone-detection", response_model=CycloneDetectionResponse, include_in_schema=False)
+@router.get("/detection", response_model=CycloneDetectionResponse, include_in_schema=False)
 def trigger_detection(force_refresh: bool = False):
     """Proactively checks data sources to detect active cyclonic disturbances."""
     results = detector_service.detect_active_cyclones(force_refresh=force_refresh)

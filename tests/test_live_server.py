@@ -3,6 +3,19 @@ import httpx
 
 BASE_URL = "http://127.0.0.1:8000/api/v1"
 
+def is_live_server_running():
+    try:
+        with httpx.Client(timeout=1.0) as client:
+            r = client.get(f"{BASE_URL}/health")
+            return r.status_code == 200
+    except Exception:
+        return False
+
+pytestmark = pytest.mark.skipif(
+    not is_live_server_running(),
+    reason="Live server not running at http://127.0.0.1:8000"
+)
+
 def test_live_health():
     with httpx.Client(timeout=5.0) as client:
         r = client.get(f"{BASE_URL}/health")
