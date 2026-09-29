@@ -1,10 +1,22 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import * as maplibregl from 'maplibre-gl';
+import {
+  Map,
+  setWorkerUrl,
+  Marker,
+  Popup,
+  LngLatBounds,
+  ScaleControl,
+  type GeoJSONSource
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useCycloneStore } from '../../store/cycloneStore';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
 import { Map as MapIcon } from 'lucide-react';
+
+// Official MapLibre GL JS Vite worker configuration: executed BEFORE any Map instance is created
+setWorkerUrl(workerUrl);
 
 // Free OSM-derived Carto Dark Matter & Esri World Imagery MapLibre style specification
 const TACTICAL_MAP_STYLE: any = {
@@ -59,13 +71,13 @@ const EMPTY_GEOJSON: any = {
 
 export const CycloneMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<maplibregl.Map | null>(null);
+  const mapInstanceRef = useRef<Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   // Markers references
-  const markersRef = useRef<maplibregl.Marker[]>([]);
-  const cycloneEyeMarkerRef = useRef<maplibregl.Marker | null>(null);
-  const hoverPopupRef = useRef<maplibregl.Popup | null>(null);
+  const markersRef = useRef<Marker[]>([]);
+  const cycloneEyeMarkerRef = useRef<Marker | null>(null);
+  const hoverPopupRef = useRef<Popup | null>(null);
 
   const {
     cycloneDetail,
@@ -81,7 +93,7 @@ export const CycloneMap: React.FC = () => {
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    const map = new maplibregl.Map({
+    const map = new Map({
       container: mapContainerRef.current,
       style: TACTICAL_MAP_STYLE,
       center: [87.2, 20.2], // [lng, lat] (Bay of Bengal / Odisha coast)
@@ -92,9 +104,9 @@ export const CycloneMap: React.FC = () => {
     });
 
     // Add navigation controls (scale)
-    map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
+    map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-    const hoverPopup = new maplibregl.Popup({
+    const hoverPopup = new Popup({
       closeButton: false,
       closeOnClick: false,
       maxWidth: '280px',
@@ -296,7 +308,7 @@ export const CycloneMap: React.FC = () => {
     if (!map || !mapLoaded || !cycloneDetail) return;
 
     const updateSource = (sourceId: string, data: any) => {
-      const src = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+      const src = map.getSource(sourceId) as GeoJSONSource | undefined;
       if (src) {
         src.setData(data);
       }
@@ -395,7 +407,7 @@ export const CycloneMap: React.FC = () => {
           } rounded-full bg-cyan-400 border-2 border-slate-900 shadow-[0_0_8px_rgba(6,182,212,0.8)] transition transform group-hover:scale-150"></div>
         `;
 
-        const popup = new maplibregl.Popup({ offset: 12, maxWidth: '240px' }).setHTML(`
+        const popup = new Popup({ offset: 12, maxWidth: '240px' }).setHTML(`
           <div class="p-2.5 space-y-1 font-sans">
             <div class="flex items-center justify-between border-b border-slate-700 pb-1 text-[11px] font-mono">
               <span class="text-cyan-400 font-semibold">OBSERVED POINT</span>
@@ -409,7 +421,7 @@ export const CycloneMap: React.FC = () => {
           </div>
         `);
 
-        const marker = new maplibregl.Marker({ element: el })
+        const marker = new Marker({ element: el })
           .setLngLat([pt.longitude, pt.latitude])
           .setPopup(popup)
           .addTo(map);
@@ -427,7 +439,7 @@ export const CycloneMap: React.FC = () => {
           <div class="w-2.5 h-2.5 rounded-full bg-rose-400 border-2 border-slate-900 shadow-[0_0_8px_rgba(244,63,94,0.8)] transition transform group-hover:scale-150"></div>
         `;
 
-        const popup = new maplibregl.Popup({ offset: 12, maxWidth: '240px' }).setHTML(`
+        const popup = new Popup({ offset: 12, maxWidth: '240px' }).setHTML(`
           <div class="p-2.5 space-y-1 font-sans">
             <div class="flex items-center justify-between border-b border-slate-700 pb-1 text-[11px] font-mono">
               <span class="text-rose-400 font-semibold">FORECAST POINT</span>
@@ -440,7 +452,7 @@ export const CycloneMap: React.FC = () => {
           </div>
         `);
 
-        const marker = new maplibregl.Marker({ element: el })
+        const marker = new Marker({ element: el })
           .setLngLat([pt.longitude, pt.latitude])
           .setPopup(popup)
           .addTo(map);
@@ -465,7 +477,7 @@ export const CycloneMap: React.FC = () => {
         </div>
       `;
 
-      const popup = new maplibregl.Popup({ offset: 16, maxWidth: '280px' }).setHTML(`
+      const popup = new Popup({ offset: 16, maxWidth: '280px' }).setHTML(`
         <div class="p-2.5 space-y-1.5 font-sans">
           <div class="flex items-center justify-between border-b border-slate-700 pb-1.5">
             <span class="font-bold text-rose-400 font-mono text-xs">◆ PREDICTED LANDFALL</span>
@@ -480,7 +492,7 @@ export const CycloneMap: React.FC = () => {
         </div>
       `);
 
-      const marker = new maplibregl.Marker({ element: el })
+      const marker = new Marker({ element: el })
         .setLngLat([landfall.longitude, landfall.latitude])
         .setPopup(popup)
         .addTo(map);
@@ -525,7 +537,7 @@ export const CycloneMap: React.FC = () => {
           setSelectedAsset(asset);
         });
 
-        const popup = new maplibregl.Popup({ offset: 14, maxWidth: '260px' }).setHTML(`
+        const popup = new Popup({ offset: 14, maxWidth: '260px' }).setHTML(`
           <div class="p-2.5 space-y-1.5 font-sans">
             <div class="flex items-center justify-between border-b border-slate-700 pb-1">
               <span class="font-bold text-slate-100 text-xs">${asset.name}</span>
@@ -547,7 +559,7 @@ export const CycloneMap: React.FC = () => {
           </div>
         `);
 
-        const marker = new maplibregl.Marker({ element: el })
+        const marker = new Marker({ element: el })
           .setLngLat([asset.longitude, asset.latitude])
           .setPopup(popup)
           .addTo(map);
@@ -600,7 +612,7 @@ export const CycloneMap: React.FC = () => {
       </div>
     `;
 
-    const eyeMarker = new maplibregl.Marker({ element: el })
+    const eyeMarker = new Marker({ element: el })
       .setLngLat([pt.longitude, pt.latitude])
       .addTo(map);
 
@@ -633,7 +645,7 @@ export const CycloneMap: React.FC = () => {
         lats.push(cycloneDetail.landfall.latitude);
       }
 
-      const bounds = new maplibregl.LngLatBounds(
+      const bounds = new LngLatBounds(
         [Math.min(...lngs), Math.min(...lats)],
         [Math.max(...lngs), Math.max(...lats)]
       );
