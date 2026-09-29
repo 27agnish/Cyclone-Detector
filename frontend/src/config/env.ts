@@ -19,17 +19,16 @@ function resolveApiBaseUrl(): string {
 
   if (configured) {
     const clean = configured.replace(/\/+$/, '');
-    if (clean.endsWith('/api/v1')) return clean;
-    if (clean.endsWith('/api')) return `${clean}/v1`;
-    return `${clean}/api/v1`;
+    if (clean.endsWith('/api/v1') || clean.endsWith('/api')) return clean;
+    return `${clean}/api`;
   }
 
-  // Same-origin relative path /api/v1: works seamlessly on the SAME port (e.g. 8000 direct, or 5173 via Vite proxy)
-  return '/api/v1';
+  // Same-origin relative path '/api': seamless single-port operation directly on port 8000
+  return '/api';
 }
 
-const apiBaseWithV1 = resolveApiBaseUrl();
-const sanitizedBaseUrl = apiBaseWithV1 ? apiBaseWithV1.replace(/\/api\/v1$/, '') : '';
+const apiBase = resolveApiBaseUrl();
+const sanitizedBaseUrl = apiBase ? apiBase.replace(/\/api(\/v1)?$/, '') : '';
 
 export const env = {
   /**
@@ -53,15 +52,16 @@ export const env = {
   IS_PRODUCTION: import.meta.env.PROD,
 
   /**
-   * Base URL for the FastAPI backend service (without /api/v1).
+   * Base URL for the FastAPI backend service (without /api).
    */
   BACKEND_BASE_URL: sanitizedBaseUrl,
 
   /**
-   * Base URL with /api/v1 prefix for standard API queries.
-   * Defaults to same-origin '/api/v1' in production, or 'http://127.0.0.1:8000/api/v1' in development.
+   * Base URL with /api prefix for standard API queries.
+   * Defaults to same-origin relative '/api' for clean single-port architecture.
    */
-  API_V1_BASE_URL: apiBaseWithV1,
+  API_BASE_URL: apiBase,
+  API_V1_BASE_URL: apiBase,
 
   /**
    * Operational demo mode flag.

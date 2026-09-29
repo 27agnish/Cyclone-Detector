@@ -4,8 +4,11 @@ from pathlib import Path
 
 # Ensure 'backend' directory is on sys.path so 'app.*' imports work from any working directory
 backend_dir = Path(__file__).resolve().parent.parent
+root_dir = backend_dir.parent
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,11 +64,9 @@ from starlette.requests import Request
 @app.middleware("http")
 async def normalize_api_path(request: Request, call_next):
     """
-    Normalizes request paths to ensure full compatibility with Vercel serverless rewrites.
-    Inspects Vercel's x-matched-path / x-vercel-matched-path headers if the rewrite arrived
-    at /api/index.py, and normalizes prefix permutations so FastAPI routes always match.
+    Normalizes request paths to ensure full compatibility with Vercel serverless rewrites,
+    proxy configurations, and direct single-port access.
     """
-    # Check if Vercel forwarded original URL via headers
     matched_path = (
         request.headers.get("x-matched-path") or
         request.headers.get("x-vercel-matched-path") or
@@ -82,20 +83,9 @@ async def normalize_api_path(request: Request, call_next):
         request.scope["path"] = path.replace("/api/v1/api/v1", "/api/v1", 1)
     elif path.startswith("/api/api/"):
         request.scope["path"] = path.replace("/api/api/", "/api/", 1)
-    elif path in ("/api/v1", "/api/v1/", "/api", "/api/", "/", "/docs", "/openapi.json"):
-        pass
-    elif path.startswith("/api/v1/"):
-        pass
     elif path.startswith("/v1/"):
         request.scope["path"] = "/api" + path
-    elif path.startswith("/api/"):
-        if not path.startswith("/api/docs") and not path.startswith("/api/openapi.json") and not path.startswith("/api/health"):
-            request.scope["path"] = "/api/v1" + path[4:]
-    elif not path.startswith("/api"):
-        is_static = path.startswith("/assets") or path in ("/favicon.svg", "/icons.svg", "/favicon.ico", "/index.html", "/app", "/ui")
-        is_html = "text/html" in request.headers.get("accept", "")
-        if path not in ("/health", "/health/") and not is_static and not is_html:
-            request.scope["path"] = f"/api/v1{path}"
+
     return await call_next(request)
 
 # Resolve frontend distribution directory (frontend/dist)
@@ -110,23 +100,18 @@ if frontend_dist.exists():
         app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
 
 @app.get("/", tags=["System"])
-@app.get("/api", include_in_schema=False)
-@app.get("/api/v1", include_in_schema=False)
-@app.get("/api/index.py", include_in_schema=False)
 def root(request: Request):
-    path = request.scope.get("path", "/")
-    accept = request.headers.get("accept", "")
     index_file = frontend_dist / "index.html"
-    
-    # When accessed from a web browser requesting HTML, serve the frontend directly on this port
-    if path == "/" and "text/html" in accept and index_file.exists():
+    if index_file.exists():
         return FileResponse(str(index_file))
 
     return {
         "name": settings.PROJECT_NAME,
         "version": settings.VERSION,
+        "status": "online",
         "docs_url": "/api/docs",
-        "health_url": f"{settings.API_V1_STR}/health"
+        "health_url": "/api/health",
+        "note": "Frontend build not found. Run 'npm run build' in frontend directory."
     }
 
 @app.get("/index.html", include_in_schema=False)
@@ -152,13 +137,27 @@ def serve_icons():
         return FileResponse(str(ic))
     raise HTTPException(status_code=404)
 
+# API root info endpoint
+@app.get("/api", tags=["System"])
+@app.get("/api/", tags=["System"], include_in_schema=False)
+@app.get("/api/v1", tags=["System"], include_in_schema=False)
+@app.get("/api/v1/", tags=["System"], include_in_schema=False)
+def api_root():
+    return {
+        "name": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "status": "online",
+        "docs_url": "/api/docs",
+        "health_url": "/api/health",
+    }
+
 # Health endpoint with safe service status reporting
-@app.get("/api/v1/health", tags=["Health"])
-@app.get("/api/v1/health/", include_in_schema=False)
-@app.get("/api/health", include_in_schema=False)
-@app.get("/api/health/", include_in_schema=False)
-@app.get("/health", include_in_schema=False)
-@app.get("/health/", include_in_schema=False)
+@app.get("/api/health", tags=["Health"])
+@app.get("/api/health/", tags=["Health"], include_in_schema=False)
+@app.get("/api/v1/health", tags=["Health"], include_in_schema=False)
+@app.get("/api/v1/health/", tags=["Health"], include_in_schema=False)
+@app.get("/health", tags=["Health"], include_in_schema=False)
+@app.get("/health/", tags=["Health"], include_in_schema=False)
 def health_check():
     return {
         "status": "ok",
@@ -176,17 +175,19 @@ def health_check():
         }
     }
 
-# Register API v1 routers
-app.include_router(cyclones_router, prefix=settings.API_V1_STR)
-app.include_router(risk_router, prefix=settings.API_V1_STR)
-app.include_router(infra_router, prefix=settings.API_V1_STR)
-app.include_router(population_router, prefix=settings.API_V1_STR)
-app.include_router(maps_router, prefix=settings.API_V1_STR)
-app.include_router(ai_router, prefix=settings.API_V1_STR)
+# Register API routers under both /api and /api/v1 for complete REST consistency
+for api_prefix in ("/api", "/api/v1"):
+    app.include_router(cyclones_router, prefix=api_prefix)
+    app.include_router(risk_router, prefix=api_prefix)
+    app.include_router(infra_router, prefix=api_prefix)
+    app.include_router(population_router, prefix=api_prefix)
+    app.include_router(maps_router, prefix=api_prefix)
+    app.include_router(ai_router, prefix=api_prefix)
 
 # Direct detection endpoint aliases
-@app.get("/api/v1/detect", tags=["Cyclones"], include_in_schema=False)
 @app.get("/api/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/api/v1/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/detect", tags=["Cyclones"], include_in_schema=False)
 def direct_detect(force_refresh: bool = False):
     from app.api.cyclones import trigger_detection
     return trigger_detection(force_refresh=force_refresh)
@@ -195,19 +196,26 @@ def direct_detect(force_refresh: bool = False):
 @app.get("/{full_path:path}", include_in_schema=False)
 def spa_fallback(full_path: str, request: Request):
     # API, docs, or health requests must NEVER return HTML index.html
-    api_prefixes = ("api", "docs", "health", "openapi.json", "cyclones", "risk", "infrastructure", "population", "map", "detect")
+    api_prefixes = ("api", "docs", "health", "openapi.json")
     if any(full_path == p or full_path.startswith(f"{p}/") for p in api_prefixes):
         raise HTTPException(status_code=404, detail=f"API route '/{full_path}' not found")
 
-    # Non-HTML requests (e.g. client API queries) must return 404 JSON, not HTML
+    # If the client explicitly requests JSON (non-browser client), don't return HTML
     accept = request.headers.get("accept", "")
-    if "text/html" not in accept:
-        raise HTTPException(status_code=404, detail="Not Found")
+    if "text/html" not in accept and ("application/json" in accept or "text/json" in accept):
+        raise HTTPException(status_code=404, detail=f"Route '/{full_path}' not found")
 
+    # If a static asset file exists in frontend/dist, serve it directly
+    file_path = frontend_dist / full_path
+    if file_path.is_file():
+        return FileResponse(str(file_path))
+
+    # For browser client navigation (e.g. /analysis, /cyclones, /cyclone-details, /settings), serve index.html
     index_file = frontend_dist / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file))
-    raise HTTPException(status_code=404, detail="Not Found")
+
+    raise HTTPException(status_code=404, detail="Frontend build not found. Run 'npm run build' in frontend directory.")
 
 if __name__ == "__main__":
     import uvicorn

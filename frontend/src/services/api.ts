@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { env } from '../config/env';
 
-export const API_BASE_URL = env.API_V1_BASE_URL;
+export const API_BASE_URL = env.API_BASE_URL;
 
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL || '/api/v1',
+  baseURL: API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -91,7 +91,10 @@ def test_vercel_serverless_entrypoint():
     # Test root and /api /api/v1 alias
     resp_root = vclient.get("/")
     assert resp_root.status_code == 200
-    assert resp_root.json()["name"] == "CYCLONESHIELD AI"
+    if "text/html" in resp_root.headers.get("content-type", ""):
+        assert "cycloneshield" in resp_root.text.lower()
+    else:
+        assert resp_root.json()["name"] == "CYCLONESHIELD AI"
     
     resp_api = vclient.get("/api")
     assert resp_api.status_code == 200

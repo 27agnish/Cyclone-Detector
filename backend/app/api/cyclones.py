@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
+from app.config import settings
 from app.services.cyclone_detection.detector import detector_service
 from app.services.cyclone_detection.tracker import cyclone_tracker
 from app.schemas.cyclone import CycloneSummary, CycloneDetail, TrackPoint, ForecastCone, LandfallInfo, LandfallZone, CycloneDetectionResponse
@@ -7,6 +9,33 @@ from app.services.infrastructure_service import infrastructure_service
 from app.services.population_service import population_service
 
 router = APIRouter(prefix="/cyclones", tags=["Cyclones"])
+
+@router.get("/health", tags=["Cyclones"])
+def cyclone_service_health():
+    """
+    Diagnostic health check for the cyclone detection & tracking data services.
+    Reports operational status of providers, active cyclones count, and cache status.
+    """
+    try:
+        active = detector_service.detect_active_cyclones()
+        return {
+            "status": "operational",
+            "service": "Cyclone Detection Service",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "active_cyclones_count": len(active),
+            "demo_mode": settings.DEMO_MODE,
+            "data_available": True,
+            "providers": [p.provider_name for p in detector_service.providers],
+            "active_cyclones": [c["name"] if isinstance(c, dict) else c.name for c in active],
+        }
+    except Exception as e:
+        return {
+            "status": "degraded",
+            "service": "Cyclone Detection Service",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "data_available": False,
+            "error": str(e)
+        }
 
 @router.get("", response_model=List[CycloneSummary])
 def get_all_cyclones():
