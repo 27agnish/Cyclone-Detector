@@ -1,24 +1,7 @@
 {
-  "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/v1/(.*)",
-      "destination": "/api/index.py?_path=/api/v1/$1"
-    },
-    {
-      "source": "/api/v1",
-      "destination": "/api/index.py?_path=/api/v1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py?_path=/api/$1"
-    },
-    {
-      "source": "/api",
-      "destination": "/api/index.py?_path=/api"
-    },
-    {
-      "source": "/((?!api).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
