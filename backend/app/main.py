@@ -64,22 +64,23 @@ from starlette.requests import Request
 @app.middleware("http")
 async def normalize_api_path(request: Request, call_next):
     """
-    Normalizes request paths to ensure full compatibility with Vercel serverless rewrites,
-    proxy configurations, and direct single-port access.
+    Normalizes request paths for single-port direct access, proxy routing, and serverless environments.
+    Guarantees API routes are never routed to root / or index.html.
     """
     matched_path = (
-        request.headers.get("x-matched-path") or
         request.headers.get("x-vercel-matched-path") or
-        request.headers.get("x-forwarded-uri") or
+        request.headers.get("x-matched-path") or
         ""
     )
-    if matched_path and matched_path not in ("/api/index.py", "/api/index.py/"):
+    if matched_path and not matched_path.startswith("/api/index.py"):
         request.scope["path"] = matched_path.split("?")[0]
 
     path = request.scope.get("path", "")
-    if path in ("/api/index.py", "/api/index.py/"):
-        request.scope["path"] = "/"
-    elif path.startswith("/api/v1/api/v1"):
+    if path.startswith("/api/index.py"):
+        sub = path[len("/api/index.py"):]
+        request.scope["path"] = "/api" + sub if sub.startswith("/") else "/api"
+
+    if path.startswith("/api/v1/api/v1"):
         request.scope["path"] = path.replace("/api/v1/api/v1", "/api/v1", 1)
     elif path.startswith("/api/api/"):
         request.scope["path"] = path.replace("/api/api/", "/api/", 1)
@@ -186,31 +187,46 @@ for api_prefix in ("/api", "/api/v1"):
 
 # Direct detection endpoint aliases
 @app.get("/api/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/api/detect/", tags=["Cyclones"], include_in_schema=False)
 @app.get("/api/v1/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/api/v1/detect/", tags=["Cyclones"], include_in_schema=False)
 @app.get("/detect", tags=["Cyclones"], include_in_schema=False)
+@app.get("/detect/", tags=["Cyclones"], include_in_schema=False)
 def direct_detect(force_refresh: bool = False):
     from app.api.cyclones import trigger_detection
     return trigger_detection(force_refresh=force_refresh)
 
 # SPA fallback for browser client routes (e.g. /cyclones, /analysis, /landfall)
+# Note: API routes (/api/*) are registered BEFORE this fallback and MUST NEVER return HTML.
 @app.get("/{full_path:path}", include_in_schema=False)
 def spa_fallback(full_path: str, request: Request):
-    # API, docs, or health requests must NEVER return HTML index.html
-    api_prefixes = ("api", "docs", "health", "openapi.json")
-    if any(full_path == p or full_path.startswith(f"{p}/") for p in api_prefixes):
-        raise HTTPException(status_code=404, detail=f"API route '/{full_path}' not found")
+    raw_path = request.url.path
 
-    # If the client explicitly requests JSON (non-browser client), don't return HTML
+    # Rule 1: Under NO circumstances may an API route return HTML index.html
+    if (
+        full_path == "api"
+        or full_path.startswith("api/")
+        or raw_path == "/api"
+        or raw_path.startswith("/api/")
+        or raw_path.startswith("/docs")
+        or raw_path.startswith("/openapi.json")
+    ):
+        raise HTTPException(
+            status_code=404,
+            detail=f"API route '{raw_path}' not found on FastAPI backend."
+        )
+
+    # Rule 2: If the client explicitly requests JSON (non-browser client), don't return HTML
     accept = request.headers.get("accept", "")
     if "text/html" not in accept and ("application/json" in accept or "text/json" in accept):
-        raise HTTPException(status_code=404, detail=f"Route '/{full_path}' not found")
+        raise HTTPException(status_code=404, detail=f"Route '{raw_path}' not found")
 
-    # If a static asset file exists in frontend/dist, serve it directly
+    # Rule 3: If a static asset file exists in frontend/dist, serve it directly
     file_path = frontend_dist / full_path
     if file_path.is_file():
         return FileResponse(str(file_path))
 
-    # For browser client navigation (e.g. /analysis, /cyclones, /cyclone-details, /settings), serve index.html
+    # Rule 4: For browser client navigation (e.g. /analysis, /cyclones, /cyclone-details, /settings), serve index.html
     index_file = frontend_dist / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file))

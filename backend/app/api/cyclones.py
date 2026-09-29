@@ -11,6 +11,7 @@ from app.services.population_service import population_service
 router = APIRouter(prefix="/cyclones", tags=["Cyclones"])
 
 @router.get("/health", tags=["Cyclones"])
+@router.get("/health/", tags=["Cyclones"], include_in_schema=False)
 def cyclone_service_health():
     """
     Diagnostic health check for the cyclone detection & tracking data services.
@@ -49,6 +50,7 @@ def get_active_cyclones():
     return active
 
 @router.get("/detect", response_model=CycloneDetectionResponse)
+@router.get("/detect/", response_model=CycloneDetectionResponse, include_in_schema=False)
 @router.get("/cyclone-detection", response_model=CycloneDetectionResponse, include_in_schema=False)
 @router.get("/detection", response_model=CycloneDetectionResponse, include_in_schema=False)
 def trigger_detection(force_refresh: bool = False):
