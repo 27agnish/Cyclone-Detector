@@ -33,7 +33,6 @@ export const ApiStatusModal: React.FC<ApiStatusModalProps> = ({ isOpen, onClose 
   if (!isOpen) return null;
 
   const services = healthData?.services || {};
-  const isGoogleMapsConfigured = env.IS_GOOGLE_MAPS_CONFIGURED;
   const isGeminiConfigured = services.gemini === 'configured';
   const isDbConnected = services.database === 'connected';
   const isEarthEngineConfigured = services.earth_engine === 'configured';
@@ -67,20 +66,18 @@ export const ApiStatusModal: React.FC<ApiStatusModalProps> = ({ isOpen, onClose 
 
           {/* Service Indicators List */}
           <div className="space-y-2.5">
-            {/* Google Maps Platform */}
+            {/* Tactical Mapping Engine (MapLibre GL JS & OpenStreetMap) */}
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-900/60 border border-command-border">
               <div className="flex items-center gap-2.5">
                 <Globe className="w-4 h-4 text-cyan-400" />
                 <div>
-                  <div className="font-bold text-slate-100">Google Maps Platform (JS API)</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Interactive satellite & road mapping</div>
+                  <div className="font-bold text-slate-100">Tactical GIS & Mapping Engine</div>
+                  <div className="text-[10px] text-slate-400 font-normal">MapLibre GL JS & OpenStreetMap (OSM)</div>
                 </div>
               </div>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1.5 ${
-                isGoogleMapsConfigured ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${isGoogleMapsConfigured ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                {isGoogleMapsConfigured ? 'Connected' : 'Not Configured (Vector Fallback Active)'}
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border border-emerald-800">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                Active (Free / No Key Required)
               </span>
             </div>
 

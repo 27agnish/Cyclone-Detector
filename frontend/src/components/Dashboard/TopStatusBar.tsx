@@ -177,42 +177,65 @@ export const TopStatusBar: React.FC = () => {
               </button>
 
               {notifOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-command-border rounded-xl shadow-2xl p-3 z-50 space-y-2 font-mono">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <Bell className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>OPERATIONAL ALERTS ({notifications.length})</span>
-                    </span>
-                    <button onClick={() => setNotifOpen(false)} className="text-slate-400 hover:text-white">
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto space-y-2 text-xs">
-                    {notifications.map(n => (
-                      <div key={n.id} className="p-2.5 rounded bg-slate-950/80 border border-slate-800 space-y-1 relative">
-                        <div className="flex justify-between items-start">
-                          <span className={`font-bold text-[11px] ${
-                            n.type === 'critical' ? 'text-red-400' :
-                            n.type === 'warning' ? 'text-amber-400' : 'text-cyan-400'
-                          }`}>
-                            {n.title}
-                          </span>
-                          <button 
-                            onClick={() => dismissNotification(n.id)}
-                            className="text-slate-500 hover:text-slate-300"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
+                <>
+                  {/* Backdrop overlay for closing on outside click */}
+                  <div 
+                    className="fixed inset-0 z-[9998] cursor-default" 
+                    onClick={() => setNotifOpen(false)}
+                    aria-hidden="true"
+                  />
+
+                  {/* Fixed top-right notification panel */}
+                  <div 
+                    className="fixed top-[70px] right-[10px] sm:right-[20px] w-[min(400px,calc(100vw-20px))] max-h-[calc(100vh-90px)] overflow-y-auto bg-slate-900/98 backdrop-blur-xl border border-command-border rounded-xl shadow-2xl p-3.5 z-[9999] space-y-2.5 font-mono animate-in fade-in slide-in-from-top-2 duration-150"
+                    style={{
+                      position: 'fixed',
+                      top: '70px',
+                      zIndex: 9999
+                    }}
+                  >
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Bell className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>OPERATIONAL ALERTS ({notifications.length})</span>
+                      </span>
+                      <button 
+                        onClick={() => setNotifOpen(false)} 
+                        className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition"
+                        title="Close alerts"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      {notifications.map(n => (
+                        <div key={n.id} className="p-2.5 rounded bg-slate-950/90 border border-slate-800/90 hover:border-slate-700 space-y-1 relative transition">
+                          <div className="flex justify-between items-start gap-2">
+                            <span className={`font-bold text-[11px] ${
+                              n.type === 'critical' ? 'text-red-400' :
+                              n.type === 'warning' ? 'text-amber-400' : 'text-cyan-400'
+                            }`}>
+                              {n.title}
+                            </span>
+                            <button 
+                              onClick={() => dismissNotification(n.id)}
+                              className="text-slate-500 hover:text-slate-300 p-0.5 rounded hover:bg-slate-800 shrink-0"
+                              title="Dismiss notification"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <p className="text-[11px] text-slate-300 font-sans leading-relaxed">{n.message}</p>
+                          <span className="text-[9px] text-slate-500 block pt-0.5">{n.timestamp}</span>
                         </div>
-                        <p className="text-[11px] text-slate-300 font-sans">{n.message}</p>
-                        <span className="text-[9px] text-slate-500 block">{n.timestamp}</span>
-                      </div>
-                    ))}
-                    {notifications.length === 0 && (
-                      <div className="text-slate-400 text-[11px] p-4 text-center">No active alerts.</div>
-                    )}
+                      ))}
+                      {notifications.length === 0 && (
+                        <div className="text-slate-400 text-[11px] p-6 text-center">No active alerts.</div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 

@@ -142,9 +142,9 @@ export const SettingsPage: React.FC = () => {
 
           <div className="space-y-2 text-slate-300">
             <div className="flex justify-between">
-              <span className="text-slate-400">Google Maps JavaScript API:</span>
-              <span className={env.IS_GOOGLE_MAPS_CONFIGURED ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
-                {env.IS_GOOGLE_MAPS_CONFIGURED ? 'Configured & Active' : 'Fallback to Tactical Vector'}
+              <span className="text-slate-400">Tactical Mapping Engine:</span>
+              <span className="text-emerald-400 font-bold">
+                MapLibre GL JS & OpenStreetMap (Active)
               </span>
             </div>
             <div className="flex justify-between">

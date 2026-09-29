@@ -3,8 +3,6 @@
  * Provides type-safe access to environment variables without scattering import.meta.env.
  */
 
-const rawMapsKey = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '').trim();
-
 /**
  * Base backend URL resolution:
  * - In local development: defaults to 'http://127.0.0.1:8000/api/v1' unless overridden by VITE_API_BASE_URL.
@@ -32,19 +30,10 @@ const sanitizedBaseUrl = apiBase ? apiBase.replace(/\/api(\/v1)?$/, '') : '';
 
 export const env = {
   /**
-   * Google Maps Platform JavaScript API Key.
-   * Only accessible from the frontend client environment.
+   * Tactical GIS Engine name (MapLibre GL JS with OpenStreetMap tiles).
+   * Does not require Google Maps or any secret API key.
    */
-  GOOGLE_MAPS_API_KEY: rawMapsKey,
-
-  /**
-   * Whether a valid, non-placeholder Google Maps API key is present.
-   */
-  IS_GOOGLE_MAPS_CONFIGURED: Boolean(
-    rawMapsKey && 
-    rawMapsKey !== 'YOUR_GOOGLE_MAPS_API_KEY' &&
-    rawMapsKey.length > 10
-  ),
+  MAP_ENGINE: 'MapLibre GL JS (OpenStreetMap)',
 
   /**
    * Production mode indicator.
