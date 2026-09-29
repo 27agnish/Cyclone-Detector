@@ -65,21 +65,24 @@ from starlette.requests import Request
 async def normalize_api_path(request: Request, call_next):
     """
     Normalizes request paths for single-port direct access, proxy routing, and serverless environments.
-    Guarantees API routes are never routed to root / or index.html.
+    Guarantees API routes are preserved and never routed to root / or index.html.
     """
-    matched_path = (
-        request.headers.get("x-vercel-matched-path") or
-        request.headers.get("x-matched-path") or
-        ""
-    )
-    if matched_path and not matched_path.startswith("/api/index.py"):
-        request.scope["path"] = matched_path.split("?")[0]
+    # 1. Check query parameter _path from Vercel rewrite
+    query_path = request.query_params.get("_path")
+    if query_path and query_path.startswith("/api"):
+        request.scope["path"] = query_path.split("?")[0]
+    else:
+        # 2. Check headers from reverse proxy / Vercel
+        fwd = (
+            request.headers.get("x-forwarded-uri") or
+            request.headers.get("x-vercel-matched-path") or
+            request.headers.get("x-matched-path") or
+            ""
+        )
+        if fwd and fwd.startswith("/api") and not fwd.startswith("/api/index.py"):
+            request.scope["path"] = fwd.split("?")[0]
 
     path = request.scope.get("path", "")
-    if path.startswith("/api/index.py"):
-        sub = path[len("/api/index.py"):]
-        request.scope["path"] = "/api" + sub if sub.startswith("/") else "/api"
-
     if path.startswith("/api/v1/api/v1"):
         request.scope["path"] = path.replace("/api/v1/api/v1", "/api/v1", 1)
     elif path.startswith("/api/api/"):
