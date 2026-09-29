@@ -22,12 +22,7 @@ function resolveApiBaseUrl(): string {
     return clean.endsWith('/api/v1') ? clean : `${clean}/api/v1`;
   }
 
-  // Local development default (when running 'vite' dev server alongside local FastAPI)
-  if (import.meta.env.DEV) {
-    return 'http://127.0.0.1:8000/api/v1';
-  }
-
-  // Single-deployment Vercel production default: frontend and backend communicate via same-origin '/api/v1'
+  // Same-origin relative path /api/v1: works seamlessly on the SAME port (e.g. 8000 direct, or 5173 via Vite proxy)
   return '/api/v1';
 }
 
@@ -69,7 +64,9 @@ export const env = {
   /**
    * Operational demo mode flag.
    */
-  DEMO_MODE: import.meta.env.MODE === 'development' || import.meta.env.VITE_DEMO_MODE === 'true',
+  DEMO_MODE: import.meta.env.VITE_DEMO_MODE !== undefined 
+    ? (import.meta.env.VITE_DEMO_MODE === 'true' || import.meta.env.VITE_DEMO_MODE === true)
+    : true,
 } as const;
 
 export default env;

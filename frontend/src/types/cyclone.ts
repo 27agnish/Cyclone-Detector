@@ -39,6 +39,8 @@ export interface CycloneSummary {
   is_active: boolean;
   estimated_landfall_time?: string;
   estimated_landfall_location?: string;
+  estimated_risk_score?: number;
+  estimated_risk_category?: RiskLevel;
 }
 
 export interface CycloneDetectionResponse {
@@ -180,3 +182,69 @@ export interface AIResponse {
   recommended_actions: string[];
   disclaimer: string;
 }
+
+export interface HealthCheckResponse {
+  status: string;
+  service: string;
+  version: string;
+  timestamp: string;
+  demo_mode: boolean;
+  refresh_interval_minutes: number;
+  services: {
+    database: string;
+    gemini: string;
+    cyclone_data: string;
+    earth_engine: string;
+    google_maps: string;
+  };
+}
+
+export interface HazardFactorBreakdown {
+  wind_hazard_score: number;
+  storm_surge_score: number;
+  rainfall_flood_score: number;
+  coastal_proximity_score: number;
+  elevation_vulnerability_score: number;
+  asset_fragility_score: number;
+}
+
+export interface AssetRiskDetail {
+  asset_id: string;
+  name: string;
+  asset_type: string;
+  latitude: number;
+  longitude: number;
+  risk_score: number;
+  risk_category: RiskLevel;
+  breakdown: HazardFactorBreakdown;
+  recommended_action: string;
+}
+
+export interface RiskAssessmentResponse {
+  cyclone_id: string;
+  overall_cyclone_risk_score: number;
+  overall_risk_category: RiskLevel;
+  score_label: string;
+  calculated_at: string;
+  model_type: string;
+  critical_count: number;
+  high_count: number;
+  moderate_count: number;
+  low_count: number;
+  top_vulnerable_assets: AssetRiskDetail[];
+  disclaimer: string;
+}
+
+export interface LandfallRiskBreakdown {
+  cyclone_id: string;
+  landfall_sector: string;
+  district: string;
+  expected_wind_speed: number;
+  expected_storm_surge_m: number;
+  risk_tier: string;
+  coastal_saline_inundation_risk: string;
+  estuary_backflow_risk: string;
+  source_label: string;
+  disclaimer: string;
+}
+

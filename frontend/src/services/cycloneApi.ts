@@ -1,7 +1,21 @@
 import { apiClient } from './api';
-import { CycloneSummary, CycloneDetail, ForecastCone, LandfallInfo, LandfallZone, PopulationExposure, CycloneDetectionResponse } from '../types/cyclone';
+import { 
+  CycloneSummary, 
+  CycloneDetail, 
+  ForecastCone, 
+  LandfallInfo, 
+  LandfallZone, 
+  PopulationExposure, 
+  CycloneDetectionResponse,
+  HealthCheckResponse
+} from '../types/cyclone';
 
 export const cycloneApi = {
+  getHealth: async (): Promise<HealthCheckResponse> => {
+    const res = await apiClient.get<HealthCheckResponse>('/health');
+    return res.data;
+  },
+
   getActiveCyclones: async (): Promise<CycloneSummary[]> => {
     const res = await apiClient.get<CycloneSummary[]>('/cyclones/active');
     return res.data;

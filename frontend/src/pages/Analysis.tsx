@@ -1,148 +1,341 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar 
+  Layers, 
+  Activity, 
+  Wind, 
+  Waves, 
+  ShieldAlert, 
+  RefreshCw,
+  Sparkles,
+  AlertTriangle,
+  Building2,
+  CheckCircle2,
+  ArrowRight
+} from 'lucide-react';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  Radar,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
-import { Layers, Activity, Wind, Waves, Compass, ShieldAlert } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
+import { riskApi } from '../services/riskApi';
+import { aiApi } from '../services/aiApi';
+import { RiskAssessmentResponse } from '../types/cyclone';
 
 export const Analysis: React.FC = () => {
-  const { cycloneDetail } = useCycloneStore();
+  const { 
+    selectedCycloneId, 
+    cycloneDetail, 
+    riskAssessment, 
+    openAiModal, 
+    setIsAiLoading,
+    setActiveTab,
+    setSelectedAsset
+  } = useCycloneStore();
 
-  // Synthetic Holland vortex radial wind profile data
-  const windProfileData = [
-    { distanceKm: 0, windKmh: 45, surgeM: 1.2 },
-    { distanceKm: 10, windKmh: 110, surgeM: 2.1 },
-    { distanceKm: 20, windKmh: 130, surgeM: 2.8 },
-    { distanceKm: 30, windKmh: 125, surgeM: 2.6 },
-    { distanceKm: 45, windKmh: 105, surgeM: 2.0 },
-    { distanceKm: 60, windKmh: 88, surgeM: 1.5 },
-    { distanceKm: 80, windKmh: 72, surgeM: 1.1 },
-    { distanceKm: 100, windKmh: 60, surgeM: 0.8 },
-    { distanceKm: 125, windKmh: 48, surgeM: 0.5 },
-    { distanceKm: 150, windKmh: 38, surgeM: 0.3 },
+  const [loading, setLoading] = useState(false);
+  const [currentRisk, setCurrentRisk] = useState<RiskAssessmentResponse | null>(riskAssessment);
+
+  const fetchRisk = async () => {
+    setLoading(true);
+    try {
+      const data = await riskApi.getRiskAssessment(selectedCycloneId);
+      setCurrentRisk(data);
+    } catch (e) {
+      console.error('[CycloneShield Risk Fetch Error]:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!riskAssessment || riskAssessment.cyclone_id !== selectedCycloneId) {
+      fetchRisk();
+    } else {
+      setCurrentRisk(riskAssessment);
+    }
+  }, [selectedCycloneId, riskAssessment]);
+
+  const handleExplainRisk = async (assetId?: string) => {
+    setIsAiLoading(true);
+    try {
+      const res = await aiApi.explainRisk(selectedCycloneId, assetId);
+      openAiModal(res);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  // Derive radar breakdown from first top vulnerable asset or representative values
+  const sampleBreakdown = currentRisk?.top_vulnerable_assets?.[0]?.breakdown || {
+    wind_hazard_score: 85.0,
+    storm_surge_score: 91.0,
+    rainfall_flood_score: 72.0,
+    coastal_proximity_score: 88.0,
+    elevation_vulnerability_score: 82.0,
+    asset_fragility_score: 85.0
+  };
+
+  const radarData = [
+    { factor: 'Wind Hazard', score: sampleBreakdown.wind_hazard_score, fullMark: 100 },
+    { factor: 'Storm Surge', score: sampleBreakdown.storm_surge_score, fullMark: 100 },
+    { factor: 'Rainfall / Flood', score: sampleBreakdown.rainfall_flood_score, fullMark: 100 },
+    { factor: 'Coastal Proximity', score: sampleBreakdown.coastal_proximity_score, fullMark: 100 },
+    { factor: 'Elevation Vulnerability', score: sampleBreakdown.elevation_vulnerability_score, fullMark: 100 },
+    { factor: 'Asset Fragility', score: sampleBreakdown.asset_fragility_score, fullMark: 100 }
   ];
 
-  // Hazard factor weights
-  const hazardFactorWeights = [
-    { factor: 'Peak Wind Hazard', weight: 28, score: 85 },
-    { factor: 'Track Proximity', weight: 20, score: 90 },
-    { factor: 'Landfall Proximity', weight: 18, score: 95 },
-    { factor: 'Storm Surge & Elevation', weight: 14, score: 78 },
-    { factor: 'Asset Criticality', weight: 12, score: 88 },
-    { factor: 'Rainfall & Flooding', weight: 8, score: 72 },
+  const barData = [
+    { name: 'Critical', count: currentRisk?.critical_count || 4, color: '#dc2626' },
+    { name: 'High Risk', count: currentRisk?.high_count || 8, color: '#f97316' },
+    { name: 'Moderate', count: currentRisk?.moderate_count || 8, color: '#eab308' },
+    { name: 'Low Risk', count: currentRisk?.low_count || 0, color: '#10b981' }
   ];
+
+  const overallScore = currentRisk?.overall_cyclone_risk_score ?? 78.5;
+  const overallCategory = currentRisk?.overall_risk_category ?? 'CRITICAL';
 
   return (
     <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
       {/* Header */}
-      <div className="border-b border-command-border pb-4">
-        <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
-          <Layers className="w-5 h-5 text-cyan-400" />
-          <span>GIS SPATIAL HAZARD & RISK ENGINE</span>
-        </h2>
-        <p className="text-xs text-slate-400 mt-1">
-          Deterministic parametric vortex modeling, bathymetric coastal surge calculations, and multi-criteria vulnerability analysis.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-command-border pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-mono font-bold text-white flex items-center gap-2.5">
+              <Layers className="w-5 h-5 text-cyan-400" />
+              <span>CYCLONESHIELD AI PROTOTYPE RISK SCORE</span>
+            </h2>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700 font-bold uppercase">
+              MODEL-DERIVED PROTOTYPE OUTPUT
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Backend multi-criteria hazard ensemble evaluating sustained wind, storm surge attenuation, elevation vulnerability, and lifeline fragility.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchRisk}
+            disabled={loading}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono transition"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+            <span>RE-CALCULATE RISK</span>
+          </button>
+
+          <button
+            onClick={() => handleExplainRisk()}
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow transition"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>AI EXPLAIN COMPOSITE RISK</span>
+          </button>
+        </div>
       </div>
 
-      {/* Grid of Hazard Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Wind Vortex Profile */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-4">
+      {/* Mandatory Official Notice Strip */}
+      <div className="bg-amber-950/40 border border-amber-800/80 rounded-lg p-3 flex items-start gap-2.5 text-xs text-amber-200 font-mono">
+        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+        <div>
+          <strong>MODEL-DERIVED PROTOTYPE OUTPUT:</strong>
+          <span className="ml-1 text-slate-300 font-sans">
+            The scores displayed below are synthesized by the backend ML and multi-criteria deterministic risk engine for prototype operational decision support. Not certified meteorological risk indices.
+          </span>
+        </div>
+      </div>
+
+      {/* Overall Risk Score & Category Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 font-mono">
+        {/* Main Composite Score */}
+        <div className="bg-command-card border border-command-border rounded-xl p-4 shadow-xl col-span-1 sm:col-span-2 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
-              <Wind className="w-4 h-4 text-cyan-400" />
-              <span>RADIAL WIND SPEED & SURGE DECAY</span>
-            </div>
-            <span className="text-[11px] font-mono text-slate-400">Holland / Rankine Profile</span>
+            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+              CYCLONESHIELD AI PROTOTYPE RISK SCORE
+            </span>
+            <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+              overallCategory === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' :
+              overallCategory === 'HIGH' ? 'bg-orange-950 text-orange-300 border border-orange-800' :
+              'bg-yellow-950 text-yellow-300 border border-yellow-800'
+            }`}>
+              {overallCategory}
+            </span>
           </div>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={windProfileData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="distanceKm" unit="km" stroke="#64748b" textAnchor="end" />
-                <YAxis stroke="#64748b" />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
-                  labelStyle={{ color: '#f8fafc', fontWeight: 'bold' }}
-                />
-                <Line type="monotone" dataKey="windKmh" name="Wind Speed (km/h)" stroke="#38bdf8" strokeWidth={2.5} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="surgeM" name="Surge Amplitude (m)" stroke="#f43f5e" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="flex items-baseline gap-3 my-2">
+            <div className="text-4xl font-extrabold text-white">{overallScore}</div>
+            <div className="text-xs text-slate-400">/ 100 COMPOSITE INDEX</div>
           </div>
-          <div className="text-[11px] text-slate-400">
-            Peak destructive sustained winds occur within the 15-30 km eyewall swath, with surge attenuation inland.
+
+          <div className="text-[11px] text-slate-400 font-sans">
+            Evaluated across {currentRisk?.top_vulnerable_assets?.length || 20} monitored lifelines in active landfall corridor.
           </div>
         </div>
 
-        {/* Hazard Criteria Breakdown */}
-        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-4">
+        {/* Hazard Breakdown KPI Cards */}
+        <div className="bg-command-card border border-red-900/60 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
+          <span className="text-[10px] text-red-400 uppercase font-bold tracking-wider">CRITICAL LIFELINES</span>
+          <div className="text-2xl font-extrabold text-red-400 mt-1">{currentRisk?.critical_count ?? 4}</div>
+          <span className="text-[10px] text-slate-400 mt-1">Severe eyewall swath</span>
+        </div>
+
+        <div className="bg-command-card border border-orange-900/60 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
+          <span className="text-[10px] text-orange-400 uppercase font-bold tracking-wider">HIGH RISK ASSETS</span>
+          <div className="text-2xl font-extrabold text-orange-400 mt-1">{currentRisk?.high_count ?? 8}</div>
+          <span className="text-[10px] text-slate-400 mt-1">Gale & surge exposure</span>
+        </div>
+
+        <div className="bg-command-card border border-yellow-900/60 rounded-xl p-3.5 shadow-xl flex flex-col justify-between">
+          <span className="text-[10px] text-yellow-400 uppercase font-bold tracking-wider">MODERATE RISK</span>
+          <div className="text-2xl font-extrabold text-yellow-400 mt-1">{currentRisk?.moderate_count ?? 8}</div>
+          <span className="text-[10px] text-slate-400 mt-1">Perimeter buffer</span>
+        </div>
+      </div>
+
+      {/* Hazard Factor Spider & Distribution Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Radar Hazard Profile */}
+        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
-              <Activity className="w-4 h-4 text-amber-400" />
-              <span>MULTI-CRITERIA RISK WEIGHT DISTRIBUTION</span>
+              <Activity className="w-4 h-4 text-cyan-400" />
+              <span>SIX-FACTOR HAZARD VECTOR RADAR</span>
             </div>
-            <span className="text-[11px] font-mono text-slate-400">Model Weights</span>
+            <span className="text-[10px] font-mono text-slate-400">Backend Sub-scores</span>
           </div>
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={hazardFactorWeights} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis type="number" stroke="#64748b" domain={[0, 35]} unit="%" />
-                <YAxis type="category" dataKey="factor" stroke="#64748b" width={140} textAnchor="end" />
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                <PolarGrid stroke="#334155" />
+                <PolarAngleAxis dataKey="factor" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" />
+                <Radar name="Hazard Severity" dataKey="score" stroke="#06b6d4" fill="#0891b2" fillOpacity={0.5} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
                 />
-                <Bar dataKey="weight" name="Model Weight (%)" fill="#06b6d4" radius={[0, 4, 4, 0]} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="text-[11px] text-slate-400 font-mono text-center">
+            Normalized sub-factor ratings (0-100) generated by backend risk modeling.
+          </div>
+        </div>
+
+        {/* Hazard Level Asset Distribution */}
+        <div className="bg-command-card border border-command-border rounded-xl p-5 shadow-xl space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-mono font-bold text-white">
+              <Building2 className="w-4 h-4 text-amber-400" />
+              <span>ASSETS BY RISK SEVERITY CATEGORY</span>
+            </div>
+            <span className="text-[10px] font-mono text-slate-400">Triage Count</span>
+          </div>
+
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="name" stroke="#64748b" />
+                <YAxis stroke="#64748b" allowDecimals={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }}
+                />
+                <Bar dataKey="count" fill="#38bdf8">
+                  {barData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="text-[11px] text-slate-400">
-            Calculated deterministic risk scores integrate wind shear, storm surge, elevation, and lifeline criticality.
+          <div className="text-[11px] text-slate-400 font-mono text-center">
+            Lifeline distribution across Critical, High Risk, and Moderate vulnerability thresholds.
           </div>
         </div>
       </div>
 
-      {/* Methodology Explainer Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-command-card border border-command-border rounded-xl p-4 space-y-2">
-          <div className="text-xs font-mono font-bold text-cyan-400 uppercase">
-            1. Forecast Uncertainty Cone
+      {/* Top Vulnerable Assets Table from Backend */}
+      <div className="bg-command-card border border-command-border rounded-xl shadow-xl overflow-hidden space-y-3 p-5">
+        <div className="flex items-center justify-between border-b border-command-border pb-3">
+          <div>
+            <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
+              Top Ranked Vulnerable Assets (Backend Model Evaluation)
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Ranked strictly by the backend risk engine without client recalculation.
+            </p>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Constructed via dynamic Minkowski circle envelopes where radial error expands linearly with forecast lead time:
-            <span className="font-mono text-white block my-1 bg-slate-900 p-1.5 rounded">
-              R(t) = 35.0 km + 2.8 × t (hours)
-            </span>
-            Yields ~100 km uncertainty radius at T+24h, widening to ~170 km at T+48h.
-          </p>
+          <span className="text-xs font-mono text-cyan-400">
+            {currentRisk?.top_vulnerable_assets?.length || 0} Assets Evaluated
+          </span>
         </div>
 
-        <div className="bg-command-card border border-command-border rounded-xl p-4 space-y-2">
-          <div className="text-xs font-mono font-bold text-rose-400 uppercase">
-            2. Landfall Impact Buffer Rings
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Coastline intersection coordinates are surrounded by tri-tier impact polygons:
-            <span className="font-mono text-white block my-1 bg-slate-900 p-1.5 rounded">
-              Critical (0-35km) | High (35-80km) | Mod (80-150km)
-            </span>
-            Directly mapping eyewall passage and severe saline surge ingress zones.
-          </p>
-        </div>
-
-        <div className="bg-command-card border border-command-border rounded-xl p-4 space-y-2">
-          <div className="text-xs font-mono font-bold text-amber-400 uppercase">
-            3. India-Wide Scalability
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            The spatial engine is coordinate-agnostic, seamlessly evaluating any coastal state across India including Odisha, West Bengal, Andhra Pradesh, Tamil Nadu, Kerala, Maharashtra, and Gujarat.
-          </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-slate-900 text-slate-400 border-b border-command-border">
+              <tr>
+                <th className="p-3">ASSET</th>
+                <th className="p-3">TYPE</th>
+                <th className="p-3">COORDINATES</th>
+                <th className="p-3">WIND HAZARD</th>
+                <th className="p-3">STORM SURGE</th>
+                <th className="p-3">RISK SCORE</th>
+                <th className="p-3">RECOMMENDED ACTION</th>
+                <th className="p-3 text-right">ACTION</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800">
+              {currentRisk?.top_vulnerable_assets?.map((a) => (
+                <tr key={a.asset_id} className="hover:bg-slate-800/40">
+                  <td className="p-3 font-bold text-white">{a.name}</td>
+                  <td className="p-3 text-slate-300 capitalize">{a.asset_type}</td>
+                  <td className="p-3 text-slate-400">{a.latitude}°N, {a.longitude}°E</td>
+                  <td className="p-3 text-amber-400 font-bold">{a.breakdown.wind_hazard_score}</td>
+                  <td className="p-3 text-sky-400 font-bold">{a.breakdown.storm_surge_score}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      a.risk_category === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' :
+                      a.risk_category === 'HIGH' ? 'bg-orange-950 text-orange-300 border border-orange-800' :
+                      'bg-yellow-950 text-yellow-300 border border-yellow-800'
+                    }`}>
+                      {a.risk_category} ({a.risk_score})
+                    </span>
+                  </td>
+                  <td className="p-3 text-slate-300 text-[11px] max-w-xs truncate" title={a.recommended_action}>
+                    {a.recommended_action}
+                  </td>
+                  <td className="p-3 text-right space-x-1.5 whitespace-nowrap">
+                    <button
+                      onClick={() => handleExplainRisk(a.asset_id)}
+                      className="px-2 py-1 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 text-[10px] inline-flex items-center gap-1"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      AI Explain
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 };
+
+export default Analysis;

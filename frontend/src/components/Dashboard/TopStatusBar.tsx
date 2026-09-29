@@ -6,14 +6,20 @@ import {
   Compass, 
   Sparkles, 
   AlertTriangle, 
-  Radio, 
+  Bell, 
+  Search,
   FileText,
   Clock,
-  Key
+  Key,
+  X,
+  CheckCircle2,
+  Settings as SettingsIcon,
+  ChevronDown
 } from 'lucide-react';
 import { useCycloneStore } from '../../store/cycloneStore';
 import { aiApi } from '../../services/aiApi';
 import { ApiStatusModal } from './ApiStatusModal';
+import { env } from '../../config/env';
 
 export const TopStatusBar: React.FC = () => {
   const {
@@ -26,10 +32,17 @@ export const TopStatusBar: React.FC = () => {
     lastUpdated,
     isLoading,
     openAiModal,
-    setIsAiLoading
+    setIsAiLoading,
+    setActiveTab,
+    notifications,
+    dismissNotification,
+    healthStatus
   } = useCycloneStore();
 
   const [apiStatusOpen, setApiStatusOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleAiImpactAnalysis = async () => {
     if (!cycloneDetail) return;
@@ -57,41 +70,154 @@ export const TopStatusBar: React.FC = () => {
     }
   };
 
+  // Filtered cyclones or shortcuts based on search
+  const filteredCyclones = activeCyclones.filter(c => 
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.basin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.estimated_landfall_location && c.estimated_landfall_location.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <>
-      <header className="w-full bg-command-surface border-b border-command-border px-4 py-2.5 shadow-md">
-        {/* Top Banner & Status */}
+      <header className="w-full bg-command-surface border-b border-command-border px-4 py-2 shadow-md z-20">
+        {/* Top Operational Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Left: Product Name, Tagline & Mode Status */}
+          {/* Left: Tagline & Status Indicators */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-extrabold text-base tracking-wider text-white">
-                    CYCLONESHIELD<span className="text-cyan-400"> AI</span>
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 font-semibold uppercase tracking-wider flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    {statusMessage}
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-800/80 text-amber-300">
-                    DEMO MODE — SIMULATED CYCLONE SCENARIO
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 font-sans hidden sm:block">
-                  From Cyclone Track to Infrastructure Action | Decision-Support Command Platform
-                </p>
-              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                {statusMessage}
+              </span>
+
+              {env.DEMO_MODE ? (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-800/80 text-amber-300 font-semibold flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3 text-amber-400" />
+                  DEMO MODE — SIMULATED CYCLONE SCENARIO
+                </span>
+              ) : (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-300 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  LIVE MODE — MONITORED OCEAN BASIN
+                </span>
+              )}
             </div>
+
+            <span className="text-slate-500 hidden lg:inline">|</span>
+
+            <span className="text-xs text-slate-400 hidden lg:inline font-sans">
+              "Predict the Path. Protect What Matters."
+            </span>
           </div>
 
-          {/* Right: Operational Controls & AI Actions */}
+          {/* Right: Search, Notifications, Selectors, AI Triggers */}
           <div className="flex items-center gap-2">
+            {/* Global Search Button */}
+            <div className="relative">
+              <button
+                onClick={() => setSearchOpen(!searchOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono transition"
+                title="Global Search"
+              >
+                <Search className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">SEARCH</span>
+              </button>
+
+              {searchOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-command-border rounded-xl shadow-2xl p-3 z-50 space-y-2 font-mono">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <span className="text-xs font-bold text-white">GLOBAL SEARCH</span>
+                    <button onClick={() => setSearchOpen(false)} className="text-slate-400 hover:text-white">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search cyclone, district, or sector..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    autoFocus
+                    className="w-full bg-slate-950 border border-slate-700 text-xs text-white px-2.5 py-1.5 rounded focus:outline-none focus:border-cyan-500"
+                  />
+                  <div className="max-h-48 overflow-y-auto space-y-1 text-xs">
+                    {filteredCyclones.map(c => (
+                      <button
+                        key={c.id}
+                        onClick={() => {
+                          selectCyclone(c.id);
+                          setSearchOpen(false);
+                        }}
+                        className="w-full text-left p-2 rounded hover:bg-slate-800 text-slate-200 flex justify-between items-center transition"
+                      >
+                        <span className="font-bold text-white">{c.name}</span>
+                        <span className="text-[10px] text-cyan-400">{c.category}</span>
+                      </button>
+                    ))}
+                    {filteredCyclones.length === 0 && (
+                      <div className="text-slate-400 text-[11px] p-2 text-center">No matching records found.</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Notifications Center */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifOpen(!notifOpen)}
+                className="relative p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition"
+                title="Operational Notifications"
+              >
+                <Bell className="w-3.5 h-3.5 text-slate-300" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white font-mono text-[9px] font-bold flex items-center justify-center animate-pulse">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+
+              {notifOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-command-border rounded-xl shadow-2xl p-3 z-50 space-y-2 font-mono">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <Bell className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>OPERATIONAL ALERTS ({notifications.length})</span>
+                    </span>
+                    <button onClick={() => setNotifOpen(false)} className="text-slate-400 hover:text-white">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto space-y-2 text-xs">
+                    {notifications.map(n => (
+                      <div key={n.id} className="p-2.5 rounded bg-slate-950/80 border border-slate-800 space-y-1 relative">
+                        <div className="flex justify-between items-start">
+                          <span className={`font-bold text-[11px] ${
+                            n.type === 'critical' ? 'text-red-400' :
+                            n.type === 'warning' ? 'text-amber-400' : 'text-cyan-400'
+                          }`}>
+                            {n.title}
+                          </span>
+                          <button 
+                            onClick={() => dismissNotification(n.id)}
+                            className="text-slate-500 hover:text-slate-300"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-slate-300 font-sans">{n.message}</p>
+                        <span className="text-[9px] text-slate-500 block">{n.timestamp}</span>
+                      </div>
+                    ))}
+                    {notifications.length === 0 && (
+                      <div className="text-slate-400 text-[11px] p-4 text-center">No active alerts.</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Active Cyclone Switcher */}
-            {activeCyclones.length > 1 && (
+            {activeCyclones.length > 0 && (
               <select
                 value={selectedCycloneId}
                 onChange={(e) => selectCyclone(e.target.value)}
@@ -105,32 +231,22 @@ export const TopStatusBar: React.FC = () => {
               </select>
             )}
 
-            {/* API Status Modal Trigger */}
-            <button
-              onClick={() => setApiStatusOpen(true)}
-              title="View API Connectivity & Status"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-700 font-mono text-xs transition"
-            >
-              <Key className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">API STATUS</span>
-            </button>
-
             {/* AI Impact Analysis Trigger */}
             <button
               onClick={handleAiImpactAnalysis}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-semibold shadow-md transition"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>AI IMPACT ANALYSIS</span>
+              <span className="hidden sm:inline">AI IMPACT BRIEFING</span>
             </button>
 
-            {/* AI Disaster Briefing Report */}
+            {/* Settings & API Health Shortcut */}
             <button
-              onClick={handleAiReport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-mono text-xs font-medium transition"
+              onClick={() => setActiveTab('settings')}
+              title="System Settings & Live Diagnostics"
+              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-700 transition"
             >
-              <FileText className="w-3.5 h-3.5 text-cyan-400" />
-              <span>DISASTER BRIEFING</span>
+              <SettingsIcon className="w-3.5 h-3.5" />
             </button>
 
             {/* Refresh Data Button */}
@@ -138,16 +254,16 @@ export const TopStatusBar: React.FC = () => {
               onClick={refreshAllData}
               disabled={isLoading}
               title="Refresh Cyclone Telemetry"
-              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition disabled:opacity-50"
+              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
             </button>
           </div>
         </div>
 
         {/* Live Cyclone Telemetry Strip */}
         {cycloneDetail && (
-          <div className="mt-2.5 pt-2 border-t border-command-border/80 flex flex-wrap items-center justify-between text-xs font-mono gap-3">
+          <div className="mt-2 pt-2 border-t border-command-border/80 flex flex-wrap items-center justify-between text-xs font-mono gap-3">
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-1.5 text-white">
                 <span className="text-slate-400">TARGET:</span>
@@ -183,7 +299,7 @@ export const TopStatusBar: React.FC = () => {
             <div className="flex items-center gap-3 text-slate-400 text-[11px]">
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3 text-slate-500" />
-                Last Data Update: <span className="text-slate-300">{lastUpdated}</span>
+                Last Update: <span className="text-slate-300">{lastUpdated}</span>
               </span>
             </div>
           </div>
@@ -195,3 +311,5 @@ export const TopStatusBar: React.FC = () => {
     </>
   );
 };
+
+export default TopStatusBar;

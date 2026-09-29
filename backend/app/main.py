@@ -7,8 +7,10 @@ backend_dir = Path(__file__).resolve().parent.parent
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
@@ -86,21 +88,65 @@ async def normalize_api_path(request: Request, call_next):
         if not path.startswith("/api/docs") and not path.startswith("/api/openapi.json") and not path.startswith("/api/health"):
             request.scope["path"] = "/api/v1" + path[4:]
     elif not path.startswith("/api"):
-        if path not in ("/health", "/health/"):
+        is_static = path.startswith("/assets") or path in ("/favicon.svg", "/icons.svg", "/favicon.ico", "/index.html", "/app", "/ui")
+        is_html = "text/html" in request.headers.get("accept", "")
+        if path not in ("/health", "/health/") and not is_static and not is_html:
             request.scope["path"] = f"/api/v1{path}"
     return await call_next(request)
+
+# Resolve frontend distribution directory (frontend/dist)
+frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+if not frontend_dist.exists():
+    frontend_dist = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
+# Mount frontend assets for same-port delivery (e.g. http://127.0.0.1:8000/assets/...)
+if frontend_dist.exists():
+    assets_dir = frontend_dist / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
 
 @app.get("/", tags=["System"])
 @app.get("/api", include_in_schema=False)
 @app.get("/api/v1", include_in_schema=False)
 @app.get("/api/index.py", include_in_schema=False)
-def root():
+def root(request: Request):
+    path = request.scope.get("path", "/")
+    accept = request.headers.get("accept", "")
+    index_file = frontend_dist / "index.html"
+    
+    # When accessed from a web browser requesting HTML, serve the frontend directly on this port
+    if path == "/" and "text/html" in accept and index_file.exists():
+        return FileResponse(str(index_file))
+
     return {
         "name": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "docs_url": "/api/docs",
         "health_url": f"{settings.API_V1_STR}/health"
     }
+
+@app.get("/index.html", include_in_schema=False)
+@app.get("/app", include_in_schema=False)
+@app.get("/ui", include_in_schema=False)
+def serve_app():
+    index_file = frontend_dist / "index.html"
+    if index_file.exists():
+        return FileResponse(str(index_file))
+    raise HTTPException(status_code=404, detail="Frontend build not found. Run 'npm run build' in frontend directory.")
+
+@app.get("/favicon.svg", include_in_schema=False)
+def serve_favicon():
+    fav = frontend_dist / "favicon.svg"
+    if fav.exists():
+        return FileResponse(str(fav))
+    raise HTTPException(status_code=404)
+
+@app.get("/icons.svg", include_in_schema=False)
+def serve_icons():
+    ic = frontend_dist / "icons.svg"
+    if ic.exists():
+        return FileResponse(str(ic))
+    raise HTTPException(status_code=404)
 
 # Health endpoint with safe service status reporting
 @app.get("/api/v1/health", tags=["Health"])
@@ -133,6 +179,16 @@ app.include_router(infra_router, prefix=settings.API_V1_STR)
 app.include_router(population_router, prefix=settings.API_V1_STR)
 app.include_router(maps_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
+
+# SPA fallback for browser client routes (e.g. /cyclones, /analysis, /landfall)
+@app.get("/{full_path:path}", include_in_schema=False)
+def spa_fallback(full_path: str, request: Request):
+    if full_path.startswith("api") or full_path.startswith("docs") or full_path in ("health", "openapi.json"):
+        raise HTTPException(status_code=404, detail="Not Found")
+    index_file = frontend_dist / "index.html"
+    if index_file.exists():
+        return FileResponse(str(index_file))
+    raise HTTPException(status_code=404, detail="Not Found")
 
 if __name__ == "__main__":
     import uvicorn

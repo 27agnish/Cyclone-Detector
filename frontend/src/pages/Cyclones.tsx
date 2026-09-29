@@ -105,17 +105,28 @@ export const Cyclones: React.FC = () => {
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                   <span className="text-[11px] text-slate-500 font-mono">
                     Source: {c.source}
                   </span>
-                  <button
-                    onClick={() => handleSelectAndInspect(c.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-semibold shadow transition"
-                  >
-                    <span>LOAD INTO COMMAND MAP</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={async () => {
+                        await selectCyclone(c.id);
+                        setActiveTab('cyclone-details');
+                      }}
+                      className="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 font-mono text-xs transition"
+                    >
+                      DOSSIER & CHARTS
+                    </button>
+                    <button
+                      onClick={() => handleSelectAndInspect(c.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-semibold shadow transition"
+                    >
+                      <span>LOAD TO MAP</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
