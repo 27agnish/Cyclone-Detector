@@ -1,12 +1,11 @@
 import React from 'react';
 import { useCycloneStore, TabType } from '../../store/cycloneStore';
+import groupIcon from '../../assets/cyclone-shield-group-icon.png';
 
 interface NavItem {
   id: TabType;
   label: string;
   icon: string;
-  badge?: string;
-  badgeColor?: 'cyan' | 'crimson' | 'amber' | 'emerald' | 'neutral';
 }
 
 interface NavSection {
@@ -20,16 +19,8 @@ export const Sidebar: React.FC = () => {
     setActiveTab, 
     isSidebarCollapsed, 
     toggleSidebar,
-    healthStatus,
-    activeCyclones,
-    selectedCycloneId,
-    riskAssessment
+    healthStatus
   } = useCycloneStore();
-
-  const selectedCyclone = activeCyclones.find(c => c.id === selectedCycloneId) || activeCyclones[0];
-  const severityScore = riskAssessment?.overall_cyclone_risk_score 
-    ? Math.round(riskAssessment.overall_cyclone_risk_score) 
-    : 88;
 
   const sections: NavSection[] = [
     {
@@ -41,91 +32,31 @@ export const Sidebar: React.FC = () => {
     {
       title: 'CYCLONE INTELLIGENCE',
       items: [
-        { 
-          id: 'cyclones', 
-          label: 'Active Cyclones', 
-          icon: 'cyclone', 
-          badge: `${activeCyclones.length || 3} ACTIVE`,
-          badgeColor: 'cyan'
-        },
-        { 
-          id: 'cyclone-details', 
-          label: 'Cyclone Details', 
-          icon: 'my_location', 
-          badge: selectedCyclone ? (selectedCyclone.name.startsWith('Cyclone') ? selectedCyclone.name.replace('Cyclone ', 'TC-') : `TC-${selectedCyclone.name}`) : 'TC-HELEN',
-          badgeColor: 'crimson'
-        }
+        { id: 'cyclones', label: 'Active Cyclones', icon: 'cyclone' },
+        { id: 'cyclone-details', label: 'Cyclone Details', icon: 'my_location' }
       ]
     },
     {
       title: 'RISK INTELLIGENCE',
       items: [
-        { 
-          id: 'analysis', 
-          label: 'Risk Analysis', 
-          icon: 'gshield', 
-          badge: `CRITICAL ${severityScore}`,
-          badgeColor: 'crimson'
-        },
-        { 
-          id: 'landfall', 
-          label: 'Landfall Analysis', 
-          icon: 'adjust', 
-          badge: 'T-14h',
-          badgeColor: 'amber'
-        },
-        { 
-          id: 'infrastructure', 
-          label: 'Infrastructure', 
-          icon: 'domain', 
-          badge: '142 ASSETS',
-          badgeColor: 'neutral'
-        },
-        { 
-          id: 'population', 
-          label: 'Population Exposure', 
-          icon: 'groups', 
-          badge: '1.4M',
-          badgeColor: 'cyan'
-        }
+        { id: 'analysis', label: 'Risk Analysis', icon: 'gshield' },
+        { id: 'landfall', label: 'Landfall Analysis', icon: 'adjust' },
+        { id: 'infrastructure', label: 'Infrastructure', icon: 'domain' },
+        { id: 'population', label: 'Population Exposure', icon: 'groups' }
       ]
     },
     {
       title: 'SATELLITE & AI',
       items: [
-        { 
-          id: 'satellite', 
-          label: 'Satellite Intelligence', 
-          icon: 'satellite_alt', 
-          badge: 'INSAT-3D',
-          badgeColor: 'emerald'
-        },
-        { 
-          id: 'ai', 
-          label: 'AI Intelligence', 
-          icon: 'auto_awesome', 
-          badge: 'FASTAPI',
-          badgeColor: 'cyan'
-        }
+        { id: 'satellite', label: 'Satellite Intelligence', icon: 'satellite_alt' },
+        { id: 'ai', label: 'AI Intelligence', icon: 'auto_awesome' }
       ]
     },
     {
       title: 'RESPONSE',
       items: [
-        { 
-          id: 'emergency', 
-          label: 'Emergency Priorities', 
-          icon: 'notification_important', 
-          badge: '7 URGENT',
-          badgeColor: 'crimson'
-        },
-        { 
-          id: 'reports', 
-          label: 'Reports', 
-          icon: 'description', 
-          badge: 'PDF/JSON',
-          badgeColor: 'neutral'
-        }
+        { id: 'emergency', label: 'Emergency Priorities', icon: 'notification_important' },
+        { id: 'reports', label: 'Reports', icon: 'description' }
       ]
     },
     {
@@ -135,21 +66,6 @@ export const Sidebar: React.FC = () => {
       ]
     }
   ];
-
-  const getBadgeStyle = (color?: string) => {
-    switch (color) {
-      case 'crimson':
-        return 'bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold';
-      case 'amber':
-        return 'bg-amber-950/60 border border-amber-500/40 text-amber-300 font-bold';
-      case 'emerald':
-        return 'bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 font-bold';
-      case 'cyan':
-        return 'bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 font-bold';
-      default:
-        return 'bg-surface-container-highest border border-outline-variant/30 text-on-surface-variant font-medium';
-    }
-  };
 
   return (
     <aside 
@@ -161,8 +77,12 @@ export const Sidebar: React.FC = () => {
         {/* Brand Header */}
         <div className="p-3 md:p-space-lg flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant/20">
           <div className="flex items-center gap-space-md overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-primary-container flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.4)] shrink-0">
-              <span className="material-symbols-outlined text-[20px] text-surface-container-lowest font-bold">shield</span>
+            <div className="w-8 h-8 md:w-9 md:h-9 shrink-0 flex items-center justify-center">
+              <img 
+                src={groupIcon} 
+                alt="CycloneShield AI Logo" 
+                className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]" 
+              />
             </div>
             {!isSidebarCollapsed && (
               <div className="hidden md:flex flex-col min-w-0">
@@ -204,7 +124,7 @@ export const Sidebar: React.FC = () => {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`w-full flex items-center justify-center md:justify-between px-2 md:px-space-sm py-space-xs rounded-lg transition-all group ${
+                    className={`w-full flex items-center justify-center md:justify-start px-2 md:px-space-sm py-space-xs rounded-lg transition-all group ${
                       isActive
                         ? 'bg-gradient-to-r from-surface-container-high to-surface-container text-primary font-semibold shadow-[inset_3px_0_0_0_#00e5ff] border-l border-primary-container/60'
                         : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
@@ -225,11 +145,6 @@ export const Sidebar: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    {!isSidebarCollapsed && item.badge && (
-                      <span className={`hidden xl:inline-block font-badge text-badge px-space-xs py-space-2xs rounded shrink-0 ${getBadgeStyle(item.badgeColor)}`}>
-                        {item.badge}
-                      </span>
-                    )}
                   </button>
                 );
               })}
@@ -240,18 +155,15 @@ export const Sidebar: React.FC = () => {
 
       {/* Dock Bottom: Live Mode & Commander Profile */}
       <div className="p-2 md:p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
-        {!isSidebarCollapsed && (
-          <div className="hidden md:flex items-center gap-space-xs bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30">
-            <button className="flex-1 flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 font-badge text-badge uppercase font-bold shadow-[0_0_10px_rgba(0,229,255,0.25)]" type="button">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>
-              LIVE MODE
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded text-outline hover:text-on-surface transition-colors font-badge text-badge uppercase" type="button">
-              <span className="w-1.5 h-1.5 rounded-full bg-outline"></span>
-              SIMULATION
-            </button>
+        <div className="flex items-center bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30">
+          <div 
+            className="w-full flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 font-badge text-badge uppercase font-bold shadow-[0_0_10px_rgba(0,229,255,0.25)] select-none"
+            title="SYSTEM OPERATIONAL: LIVE MODE"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>
+            {!isSidebarCollapsed && <span>LIVE MODE</span>}
           </div>
-        )}
+        </div>
         
         <div className={`flex items-center justify-center md:justify-between text-outline font-data-label text-[10px] ${isSidebarCollapsed ? 'justify-center' : 'px-space-xs py-space-2xs'}`}>
           <span className="flex items-center gap-space-2xs">

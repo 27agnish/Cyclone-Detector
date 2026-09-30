@@ -51,7 +51,6 @@ export const Analysis: React.FC = () => {
   const [generatingResponsePlan, setGeneratingResponsePlan] = useState(false);
   const [exportingGeoJson, setExportingGeoJson] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showSkeleton, setShowSkeleton] = useState(false);
   const toolbarScrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToolbar = (direction: 'left' | 'right') => {
@@ -291,15 +290,6 @@ export const Analysis: React.FC = () => {
               <Download className="w-4 h-4 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform" />
               <span className="text-white">{exportingGeoJson ? 'EXPORTING...' : 'EXPORT RISK GEOJSON'}</span>
             </button>
-
-            <button
-              type="button"
-              data-testid="btn-simulate-latency"
-              onClick={() => setShowSkeleton(!showSkeleton)}
-              className="shrink-0 whitespace-nowrap px-3.5 py-2 rounded-lg bg-[#1e293b] hover:bg-[#152037] text-slate-300 border border-[#334155] text-[11px] font-telemetry uppercase transition-colors cursor-pointer"
-            >
-              {showSkeleton ? 'HIDE SKELETON' : 'DEV: SIMULATE LATENCY'}
-            </button>
           </div>
 
           {/* Right horizontal scroll affordance for smaller viewports */}
@@ -360,19 +350,8 @@ export const Analysis: React.FC = () => {
         </div>
       </div>
 
-      {/* Skeleton Loading State */}
-      {showSkeleton ? (
-        <div className="p-6 space-y-6">
-          <div className="h-64 bg-[#0d1527] rounded-xl animate-pulse" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="h-40 bg-[#0d1527] rounded-xl animate-pulse" />
-            <div className="h-40 bg-[#0d1527] rounded-xl animate-pulse" />
-            <div className="h-40 bg-[#0d1527] rounded-xl animate-pulse" />
-          </div>
-        </div>
-      ) : (
-        /* Main Grid Content Area */
-        <div className="p-4 lg:p-6 space-y-6">
+      {/* Main Grid Content Area */}
+      <div className="p-4 lg:p-6 space-y-6">
           {/* Hero Risk Showcase: Composite Dial Card + Telemetry Dynamics */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             {/* Primary Composite Dial Card (4 Cols) */}
@@ -1050,7 +1029,6 @@ export const Analysis: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
 
       {/* Interactive Slide-Out AI Explain Panel / Drawer */}
       <div 
