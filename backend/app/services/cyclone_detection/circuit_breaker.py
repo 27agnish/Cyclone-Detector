@@ -1,6 +1,6 @@
 import time
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from datetime import datetime, timezone
 
 logger = logging.getLogger("cyclone.ingest.circuit_breaker")
@@ -56,7 +56,7 @@ class CircuitBreaker:
         self.last_error_message = None
         self.last_success_time = datetime.now(timezone.utc)
 
-    def record_failure(self, error: Exception | str):
+    def record_failure(self, error: Union[Exception, str]):
         """Records an upstream failure, increments counter, and opens circuit if threshold is reached."""
         self.failure_count += 1
         self.last_failure_time = time.time()
