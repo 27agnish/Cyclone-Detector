@@ -12,21 +12,22 @@ router = APIRouter(prefix="/cyclones", tags=["Cyclones"])
 
 @router.get("/health", tags=["Cyclones"])
 @router.get("/health/", tags=["Cyclones"], include_in_schema=False)
-def cyclone_service_health():
+async def cyclone_service_health():
     """
     Diagnostic health check for the cyclone detection & tracking data services.
     Reports operational status of providers, active cyclones count, and cache status.
     """
     try:
-        active = detector_service.detect_active_cyclones()
+        active = await detector_service.detect_active_cyclones_async()
         return {
             "status": "operational",
             "service": "Cyclone Detection Service",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": detector_service.last_updated_iso,
+            "cache_status": detector_service.cache_status,
             "active_cyclones_count": len(active),
             "demo_mode": settings.DEMO_MODE,
             "data_available": True,
-            "providers": [p.provider_name for p in detector_service.providers],
+            "providers": detector_service.get_providers_health(),
             "active_cyclones": [c["name"] if isinstance(c, dict) else c.name for c in active],
         }
     except Exception as e:
@@ -46,7 +47,8 @@ def get_all_cyclones():
 @router.get("/active", response_model=List[CycloneSummary])
 def get_active_cyclones():
     """Returns currently active cyclonic storms in monitored ocean basins."""
-    active = [c for c in detector_service.detect_active_cyclones() if c.is_active]
+    cyclones = detector_service.detect_active_cyclones()
+    active = [c for c in cyclones if c.is_active]
     return active
 
 @router.get("/detect", response_model=CycloneDetectionResponse)
@@ -68,9 +70,11 @@ def refresh_cyclone_data():
     results = detector_service.refresh()
     return {
         "status": "DATA UPDATED",
-        "timestamp": results[0].last_updated if results else "N/A",
+        "timestamp": detector_service.last_updated_iso,
+        "cache_status": detector_service.cache_status,
         "cyclones_count": len(results),
-        "cyclones": results
+        "cyclones": results,
+        "providers": detector_service.get_providers_health()
     }
 
 @router.get("/{cyclone_id}", response_model=CycloneDetail)

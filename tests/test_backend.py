@@ -141,3 +141,33 @@ def test_ai_fallback_and_emergency_priorities():
     pdata = plan_resp.json()
     assert len(pdata["priorities"]) >= 5
     assert pdata["priorities"][0]["rank"] == 1
+
+    # Test Sentinel-1 SAR & Gemini reconnaissance endpoint
+    sar_resp = client.post(
+        "/api/v1/ai/analyze-satellite",
+        json={
+            "cyclone_id": "cyclone_dana",
+            "cyclone_name": "Cyclone DANA",
+            "latitude": 20.85,
+            "longitude": 86.90,
+            "wind_speed": 120.0,
+            "pressure": 976.0,
+            "landfall_location": "Bhitarkanika & Dhamra, Odisha",
+            "satellite_source": "Sentinel-1A C-Band SAR",
+            "analysis_type": "SAR_RECONNAISSANCE",
+        },
+    )
+    assert sar_resp.status_code == 200
+    sdata = sar_resp.json()
+    assert sdata["cyclone_id"] == "cyclone_dana"
+    assert "sar_data" in sdata and sdata["sar_data"] is not None
+    assert sdata["sar_data"]["flood_inundation_sqkm"] > 0
+    assert len(sdata["sar_data"]["submerged_infrastructure"]) >= 1
+    assert len(sdata["sar_data"]["road_bridge_impact"]) >= 1
+    assert len(sdata["sar_data"]["detected_changes"]) >= 1
+    assert len(sdata["sar_data"]["recommended_investigation_areas"]) >= 1
+
+    # Test validation error for empty cyclone_id
+    bad_sar = client.post("/api/v1/ai/analyze-satellite", json={"cyclone_id": "   "})
+    assert bad_sar.status_code == 400
+

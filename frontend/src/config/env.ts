@@ -58,6 +58,14 @@ export const env = {
   DEMO_MODE: import.meta.env.VITE_DEMO_MODE !== undefined 
     ? (import.meta.env.VITE_DEMO_MODE === 'true' || import.meta.env.VITE_DEMO_MODE === true)
     : true,
+
+  /**
+   * Flag to control visibility of simulated demo states ("API Pipeline & Fallback States" section).
+   * Defaults to false so the user-facing dashboard opens straight onto active cyclone cards and map.
+   */
+  SHOW_FALLBACK_DEMOS: typeof window !== 'undefined'
+    ? (localStorage.getItem('SHOW_FALLBACK_DEMOS') === 'true' || import.meta.env.VITE_SHOW_FALLBACK_DEMOS === 'true')
+    : false,
 } as const;
 
 export default env;

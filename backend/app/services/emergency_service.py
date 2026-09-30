@@ -38,18 +38,34 @@ class EmergencyPriorityEngine:
             )
             rank += 1
 
-        # Add coastal population evacuation priority
-        priorities.insert(2, EmergencyPriorityItem(
-            rank=3,
-            asset_id="pop_dhamra_coastal",
-            name="Dhamra-Bhitarkanika Coastal Lowland Settlement",
-            type="Coastal Population Zone",
-            district="Bhadrak / Kendrapara",
-            risk_level="CRITICAL",
-            urgency="IMMEDIATE (0-6H)",
-            priority_action="Complete targeted evacuation of 48,000 residents in kutchha houses to multi-purpose cyclone shelters; enforce fishing vessel mooring.",
-            rationale="Vulnerable low-lying saline marsh settlements within 25km of direct eyewall landfall zone."
-        ))
+        is_gujarat = "biparjoy" in (cyclone_id or "").lower() or any(
+            a.state.lower() == "gujarat" for a in sorted_assets
+        )
+        if is_gujarat:
+            priorities.insert(2, EmergencyPriorityItem(
+                rank=3,
+                asset_id="pop_jakhau_coastal",
+                name="Jakhau–Mandvi Coastal Lowland & Salt-Pan Settlements",
+                type="Coastal Population Zone",
+                district="Kutch / Devbhumi Dwarka",
+                risk_level="CRITICAL",
+                urgency="IMMEDIATE (0-6H)",
+                priority_action="Complete targeted evacuation of 52,000 coastal residents and salt-pan workers (Agariyas) to GSDMA multi-purpose cyclone shelters; enforce port berth suspension at Jakhau and Mandvi.",
+                rationale="Vulnerable low-lying intertidal salt flats and coastal settlements within 25km of direct eyewall landfall zone."
+            ))
+        else:
+            # Add coastal population evacuation priority
+            priorities.insert(2, EmergencyPriorityItem(
+                rank=3,
+                asset_id="pop_dhamra_coastal",
+                name="Dhamra-Bhitarkanika Coastal Lowland Settlement",
+                type="Coastal Population Zone",
+                district="Bhadrak / Kendrapara",
+                risk_level="CRITICAL",
+                urgency="IMMEDIATE (0-6H)",
+                priority_action="Complete targeted evacuation of 48,000 residents in kutchha houses to multi-purpose cyclone shelters; enforce fishing vessel mooring.",
+                rationale="Vulnerable low-lying saline marsh settlements within 25km of direct eyewall landfall zone."
+            ))
 
         # Re-number ranks
         for idx, item in enumerate(priorities, start=1):

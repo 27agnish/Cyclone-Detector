@@ -89,24 +89,25 @@ export const TopStatusBar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-16 bg-surface-container-lowest/90 backdrop-blur-2xl px-space-md lg:px-space-lg flex items-center justify-between border-b border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.6)] select-none">
+      <header className="sticky top-0 z-30 shrink-0 h-16 min-h-[4rem] w-full bg-surface-container-lowest/95 backdrop-blur-2xl px-3 sm:px-space-md lg:px-space-lg flex items-center justify-between gap-2 border-b border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.6)] select-none overflow-hidden">
         {/* Left: Active Cyclone Telemetry Pill */}
-        <div className="flex items-center gap-space-sm">
-          <div className="flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-low border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-rose-500 alert-beacon shadow-[0_0_8px_#ff3366]"></span>
-            <span className="font-badge text-badge text-rose-300 tracking-wider uppercase font-bold">
-              {activeName} ({activeCat})
+        <div className="flex items-center gap-2 min-w-0 shrink-0">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low border border-rose-500/40 shadow-[0_0_12px_rgba(255,51,102,0.2)] whitespace-nowrap">
+            <span className="w-2 h-2 rounded-full bg-rose-500 alert-beacon shadow-[0_0_8px_#ff3366] shrink-0"></span>
+            <span className="font-badge text-badge text-rose-300 tracking-wider uppercase font-bold whitespace-nowrap">
+              {activeName}
+              <span className="hidden 2xl:inline"> ({activeCat})</span>
             </span>
             <span className="text-outline text-body-sm">•</span>
-            <span className="font-data-value text-data-label text-cyan-300 font-bold">
+            <span className="font-data-value text-data-label text-cyan-300 font-bold whitespace-nowrap">
               {activeWind} KM/H
             </span>
             <span className="text-outline text-body-sm hidden sm:inline">•</span>
-            <span className="font-data-value text-data-label text-secondary font-semibold hidden sm:inline">
+            <span className="font-data-value text-data-label text-secondary font-semibold hidden sm:inline whitespace-nowrap">
               {activePressure} HPA
             </span>
-            <span className="text-outline text-body-sm hidden md:inline">•</span>
-            <span className="font-data-label text-[10px] text-amber-300 font-semibold uppercase hidden md:inline">
+            <span className="text-outline text-body-sm hidden xl:inline">•</span>
+            <span className="font-data-label text-[10px] text-amber-300 font-semibold uppercase hidden xl:inline whitespace-nowrap">
               TRACKING {activeDir} @ {activeSpeed} KM/H
             </span>
           </div>
@@ -116,7 +117,7 @@ export const TopStatusBar: React.FC = () => {
             <select
               value={selectedCycloneId}
               onChange={(e) => selectCyclone(e.target.value)}
-              className="hidden 2xl:inline-block bg-surface-container-high border border-cyan-500/40 text-[11px] font-data-label text-cyan-300 px-2 py-1 rounded-md focus:outline-none focus:border-cyan-400"
+              className="hidden xl:inline-block bg-surface-container-high border border-cyan-500/40 text-[11px] font-data-label text-cyan-300 px-2 py-1 rounded-md focus:outline-none focus:border-cyan-400 shrink-0"
             >
               {activeCyclones.map(c => (
                 <option key={c.id} value={c.id} className="bg-surface-container-lowest text-on-surface">
@@ -128,7 +129,7 @@ export const TopStatusBar: React.FC = () => {
         </div>
 
         {/* Center: Command Palette Trigger */}
-        <div className="flex-1 max-w-md mx-space-md hidden lg:block">
+        <div className="flex-1 max-w-xs 2xl:max-w-md mx-2 hidden xl:block min-w-[180px]">
           <button
             onClick={() => setCommandPaletteOpen(true)}
             type="button"
@@ -145,9 +146,9 @@ export const TopStatusBar: React.FC = () => {
         </div>
 
         {/* Right Action Icons & Emergency Triggers */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Status Indicator */}
-          <div className="hidden xl:flex items-center gap-3 text-slate-400 font-telemetry text-[11px]">
+          <div className="hidden 2xl:flex items-center gap-3 text-slate-400 font-telemetry text-[11px] whitespace-nowrap">
             <span className="flex items-center gap-1.5 text-cyan-300">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>
               {statusMessage || 'REALTIME SYNC'}

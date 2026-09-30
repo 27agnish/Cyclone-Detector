@@ -188,6 +188,44 @@ export const SettingsPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Developer Area: Fallback Demo Simulation */}
+      <div className="bg-[#0f172a]/80 border border-[#1e293b] rounded-xl p-5 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <Terminal className="w-5 h-5 text-cyan-400" />
+            <h3 className="font-headline font-bold text-sm text-white">DEVELOPER & SIMULATION TOOLS</h3>
+          </div>
+          <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800">
+            SHOW_FALLBACK_DEMOS
+          </span>
+        </div>
+
+        <p className="text-xs text-slate-400">
+          Control the visibility of simulated API fallback states (Skeleton Loader, Zero-Activity Basin, and FastAPI 503 Timeout) on the Active Cyclones monitoring page.
+        </p>
+
+        <div className="flex items-center justify-between p-3 rounded-lg bg-[#070d18] border border-[#1e293b]">
+          <div>
+            <div className="text-xs font-bold text-white">Show Demo States on Active Cyclones Page</div>
+            <div className="text-[11px] text-slate-400">Default is off to ensure a clean, production-ready operational view.</div>
+          </div>
+          <button
+            onClick={() => {
+              const current = localStorage.getItem('SHOW_FALLBACK_DEMOS') === 'true';
+              localStorage.setItem('SHOW_FALLBACK_DEMOS', (!current).toString());
+              window.location.reload();
+            }}
+            className={`px-3 py-1 rounded text-xs font-bold transition-all ${
+              typeof window !== 'undefined' && localStorage.getItem('SHOW_FALLBACK_DEMOS') === 'true'
+                ? 'bg-cyan-500 text-slate-950 shadow-[0_0_12px_rgba(0,229,255,0.4)]'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+            }`}
+          >
+            {typeof window !== 'undefined' && localStorage.getItem('SHOW_FALLBACK_DEMOS') === 'true' ? 'ENABLED' : 'DISABLED'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

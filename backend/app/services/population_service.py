@@ -44,9 +44,54 @@ DISTRICT_DEMOGRAPHICS = [
     }
 ]
 
+GUJARAT_DEMOGRAPHICS = [
+    {
+        "district": "Kutch",
+        "state": "Gujarat",
+        "total_population": 2092000,
+        "critical_exposure": 195000,
+        "high_exposure": 440000,
+        "moderate_exposure": 680000,
+        "evacuation_centers_active": 215,
+        "coastal_vulnerability_index": 0.93
+    },
+    {
+        "district": "Devbhumi Dwarka",
+        "state": "Gujarat",
+        "total_population": 752000,
+        "critical_exposure": 115000,
+        "high_exposure": 260000,
+        "moderate_exposure": 310000,
+        "evacuation_centers_active": 140,
+        "coastal_vulnerability_index": 0.90
+    },
+    {
+        "district": "Jamnagar",
+        "state": "Gujarat",
+        "total_population": 1407000,
+        "critical_exposure": 72000,
+        "high_exposure": 290000,
+        "moderate_exposure": 510000,
+        "evacuation_centers_active": 165,
+        "coastal_vulnerability_index": 0.84
+    },
+    {
+        "district": "Morbi",
+        "state": "Gujarat",
+        "total_population": 960000,
+        "critical_exposure": 42000,
+        "high_exposure": 175000,
+        "moderate_exposure": 340000,
+        "evacuation_centers_active": 110,
+        "coastal_vulnerability_index": 0.81
+    }
+]
+
 class PopulationService:
     def calculate_exposure(self, cyclone_id: str, intensity_factor: float = 1.0) -> PopulationExposure:
-        districts = [DistrictExposure(**d) for d in DISTRICT_DEMOGRAPHICS]
+        is_gujarat = "biparjoy" in (cyclone_id or "").lower()
+        source_demographics = GUJARAT_DEMOGRAPHICS if is_gujarat else DISTRICT_DEMOGRAPHICS
+        districts = [DistrictExposure(**d) for d in source_demographics]
         
         crit = sum(d.critical_exposure for d in districts)
         high = sum(d.high_exposure for d in districts)

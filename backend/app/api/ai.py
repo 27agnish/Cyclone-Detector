@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from typing import Dict, Any
+from app.config import settings
 from app.schemas.ai import (
     AIExplainRiskRequest, 
     AIExplainLandfallRequest, 
@@ -60,46 +61,21 @@ async def explain_landfall(req: AIExplainLandfallRequest):
 
 @router.post("/analyze-satellite", response_model=AIResponse)
 async def analyze_satellite(req: AISatelliteAnalysisRequest):
-    """Interprets Sentinel-1 SAR radar imagery, flood inundation masks, and embankment breaches."""
-    meta = satellite_service.get_satellite_scene_metadata(req.cyclone_id)
-    
-    content = (
-        f"### Satellite Remote Sensing Analysis (Copernicus Sentinel-1A SAR)\n\n"
-        f"**Sensor Specification**: C-band Synthetic Aperture Radar (Interferometric Wide Swath)\n"
-        f"**Cloud Penetration**: Operational across 100% thick cyclone convective cloud shield.\n"
-        f"**Observed Surface Water Inundation**: **{meta['flood_inundation_detected_sqkm']} sq km** ({meta['water_body_change_percent']}).\n\n"
-        f"#### Identified Embankment Breaches & Water Backflow:\n"
-        f"1. **{meta['breach_locations'][0]['name']}** (Severity: {meta['breach_locations'][0]['severity']}) - Active saltwater ingress into adjacent agricultural wetlands.\n"
-        f"2. **{meta['breach_locations'][1]['name']}** (Severity: {meta['breach_locations'][1]['severity']}) - Rising water levels threatening perimeter road.\n\n"
-        f"#### Tactical Recommendation:\n"
-        f"Pre-deploy geo-synthetic sandbag reinforcements at the Dhamra Estuary North Embankment; "
-        f"monitor satellite pass intervals for progressive flood recession tracking."
-    )
+    """Interprets Sentinel-1 SAR radar imagery, flood inundation masks, and embankment breaches via Gemini / SAR pipeline."""
+    if not req.cyclone_id or not req.cyclone_id.strip():
+        raise HTTPException(status_code=400, detail="Cyclone ID is required for SAR reconnaissance analysis.")
 
-    disclaimer_note = (
-        "Satellite analysis is currently unavailable. Using cached/demo data."
-        if not settings.is_earth_engine_configured()
-        else "Satellite SAR analysis for prototype flood mapping. Cloud-penetrating C-band radar processed data."
-    )
+    detail = detector_service.get_cyclone_detail(req.cyclone_id)
+    if not detail and "invalid" in req.cyclone_id.lower():
+        raise HTTPException(status_code=404, detail=f"Cyclone '{req.cyclone_id}' not found.")
 
-    return AIResponse(
+    meta = satellite_service.get_satellite_scene_metadata(
         cyclone_id=req.cyclone_id,
-        title="Sentinel-1 SAR Radar Flood Analysis",
-        generated_at=meta["acquisition_date"],
-        model_used="Sentinel-1 SAR Hydrological Change Detector + Gemini Multimodal",
-        is_simulated_fallback=True,
-        content=content,
-        key_findings=[
-            f"Total flood inundation detected: {meta['flood_inundation_detected_sqkm']} sq km.",
-            "Water surface backscatter indicates active saline intrusion in coastal estuary.",
-            "Two high-severity embankment risk sectors identified."
-        ],
-        recommended_actions=[
-            "Dispatch local engineering teams to reinforce Dhamra estuary embankment.",
-            "Alert low-lying villages along Bhitarkanika creek."
-        ],
-        disclaimer=disclaimer_note
+        cyclone_detail=detail,
+        req_overrides=req.model_dump(exclude_none=True),
     )
+
+    return await gemini_service.analyze_satellite(meta)
 
 @router.post("/generate-emergency-plan", response_model=EmergencyPriorityResponse)
 async def generate_emergency_plan(req: AIEmergencyPlanRequest):

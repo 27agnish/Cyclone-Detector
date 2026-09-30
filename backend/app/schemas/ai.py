@@ -11,7 +11,14 @@ class AIExplainLandfallRequest(BaseModel):
 
 class AISatelliteAnalysisRequest(BaseModel):
     cyclone_id: str
-    satellite_source: str = "Sentinel-1 SAR / Sentinel-2 MSI"
+    cyclone_name: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    wind_speed: Optional[float] = None
+    pressure: Optional[float] = None
+    landfall_location: Optional[str] = None
+    satellite_source: str = "Sentinel-1 SAR / INSAT-3DR"
+    analysis_type: str = "SAR_RECONNAISSANCE"
     bounding_box: Optional[List[float]] = None
 
 class AIEmergencyPlanRequest(BaseModel):
@@ -34,6 +41,31 @@ class EmergencyPriorityItem(BaseModel):
     priority_action: str
     rationale: str
 
+class SARReconnaissanceData(BaseModel):
+    cyclone_name: str
+    location_summary: str
+    latitude: float
+    longitude: float
+    satellite_source: str
+    sensor_mode: str
+    pass_direction: str
+    analysis_status: str
+    flood_extent_level: str
+    flood_inundation_sqkm: float
+    permanent_water_sqkm: float
+    water_expansion_percent: str
+    confidence_score: float
+    severity_level: str
+    submerged_infrastructure: List[str] = []
+    road_bridge_impact: List[str] = []
+    affected_area_summary: str
+    detected_changes: List[str] = []
+    recommended_investigation_areas: List[str] = []
+    breach_locations: List[Dict[str, Any]] = []
+    imagery_available: bool = False
+    imagery_url: Optional[str] = None
+    imagery_fallback_reason: str = "Satellite imagery unavailable for this analysis."
+
 class AIResponse(BaseModel):
     cyclone_id: str
     title: str
@@ -44,6 +76,7 @@ class AIResponse(BaseModel):
     key_findings: List[str] = []
     recommended_actions: List[str] = []
     disclaimer: str = "AI-GENERATED PROTOTYPE ANALYSIS. Not an official meteorological or disaster management order."
+    sar_data: Optional[SARReconnaissanceData] = None
 
 class EmergencyPriorityResponse(BaseModel):
     cyclone_id: str

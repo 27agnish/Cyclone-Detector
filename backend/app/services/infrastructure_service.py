@@ -48,6 +48,35 @@ INITIAL_ASSETS = [
     {"id": "com_2", "name": "Dhamra Port Marine Radio & Telecom Tower", "type": "communication", "district": "Bhadrak", "state": "Odisha", "latitude": 20.828, "longitude": 86.935, "elevation_m": 6.0, "capacity": None, "backup_power": True}
 ]
 
+GUJARAT_ASSETS = [
+    # Hospitals
+    {"id": "gj_hosp_1", "name": "Mandvi Sub-District Civil Hospital", "type": "hospital", "district": "Kutch", "state": "Gujarat", "latitude": 22.832, "longitude": 69.352, "elevation_m": 6.0, "capacity": 240, "backup_power": True},
+    {"id": "gj_hosp_2", "name": "Naliya Community Health Centre (Abdasa)", "type": "hospital", "district": "Kutch", "state": "Gujarat", "latitude": 23.258, "longitude": 68.826, "elevation_m": 4.2, "capacity": 110, "backup_power": True},
+    {"id": "gj_hosp_3", "name": "GK General District Hospital Bhuj", "type": "hospital", "district": "Kutch", "state": "Gujarat", "latitude": 23.242, "longitude": 69.666, "elevation_m": 18.0, "capacity": 520, "backup_power": True},
+    {"id": "gj_hosp_4", "name": "Lakhpat Coastal Primary Trauma Centre", "type": "hospital", "district": "Kutch", "state": "Gujarat", "latitude": 23.825, "longitude": 68.780, "elevation_m": 3.5, "capacity": 75, "backup_power": False},
+    {"id": "gj_hosp_5", "name": "Dwarka Civil & Coastal Emergency Hospital", "type": "hospital", "district": "Devbhumi Dwarka", "state": "Gujarat", "latitude": 22.244, "longitude": 68.968, "elevation_m": 5.5, "capacity": 190, "backup_power": True},
+
+    # Power Stations & Grids
+    {"id": "gj_pwr_1", "name": "Jakhau Port 132/66kV GETCO Grid Substation", "type": "power", "district": "Kutch", "state": "Gujarat", "latitude": 23.218, "longitude": 68.642, "elevation_m": 3.2, "capacity": 180, "backup_power": True},
+    {"id": "gj_pwr_2", "name": "Mandvi Coastal 220kV Transmission Substation", "type": "power", "district": "Kutch", "state": "Gujarat", "latitude": 22.845, "longitude": 69.340, "elevation_m": 5.0, "capacity": 260, "backup_power": True},
+    {"id": "gj_pwr_3", "name": "Mundra Ultra-Mega Coastal Power Switchyard", "type": "power", "district": "Kutch", "state": "Gujarat", "latitude": 22.822, "longitude": 69.552, "elevation_m": 4.8, "capacity": 400, "backup_power": True},
+    {"id": "gj_pwr_4", "name": "Naliya 66kV Rural Coastal Feeder Station", "type": "power", "district": "Kutch", "state": "Gujarat", "latitude": 23.260, "longitude": 68.835, "elevation_m": 4.0, "capacity": 95, "backup_power": False},
+
+    # Bridges & Critical Transportation
+    {"id": "gj_brg_1", "name": "Jakhau Creek Salt-Pan Causeway & Port Bridge", "type": "bridge", "district": "Kutch", "state": "Gujarat", "latitude": 23.225, "longitude": 68.630, "elevation_m": 2.8, "capacity": None, "backup_power": False},
+    {"id": "gj_brg_2", "name": "Rukmavati River Coastal Bridge (Mandvi)", "type": "bridge", "district": "Kutch", "state": "Gujarat", "latitude": 22.830, "longitude": 69.355, "elevation_m": 4.5, "capacity": None, "backup_power": False},
+    {"id": "gj_brg_3", "name": "NH-41A Jakhau–Naliya Evacuation Highway Corridor", "type": "road", "district": "Kutch", "state": "Gujarat", "latitude": 23.240, "longitude": 68.720, "elevation_m": 4.0, "capacity": None, "backup_power": False},
+
+    # Multi-Purpose Cyclone Shelters (GSDMA / NDRF)
+    {"id": "gj_shlt_1", "name": "Jakhau Port Multi-Purpose Cyclone Shelter (GSDMA)", "type": "shelter", "district": "Kutch", "state": "Gujarat", "latitude": 23.212, "longitude": 68.660, "elevation_m": 5.2, "capacity": 2800, "backup_power": True},
+    {"id": "gj_shlt_2", "name": "Mandvi Coast Guard & Community Cyclone Shelter", "type": "shelter", "district": "Kutch", "state": "Gujarat", "latitude": 22.838, "longitude": 69.365, "elevation_m": 6.0, "capacity": 2400, "backup_power": True},
+    {"id": "gj_shlt_3", "name": "Koteshwar Creek Border Cyclone Shelter", "type": "shelter", "district": "Kutch", "state": "Gujarat", "latitude": 23.685, "longitude": 68.532, "elevation_m": 4.9, "capacity": 1600, "backup_power": True},
+
+    # Water & Communication
+    {"id": "gj_wtr_1", "name": "Mandvi Coastal Desalination & Water Pumping Station", "type": "water", "district": "Kutch", "state": "Gujarat", "latitude": 22.828, "longitude": 69.330, "elevation_m": 3.9, "capacity": 95000, "backup_power": True},
+    {"id": "gj_com_1", "name": "Jakhau Coast Guard Coastal Surveillance Radar & V-SAT", "type": "communication", "district": "Kutch", "state": "Gujarat", "latitude": 23.230, "longitude": 68.618, "elevation_m": 9.0, "capacity": None, "backup_power": True}
+]
+
 class InfrastructureService:
     def __init__(self):
         self.raw_assets = INITIAL_ASSETS
@@ -61,8 +90,15 @@ class InfrastructureService:
         results = []
         lf_lat = landfall_point.get("latitude", 20.85) if landfall_point else 20.85
         lf_lon = landfall_point.get("longitude", 86.90) if landfall_point else 86.90
+        lf_state = (landfall_point.get("state", "") if landfall_point else "").lower()
 
-        for a in self.raw_assets:
+        active_catalog = (
+            GUJARAT_ASSETS
+            if (lf_state == "gujarat" or lf_lon < 75.0)
+            else self.raw_assets
+        )
+
+        for a in active_catalog:
             lat, lon = a["latitude"], a["longitude"]
             dist_track = calculate_min_distance_to_track(lat, lon, cyclone_track_points)
             dist_lf = haversine_distance_km(lat, lon, lf_lat, lf_lon)

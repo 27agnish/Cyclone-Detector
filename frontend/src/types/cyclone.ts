@@ -171,6 +171,49 @@ export interface EmergencyPriorityResponse {
   disclaimer: string;
 }
 
+export interface AISatelliteAnalysisRequest {
+  cyclone_id: string;
+  cyclone_name?: string;
+  latitude?: number;
+  longitude?: number;
+  wind_speed?: number;
+  pressure?: number;
+  landfall_location?: string;
+  satellite_source?: string;
+  analysis_type?: string;
+  bounding_box?: number[];
+}
+
+export interface SARReconnaissanceData {
+  cyclone_name: string;
+  location_summary: string;
+  latitude: number;
+  longitude: number;
+  satellite_source: string;
+  sensor_mode: string;
+  pass_direction: string;
+  analysis_status: string;
+  flood_extent_level: string;
+  flood_inundation_sqkm: number;
+  permanent_water_sqkm: number;
+  water_expansion_percent: string;
+  confidence_score: number;
+  severity_level: string;
+  submerged_infrastructure: string[];
+  road_bridge_impact: string[];
+  affected_area_summary: string;
+  detected_changes: string[];
+  recommended_investigation_areas: string[];
+  breach_locations: Array<{
+    name: string;
+    coordinates: [number, number];
+    severity: string;
+  }>;
+  imagery_available: boolean;
+  imagery_url?: string | null;
+  imagery_fallback_reason: string;
+}
+
 export interface AIResponse {
   cyclone_id: string;
   title: string;
@@ -181,6 +224,7 @@ export interface AIResponse {
   key_findings: string[];
   recommended_actions: string[];
   disclaimer: string;
+  sar_data?: SARReconnaissanceData;
 }
 
 export interface HealthCheckResponse {

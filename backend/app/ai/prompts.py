@@ -48,3 +48,21 @@ Critical Assets Exposed: {infra_summary}
 
 Provide a complete, executive-grade briefing formatted in clean Markdown with distinct operational sections, key findings, and recommended tactical actions.
 """
+
+SAR_RECONNAISSANCE_PROMPT = """
+Execute a Sentinel-1 Synthetic Aperture Radar (SAR) & Multimodal Satellite Reconnaissance briefing for:
+Cyclone: {cyclone_name} ({cyclone_id})
+Target Sector: {location_summary} ({lat}°N, {lon}°E)
+Storm Intensity: Sustained Wind {wind} km/h | Central Pressure {pressure} hPa
+Satellite Sensor: {sensor} ({satellite_source})
+Observed Flood Inundation: {flood_sqkm} sq km ({water_expansion})
+Permanent vs Flood Water Separation: {flood_sqkm} sq km flood water isolated from {perm_water_sqkm} sq km permanent water via Otsu bimodal thresholding (-18.4 dB VV)
+Submerged / Threatened Infrastructure: {submerged_infra}
+Road & Bridge Intersections: {road_bridge_impact}
+
+Provide an executive-grade SAR Reconnaissance Intelligence Report in Markdown covering:
+1. Radar Backscatter & Flood Extent Separation (Permanent vs Cyclone Inundation)
+2. Embankment Breaches & Estuarine Saline Intrusion
+3. Submerged Infrastructure, Road & Bridge Corridor Vulnerability
+4. Prioritized Field Reconnaissance & Engineering Directives
+"""

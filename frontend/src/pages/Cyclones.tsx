@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { CycloneMap } from '../components/Map/CycloneMap';
 import { CycloneSummary } from '../types/cyclone';
+import { env } from '../config/env';
 
 export const Cyclones: React.FC = () => {
   const { 
@@ -10,6 +11,8 @@ export const Cyclones: React.FC = () => {
     selectCyclone, 
     refreshAllData, 
     isLoading,
+    error,
+    lastUpdated,
     setActiveTab 
   } = useCycloneStore();
 
@@ -219,6 +222,51 @@ export const Cyclones: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Real Backend Error & Cached Stale Data Notification */}
+        {error && activeCyclones.length > 0 && (
+          <div className="bg-amber-500/15 border border-amber-500/40 rounded-xl p-space-sm px-space-md flex items-center justify-between gap-space-md flex-wrap shadow-lg">
+            <div className="flex items-center gap-space-sm">
+              <span className="material-symbols-outlined text-amber-400 text-[20px]">history</span>
+              <span className="text-amber-200 text-body-sm font-semibold">
+                Showing cached telemetry data (last synced: {lastUpdated || 'recently'}) — upstream ingest delayed.
+              </span>
+            </div>
+            <button
+              onClick={() => refreshAllData()}
+              disabled={isLoading}
+              className="px-space-md py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 text-badge font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              type="button"
+            >
+              <span className={`material-symbols-outlined text-[14px] ${isLoading ? 'animate-spin' : ''}`}>sync</span>
+              <span>{isLoading ? 'SYNCING...' : 'RETRY CONNECTION'}</span>
+            </button>
+          </div>
+        )}
+
+        {error && activeCyclones.length === 0 && (
+          <div className="flex flex-col items-center justify-center p-space-2xl bg-surface-container-low rounded-xl border border-error/40 shadow-xl text-center my-4">
+            <span className="material-symbols-outlined text-error text-[48px] mb-space-sm drop-shadow-[0_0_12px_rgba(255,92,115,0.7)]">
+              cloud_off
+            </span>
+            <h3 className="font-headline-md text-headline-md text-error font-semibold">BACKEND CONNECTION UNAVAILABLE</h3>
+            <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-1">
+              FastAPI Gateway 503: The upstream NOAA / JTWC live satellite ingest worker failed to respond and no cached data is available on disk.
+            </p>
+            <p className="font-mono text-xs text-outline mt-2">
+              {error}
+            </p>
+            <button 
+              onClick={() => refreshAllData()}
+              disabled={isLoading}
+              className="mt-space-md px-space-md py-space-xs rounded bg-gradient-to-r from-error to-rose-700 hover:from-rose-600 text-white font-bold flex items-center gap-2 transition-all cursor-pointer shadow-[0_0_14px_rgba(255,92,115,0.5)]"
+              type="button"
+            >
+              <span className={`material-symbols-outlined text-[16px] ${isLoading ? 'animate-spin' : ''}`}>sync</span>
+              <span>{isLoading ? 'RETRYING...' : 'RETRY CONNECTION & REFRESH FEED'}</span>
+            </button>
+          </div>
+        )}
 
         {/* 4 Key Strategic Telemetry Indicators */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
@@ -907,120 +955,139 @@ export const Cyclones: React.FC = () => {
           </div>
         </div>
 
-        {/* Data States & Mock API Integration Hooks Section */}
-        <div className="mt-space-lg flex flex-col gap-space-md">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-space-xs">
-              <span className="material-symbols-outlined text-primary-container text-[20px]">api</span>
-              <span className="font-headline-sm text-headline-sm text-on-surface font-semibold">API Pipeline &amp; Fallback States</span>
+        {/* Data States & Mock API Integration Hooks Section (Developer Demo Area) */}
+        {env.SHOW_FALLBACK_DEMOS && (
+          <div className="mt-space-lg flex flex-col gap-space-md">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-space-xs">
+                <span className="material-symbols-outlined text-primary-container text-[20px]">api</span>
+                <span className="font-headline-sm text-headline-sm text-on-surface font-semibold">API Pipeline &amp; Fallback States</span>
+              </div>
+              <span className="font-data-label text-data-label text-[#38bdf8] uppercase tracking-wider font-mono">FastAPI 0.110.0 • /api/v1/cyclones/*</span>
             </div>
-            <span className="font-data-label text-data-label text-[#38bdf8] uppercase tracking-wider font-mono">FastAPI 0.110.0 • /api/v1/cyclones/*</span>
-          </div>
 
-          {/* State Demonstration Tabs Bar */}
-          <div className="flex items-center gap-space-xs bg-surface-container-low p-space-2xs rounded-lg w-fit border border-surface-container flex-wrap">
-            <button 
-              onClick={() => setDemoState('live')}
-              className={`px-space-md py-1 rounded font-badge text-badge uppercase font-extrabold transition-all ${
-                demoState === 'live' 
-                  ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
-                  : 'text-outline hover:text-on-surface'
-              }`}
-              type="button"
-            >
-              Active Telemetry (Live)
-            </button>
-            <button 
-              onClick={() => setDemoState('loading')}
-              className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
-                demoState === 'loading' 
-                  ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
-                  : 'text-outline hover:text-on-surface'
-              }`}
-              type="button"
-            >
-              Skeleton Loader
-            </button>
-            <button 
-              onClick={() => setDemoState('empty')}
-              className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
-                demoState === 'empty' 
-                  ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
-                  : 'text-outline hover:text-on-surface'
-              }`}
-              type="button"
-            >
-              Zero-Activity Basin
-            </button>
-            <button 
-              onClick={() => setDemoState('error')}
-              className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
-                demoState === 'error' 
-                  ? 'bg-error text-white shadow-[0_0_10px_rgba(255,92,115,0.6)]' 
-                  : 'text-outline hover:text-on-surface'
-              }`}
-              type="button"
-            >
-              FastAPI 503 Timeout
-            </button>
-          </div>
-
-          {/* Demo State Panels */}
-          {demoState === 'loading' && (
-            <div className="p-space-lg bg-surface-container-low rounded-xl border border-surface-container shadow-md space-y-space-md animate-pulse">
-              <div className="flex items-center justify-between">
-                <div className="h-4 w-64 bg-surface-container-highest rounded" />
-                <div className="h-4 w-28 bg-surface-container-highest rounded" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-                <div className="h-40 bg-surface-container rounded-lg" />
-                <div className="h-40 bg-surface-container rounded-lg" />
-                <div className="h-40 bg-surface-container rounded-lg" />
-              </div>
-              <div className="font-data-label text-data-label text-primary-container text-center font-mono">
-                Loading cyclone systems from GET /api/v1/cyclones/active... Parsing oceanic Doppler vectors...
-              </div>
-            </div>
-          )}
-
-          {demoState === 'empty' && (
-            <div className="flex flex-col items-center justify-center p-space-2xl bg-surface-container-low rounded-xl border border-surface-container shadow-md text-center">
-              <span className="material-symbols-outlined text-primary-container text-[48px] mb-space-sm drop-shadow-[0_0_12px_rgba(0,229,255,0.5)]">
-                wb_sunny
-              </span>
-              <h3 className="font-headline-md text-headline-md text-on-surface font-semibold">NO CYCLONES ACTIVE IN MONITORED BASIN</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-1">
-                Barometric pressure envelopes remain calm across the North Indian Ocean, Arabian Sea, and Bay of Bengal. No cyclonic vortices detected by JTWC or IMD.
-              </p>
+            {/* State Demonstration Tabs Bar */}
+            <div className="flex items-center gap-space-xs bg-surface-container-low p-space-2xs rounded-lg w-fit border border-surface-container flex-wrap">
               <button 
                 onClick={() => setDemoState('live')}
-                className="mt-space-md px-space-md py-space-xs rounded bg-surface-container-high hover:bg-surface-container-highest text-primary-container font-body-sm font-semibold border border-primary-container/30" 
+                className={`px-space-md py-1 rounded font-badge text-badge uppercase font-extrabold transition-all ${
+                  demoState === 'live' 
+                    ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
+                    : 'text-outline hover:text-on-surface'
+                }`}
                 type="button"
               >
-                RETURN TO SIMULATED FLEET
+                Active Telemetry (Live)
               </button>
-            </div>
-          )}
-
-          {demoState === 'error' && (
-            <div className="flex flex-col items-center justify-center p-space-2xl bg-surface-container-low rounded-xl border border-error/40 shadow-md text-center">
-              <span className="material-symbols-outlined text-error text-[48px] mb-space-sm drop-shadow-[0_0_12px_rgba(255,92,115,0.7)]">
-                cloud_off
-              </span>
-              <h3 className="font-headline-md text-headline-md text-error font-semibold">BACKEND CONNECTION TIMEOUT</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-1">
-                FastAPI Gateway 503: The upstream NOAA / JTWC live satellite ingest worker failed to respond within 5000ms. Cached fallback data was loaded from disk.
-              </p>
               <button 
-                onClick={() => setDemoState('live')}
-                className="mt-space-md px-space-md py-space-xs rounded bg-surface-container-high hover:bg-surface-container-highest text-white font-body-sm font-semibold border border-error/40" 
+                onClick={() => setDemoState('loading')}
+                className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
+                  demoState === 'loading' 
+                    ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
+                    : 'text-outline hover:text-on-surface'
+                }`}
                 type="button"
               >
-                RETRY CONNECTION
+                Skeleton Loader
+              </button>
+              <button 
+                onClick={() => setDemoState('empty')}
+                className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
+                  demoState === 'empty' 
+                    ? 'bg-primary-container text-surface-container-lowest shadow-[0_0_10px_rgba(0,229,255,0.4)]' 
+                    : 'text-outline hover:text-on-surface'
+                }`}
+                type="button"
+              >
+                Zero-Activity Basin
+              </button>
+              <button 
+                onClick={() => setDemoState('error')}
+                className={`px-space-md py-1 rounded font-badge text-badge uppercase transition-colors ${
+                  demoState === 'error' 
+                    ? 'bg-error text-white shadow-[0_0_10px_rgba(255,92,115,0.6)]' 
+                    : 'text-outline hover:text-on-surface'
+                }`}
+                type="button"
+              >
+                FastAPI 503 Timeout
               </button>
             </div>
-          )}
-        </div>
+
+            {/* Demo State Panels */}
+            {demoState === 'loading' && (
+              <div className="p-space-lg bg-surface-container-low rounded-xl border border-surface-container shadow-md space-y-space-md animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-64 bg-surface-container-highest rounded" />
+                  <div className="h-4 w-28 bg-surface-container-highest rounded" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+                  <div className="h-40 bg-surface-container rounded-lg" />
+                  <div className="h-40 bg-surface-container rounded-lg" />
+                  <div className="h-40 bg-surface-container rounded-lg" />
+                </div>
+                <div className="font-data-label text-data-label text-primary-container text-center font-mono">
+                  Loading cyclone systems from GET /api/v1/cyclones/active... Parsing oceanic Doppler vectors...
+                </div>
+              </div>
+            )}
+
+            {demoState === 'empty' && (
+              <div className="flex flex-col items-center justify-center p-space-2xl bg-surface-container-low rounded-xl border border-surface-container shadow-md text-center">
+                <span className="material-symbols-outlined text-primary-container text-[48px] mb-space-sm drop-shadow-[0_0_12px_rgba(0,229,255,0.5)]">
+                  wb_sunny
+                </span>
+                <h3 className="font-headline-md text-headline-md text-on-surface font-semibold">NO CYCLONES ACTIVE IN MONITORED BASIN</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-1">
+                  Barometric pressure envelopes remain calm across the North Indian Ocean, Arabian Sea, and Bay of Bengal. No cyclonic vortices detected by JTWC or IMD.
+                </p>
+                <button 
+                  onClick={() => setDemoState('live')}
+                  className="mt-space-md px-space-md py-space-xs rounded bg-surface-container-high hover:bg-surface-container-highest text-primary-container font-body-sm font-semibold border border-primary-container/30" 
+                  type="button"
+                >
+                  RETURN TO SIMULATED FLEET
+                </button>
+              </div>
+            )}
+
+            {demoState === 'error' && (
+              <div className="flex flex-col items-center justify-center p-space-2xl bg-surface-container-low rounded-xl border border-error/40 shadow-md text-center">
+                <span className="material-symbols-outlined text-error text-[48px] mb-space-sm drop-shadow-[0_0_12px_rgba(255,92,115,0.7)]">
+                  cloud_off
+                </span>
+                <h3 className="font-headline-md text-headline-md text-error font-semibold">BACKEND CONNECTION TIMEOUT</h3>
+                <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-1">
+                  FastAPI Gateway 503: The upstream NOAA / JTWC live satellite ingest worker failed to respond within 5000ms. Cached fallback data was loaded from disk.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center gap-space-sm mt-space-md">
+                  <button 
+                    onClick={async () => {
+                      setDemoState('live');
+                      await refreshAllData();
+                    }}
+                    disabled={isLoading}
+                    className="px-space-md py-space-xs rounded bg-gradient-to-r from-error to-rose-700 hover:from-rose-600 hover:to-error text-white font-body-sm font-bold border border-error/50 flex items-center gap-2 transition-all shadow-[0_0_14px_rgba(255,92,115,0.5)] cursor-pointer disabled:opacity-50" 
+                    type="button"
+                  >
+                    <span className={`material-symbols-outlined text-[16px] ${isLoading ? 'animate-spin' : ''}`}>sync</span>
+                    <span>{isLoading ? 'SYNCING INGEST FEED...' : 'RETRY CONNECTION & REFRESH FEED'}</span>
+                  </button>
+                  <button 
+                    onClick={() => setDemoState('live')}
+                    className="px-space-md py-space-xs rounded bg-surface-container-high hover:bg-surface-container-highest text-primary-container font-body-sm font-semibold border border-primary-container/30 transition-colors"
+                    type="button"
+                  >
+                    RETURN TO LIVE TELEMETRY
+                  </button>
+                </div>
+                <span className="font-data-label text-[10px] text-outline mt-2 font-mono">
+                  * Note: This panel demonstrates the 503 resilience state. Click "Active Telemetry (Live)" above or "Return to Live Telemetry" to view the live fleet.
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
       </div>
     </div>

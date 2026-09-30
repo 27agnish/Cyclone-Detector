@@ -154,23 +154,23 @@ export const Sidebar: React.FC = () => {
   return (
     <aside 
       className={`relative h-full shrink-0 bg-surface-container-lowest/95 backdrop-blur-xl border-r border-outline-variant/30 z-40 flex flex-col justify-between shadow-[4px_0_24px_rgba(0,0,0,0.6)] transition-all duration-200 ${
-        isSidebarCollapsed ? 'w-20' : 'w-80'
+        isSidebarCollapsed ? 'w-16 sm:w-20' : 'w-16 md:w-64 xl:w-80'
       }`}
     >
       <div className="flex flex-col h-[calc(100vh-140px)] overflow-hidden">
         {/* Brand Header */}
-        <div className="p-space-lg flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant/20">
+        <div className="p-3 md:p-space-lg flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant/20">
           <div className="flex items-center gap-space-md overflow-hidden">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-primary-container flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.4)] shrink-0">
               <span className="material-symbols-outlined text-[20px] text-surface-container-lowest font-bold">shield</span>
             </div>
             {!isSidebarCollapsed && (
-              <div className="flex flex-col min-w-0">
+              <div className="hidden md:flex flex-col min-w-0">
                 <span className="font-headline-sm text-sm uppercase tracking-wider text-primary font-bold truncate">
                   CYCLONESHIELD AI
                 </span>
-                <span className="font-data-label text-[10px] text-primary-fixed-dim uppercase tracking-widest flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span className="font-data-label text-[10px] text-primary-fixed-dim uppercase tracking-widest flex items-center gap-1 truncate">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                   Predict Path • Protect Assets
                 </span>
               </div>
@@ -178,7 +178,7 @@ export const Sidebar: React.FC = () => {
           </div>
           <button 
             onClick={toggleSidebar}
-            className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface-container-low border border-outline-variant/40 text-on-surface-variant hover:text-primary hover:border-primary-container/50 hover:bg-surface-container transition-all shrink-0" 
+            className="hidden md:flex w-7 h-7 items-center justify-center rounded-lg bg-surface-container-low border border-outline-variant/40 text-on-surface-variant hover:text-primary hover:border-primary-container/50 hover:bg-surface-container transition-all shrink-0" 
             title={isSidebarCollapsed ? "Expand Tactical Dock" : "Collapse Tactical Dock"} 
             type="button"
           >
@@ -189,11 +189,11 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation Stream */}
-        <nav className="flex-1 overflow-y-auto px-space-md py-space-sm space-y-space-md">
+        <nav className="flex-1 overflow-y-auto px-2 md:px-space-md py-space-sm space-y-space-md">
           {sections.map((section) => (
             <div key={section.title} className="space-y-space-2xs">
               {!isSidebarCollapsed && (
-                <div className="px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">
+                <div className="hidden md:block px-space-sm py-space-2xs font-data-label text-data-label text-outline uppercase tracking-wider text-[10px]">
                   {section.title}
                 </div>
               )}
@@ -204,12 +204,12 @@ export const Sidebar: React.FC = () => {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`w-full flex items-center justify-between px-space-sm py-space-xs rounded-lg transition-all group ${
+                    className={`w-full flex items-center justify-center md:justify-between px-2 md:px-space-sm py-space-xs rounded-lg transition-all group ${
                       isActive
                         ? 'bg-gradient-to-r from-surface-container-high to-surface-container text-primary font-semibold shadow-[inset_3px_0_0_0_#00e5ff] border-l border-primary-container/60'
                         : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
                     }`}
-                    title={isSidebarCollapsed ? item.label : undefined}
+                    title={item.label}
                   >
                     <div className="flex items-center gap-space-sm min-w-0">
                       <span className={`material-symbols-outlined text-[18px] transition-colors shrink-0 ${
@@ -218,7 +218,7 @@ export const Sidebar: React.FC = () => {
                         {item.icon}
                       </span>
                       {!isSidebarCollapsed && (
-                        <span className={`font-body-md text-body-md truncate ${
+                        <span className={`hidden md:inline font-body-md text-body-md truncate ${
                           isActive ? 'text-primary font-semibold' : ''
                         }`}>
                           {item.label}
@@ -226,7 +226,7 @@ export const Sidebar: React.FC = () => {
                       )}
                     </div>
                     {!isSidebarCollapsed && item.badge && (
-                      <span className={`font-badge text-badge px-space-xs py-space-2xs rounded shrink-0 ${getBadgeStyle(item.badgeColor)}`}>
+                      <span className={`hidden xl:inline-block font-badge text-badge px-space-xs py-space-2xs rounded shrink-0 ${getBadgeStyle(item.badgeColor)}`}>
                         {item.badge}
                       </span>
                     )}
@@ -239,9 +239,9 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Dock Bottom: Live Mode & Commander Profile */}
-      <div className="p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
+      <div className="p-2 md:p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
         {!isSidebarCollapsed && (
-          <div className="flex items-center gap-space-xs bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30">
+          <div className="hidden md:flex items-center gap-space-xs bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30">
             <button className="flex-1 flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 font-badge text-badge uppercase font-bold shadow-[0_0_10px_rgba(0,229,255,0.25)]" type="button">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 pulse-beacon"></span>
               LIVE MODE
@@ -253,25 +253,25 @@ export const Sidebar: React.FC = () => {
           </div>
         )}
         
-        <div className={`flex items-center justify-between text-outline font-data-label text-[10px] ${isSidebarCollapsed ? 'justify-center' : 'px-space-xs py-space-2xs'}`}>
+        <div className={`flex items-center justify-center md:justify-between text-outline font-data-label text-[10px] ${isSidebarCollapsed ? 'justify-center' : 'px-space-xs py-space-2xs'}`}>
           <span className="flex items-center gap-space-2xs">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]"></span>
-            {!isSidebarCollapsed && <span className="text-on-surface-variant font-semibold">FASTAPI CORE</span>}
+            {!isSidebarCollapsed && <span className="hidden md:inline text-on-surface-variant font-semibold">FASTAPI CORE</span>}
           </span>
           {!isSidebarCollapsed && (
-            <span className="font-data-value text-data-label text-emerald-400 font-bold">
+            <span className="hidden xl:inline font-data-value text-data-label text-emerald-400 font-bold">
               {healthStatus?.status === 'ok' ? '18ms • ONLINE' : 'CONNECTED'}
             </span>
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-space-xs border-t border-outline-variant/20">
+        <div className="flex items-center justify-center md:justify-between pt-space-xs border-t border-outline-variant/20">
           <div className="flex items-center gap-space-sm overflow-hidden">
             <div className="relative w-8 h-8 rounded-full ring-2 ring-primary-container/70 overflow-hidden shadow-[0_0_10px_rgba(0,229,255,0.4)] shrink-0 bg-surface-container-high flex items-center justify-center">
               <span className="material-symbols-outlined text-primary text-[18px]">account_circle</span>
             </div>
             {!isSidebarCollapsed && (
-              <div className="flex flex-col truncate">
+              <div className="hidden md:flex flex-col truncate">
                 <span className="font-body-sm text-body-sm font-semibold text-on-surface leading-tight truncate">
                   Cmdr. Elena Rostova
                 </span>
@@ -282,7 +282,7 @@ export const Sidebar: React.FC = () => {
             )}
           </div>
           {!isSidebarCollapsed && (
-            <button className="text-outline hover:text-primary p-space-2xs transition-colors shrink-0" title="Operational Lock State" type="button">
+            <button className="hidden md:inline-flex text-outline hover:text-primary p-space-2xs transition-colors shrink-0" title="Operational Lock State" type="button">
               <span className="material-symbols-outlined text-[18px]">lock</span>
             </button>
           )}

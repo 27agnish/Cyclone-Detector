@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   Layers, 
   Activity, 
@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   Building2,
   CheckCircle2,
-  ArrowRight,
   Download,
   Brain,
   HelpCircle,
@@ -22,7 +21,11 @@ import {
   MapPin,
   Droplets,
   Users,
-  Compass
+  Compass,
+  FileText,
+  ClipboardList,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useCycloneStore } from '../store/cycloneStore';
 import { riskApi } from '../services/riskApi';
@@ -43,9 +46,19 @@ export const Analysis: React.FC = () => {
   const [currentRisk, setCurrentRisk] = useState<RiskAssessmentResponse | null>(riskAssessment);
   const [explainDrawerOpen, setExplainDrawerOpen] = useState(false);
   const [simulatingInference, setSimulatingInference] = useState(false);
+  const [explainingRisk, setExplainingRisk] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
+  const [generatingResponsePlan, setGeneratingResponsePlan] = useState(false);
   const [exportingGeoJson, setExportingGeoJson] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showSkeleton, setShowSkeleton] = useState(false);
+  const toolbarScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToolbar = (direction: 'left' | 'right') => {
+    if (!toolbarScrollRef.current) return;
+    const delta = direction === 'left' ? -260 : 260;
+    toolbarScrollRef.current.scrollBy({ left: delta, behavior: 'smooth' });
+  };
 
   const fetchRisk = async () => {
     setLoading(true);
@@ -74,7 +87,7 @@ export const Analysis: React.FC = () => {
     } finally {
       setTimeout(() => {
         setSimulatingInference(false);
-      }, 1200);
+      }, 600);
     }
   };
 
@@ -99,7 +112,7 @@ export const Analysis: React.FC = () => {
     a.href = url;
     a.download = `risk_zones_${selectedCycloneId}.geojson`;
     a.click();
-    setTimeout(() => setExportingGeoJson(false), 1200);
+    setTimeout(() => setExportingGeoJson(false), 800);
   };
 
   const handleCopyBriefing = () => {
@@ -110,6 +123,7 @@ export const Analysis: React.FC = () => {
   };
 
   const handleExplainWithAi = async () => {
+    setExplainingRisk(true);
     setIsAiLoading(true);
     try {
       const res = await aiApi.explainRisk(selectedCycloneId);
@@ -118,6 +132,50 @@ export const Analysis: React.FC = () => {
       console.error(e);
     } finally {
       setIsAiLoading(false);
+      setExplainingRisk(false);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    setGeneratingReport(true);
+    setIsAiLoading(true);
+    try {
+      const res = await aiApi.generateReport(selectedCycloneId);
+      openAiModal(res);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAiLoading(false);
+      setGeneratingReport(false);
+    }
+  };
+
+  const handleGenerateResponsePlan = async () => {
+    setGeneratingResponsePlan(true);
+    setIsAiLoading(true);
+    try {
+      const planRes = await aiApi.generateEmergencyPlan(selectedCycloneId);
+      openAiModal({
+        cyclone_id: planRes.cyclone_id,
+        title: `Emergency Response Priority Plan (${cycloneName})`,
+        generated_at: planRes.generated_at,
+        model_used: planRes.model_used,
+        is_simulated_fallback: false,
+        content: planRes.priorities
+          .map(
+            (p) =>
+              `### Priority #${p.rank}: ${p.name} (${p.district})\n- **Asset Type**: ${p.type.toUpperCase()} | **Risk Level**: ${p.risk_level} | **Urgency**: ${p.urgency}\n- **Directive**: ${p.priority_action}\n- **Rationale**: ${p.rationale}`
+          )
+          .join('\n\n'),
+        key_findings: planRes.priorities.slice(0, 4).map((p) => `[#${p.rank} ${p.risk_level}] ${p.name}: ${p.priority_action}`),
+        recommended_actions: planRes.priorities.slice(0, 5).map((p) => `${p.name} (${p.district}): ${p.priority_action}`),
+        disclaimer: planRes.disclaimer,
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAiLoading(false);
+      setGeneratingResponsePlan(false);
     }
   };
 
@@ -137,13 +195,136 @@ export const Analysis: React.FC = () => {
   const dashOffset = circumference - (compositeScore / 100) * circumference;
 
   return (
-    <div className="flex-1 flex flex-col w-full min-h-screen bg-[#070d18] text-[#dee2f1] select-none">
-      {/* Top Command & Status Ribbon */}
-      <div className="p-4 lg:p-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-gradient-to-r from-[#070d18] via-[#0b1326] to-[#070d18] border-b border-[#1e293b] shadow-lg relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-transparent to-transparent pointer-events-none" />
-        <div className="flex flex-col gap-1 relative z-10">
-          <div className="flex items-center gap-2 font-telemetry text-[11px] text-slate-400 uppercase tracking-wider">
-            <span className="hover:text-cyan-300 transition-colors">Risk Intelligence</span>
+    <div
+      data-testid="risk-analysis-page"
+      className="flex-1 flex flex-col w-full h-full min-h-0 overflow-y-auto overflow-x-hidden bg-[#070d18] text-[#dee2f1] select-none"
+    >
+      {/* 1. Dedicated Page Action Toolbar (Sticky directly below Global Header, Horizontally Scrollable, Never Clipped) */}
+      <div
+        data-testid="risk-action-toolbar"
+        className="sticky top-0 z-20 shrink-0 w-full bg-[#0b1326]/95 backdrop-blur-md border-b border-[#1e293b] px-3 sm:px-4 lg:px-6 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.55)]"
+      >
+        <div className="flex items-center gap-2 w-full">
+          {/* Left horizontal scroll affordance for smaller viewports */}
+          <button
+            type="button"
+            onClick={() => scrollToolbar('left')}
+            aria-label="Scroll actions left"
+            className="xl:hidden shrink-0 p-1.5 rounded-lg bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-300 border border-cyan-500/30 transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Horizontally Scrollable Action Buttons Strip */}
+          <div
+            ref={toolbarScrollRef}
+            data-testid="risk-action-scroll-container"
+            className="flex-1 min-w-0 flex items-center gap-2.5 overflow-x-auto whitespace-nowrap py-1 scroll-smooth"
+          >
+            <button
+              type="button"
+              data-testid="btn-run-impact"
+              onClick={handleRunSimulation}
+              disabled={simulatingInference || loading}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline font-bold text-xs shadow-[0_0_16px_rgba(0,229,255,0.35)] hover:shadow-[0_0_22px_rgba(0,229,255,0.55)] transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <RefreshCw className={`w-4 h-4 shrink-0 ${simulatingInference || loading ? 'animate-spin' : ''}`} />
+              <span>{simulatingInference || loading ? 'ANALYZING IMPACT...' : 'RUN IMPACT ANALYSIS'}</span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-explain-risk"
+              onClick={handleExplainWithAi}
+              disabled={explainingRisk}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-200 font-telemetry text-xs font-semibold border border-cyan-400 hover:border-cyan-300 transition-all shadow-[0_0_12px_rgba(0,229,255,0.2)] disabled:opacity-50 cursor-pointer"
+            >
+              <Sparkles className={`w-4 h-4 shrink-0 text-[#00e5ff] ${explainingRisk ? 'animate-spin' : ''}`} />
+              <span className="text-white font-bold">
+                {explainingRisk ? 'EXPLAINING RISK...' : 'EXPLAIN RISK ANALYSIS'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-generate-report"
+              onClick={handleGenerateReport}
+              disabled={generatingReport}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-200 font-telemetry text-xs font-semibold border border-cyan-500/50 hover:border-cyan-300 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <FileText className="w-4 h-4 shrink-0 text-cyan-400" />
+              <span className="text-white font-semibold">
+                {generatingReport ? 'GENERATING REPORT...' : 'GENERATE REPORT'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-generate-response"
+              onClick={handleGenerateResponsePlan}
+              disabled={generatingResponsePlan}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-950/70 hover:bg-rose-900/70 text-rose-200 font-telemetry text-xs font-semibold border border-rose-500/60 hover:border-rose-400 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <ClipboardList className="w-4 h-4 shrink-0 text-rose-400" />
+              <span className="text-white font-semibold">
+                {generatingResponsePlan ? 'GENERATING PLAN...' : 'GENERATE RESPONSE PLAN'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-xai-inspector"
+              onClick={() => setExplainDrawerOpen(true)}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0f1a30] hover:bg-[#162442] text-cyan-200 font-telemetry text-xs font-semibold border border-cyan-500/40 transition-all cursor-pointer"
+            >
+              <Brain className="w-4 h-4 shrink-0 text-[#00e5ff]" />
+              <span className="text-white">XAI INSPECTOR</span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-export-geojson"
+              onClick={handleExportGeoJson}
+              disabled={exportingGeoJson}
+              className="shrink-0 whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-950/60 border border-cyan-400/70 text-cyan-200 font-telemetry text-xs font-semibold hover:bg-[#13223f] transition-all shadow-sm group cursor-pointer"
+            >
+              <Download className="w-4 h-4 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <span className="text-white">{exportingGeoJson ? 'EXPORTING...' : 'EXPORT RISK GEOJSON'}</span>
+            </button>
+
+            <button
+              type="button"
+              data-testid="btn-simulate-latency"
+              onClick={() => setShowSkeleton(!showSkeleton)}
+              className="shrink-0 whitespace-nowrap px-3.5 py-2 rounded-lg bg-[#1e293b] hover:bg-[#152037] text-slate-300 border border-[#334155] text-[11px] font-telemetry uppercase transition-colors cursor-pointer"
+            >
+              {showSkeleton ? 'HIDE SKELETON' : 'DEV: SIMULATE LATENCY'}
+            </button>
+          </div>
+
+          {/* Right horizontal scroll affordance for smaller viewports */}
+          <button
+            type="button"
+            onClick={() => scrollToolbar('right')}
+            aria-label="Scroll actions right"
+            className="xl:hidden shrink-0 p-1.5 rounded-lg bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-300 border border-cyan-500/30 transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Page Header & Status Ribbon (Shrink-0 so it is never vertically compressed) */}
+      <div className="shrink-0 px-4 lg:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-gradient-to-r from-[#070d18] via-[#0b1326] to-[#070d18] border-b border-[#1e293b] relative">
+        <div className="flex flex-col gap-1.5 relative z-10">
+          <div className="flex flex-wrap items-center gap-2 font-telemetry text-[11px] text-slate-400 uppercase tracking-wider">
+            <button
+              type="button"
+              onClick={() => setActiveTab('dashboard')}
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              Risk Intelligence
+            </button>
             <span className="text-slate-600">/</span>
             <span className="text-[#00e5ff] font-semibold">Multi-Hazard Vulnerability Matrix</span>
             <span className="text-slate-600">/</span>
@@ -151,8 +332,8 @@ export const Analysis: React.FC = () => {
               {selectedCycloneId.toUpperCase()}
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <h1 className="font-headline text-2xl lg:text-3xl text-white font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-200 bg-clip-text text-transparent">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-headline text-xl sm:text-2xl lg:text-3xl text-white font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-200 bg-clip-text text-transparent">
               PROTOTYPE MULTI-HAZARD RISK ANALYSIS
             </h1>
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-400/40 shadow-[0_0_12px_rgba(0,229,255,0.2)]">
@@ -163,53 +344,17 @@ export const Analysis: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center gap-2.5 relative z-10">
-          <button 
-            onClick={handleRunSimulation}
-            disabled={simulatingInference}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-[#00e5ff] text-[#070d18] font-headline font-bold text-xs shadow-[0_0_18px_rgba(0,229,255,0.4)] hover:shadow-[0_0_24px_rgba(0,229,255,0.6)] hover:-translate-y-0.5 transition-all disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${simulatingInference ? 'animate-spin' : ''}`} />
-            <span>{simulatingInference ? 'INFERRING (FASTAPI)...' : 'RUN AI RISK SIMULATION'}</span>
-          </button>
-
-          <button 
-            onClick={handleExportGeoJson}
-            disabled={exportingGeoJson}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-950/60 border border-cyan-400 text-cyan-200 font-telemetry text-xs font-semibold hover:bg-[#13223f] transition-all shadow-sm group"
-          >
-            <Download className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-            <span className="text-white">{exportingGeoJson ? 'GENERATING...' : 'EXPORT RISK GEOJSON'}</span>
-          </button>
-
-          <button 
-            onClick={() => setExplainDrawerOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#13223f] hover:bg-[#1e2c4a] text-cyan-200 font-telemetry text-xs font-semibold border border-cyan-400 hover:border-cyan-300 transition-all shadow-[0_0_12px_rgba(0,229,255,0.25)]"
-          >
-            <Sparkles className="w-4 h-4 text-[#00e5ff]" />
-            <span className="text-white font-bold">EXPLAIN RISK WITH AI</span>
-          </button>
-
-          <button 
-            onClick={() => setShowSkeleton(!showSkeleton)}
-            className="px-3 py-2 rounded-lg bg-[#1e293b] hover:bg-[#152037] text-slate-300 border border-[#334155] text-[10px] font-telemetry uppercase transition-colors"
-          >
-            {showSkeleton ? 'HIDE SKELETON' : 'DEV: SIMULATE LATENCY'}
-          </button>
-        </div>
       </div>
 
-      {/* Model Advisory Disclaimer Banner */}
-      <div className="px-4 lg:px-6 py-2 bg-gradient-to-r from-red-950/80 via-rose-950/70 to-red-950/80 border-y border-rose-500/40 text-red-200 flex items-center justify-between shadow-[0_0_16px_rgba(255,51,102,0.15)] text-xs font-telemetry">
+      {/* 3. Model Advisory Disclaimer Banner (Shrink-0) */}
+      <div className="shrink-0 px-4 lg:px-6 py-2.5 bg-gradient-to-r from-red-950/80 via-rose-950/70 to-red-950/80 border-b border-rose-500/40 text-red-200 flex items-center justify-between shadow-[0_0_16px_rgba(255,51,102,0.15)] text-xs font-telemetry">
         <div className="flex items-center gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-rose-400 alert-beacon" />
+          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 alert-beacon" />
           <span className="tracking-widest font-bold uppercase text-[10px] sm:text-xs">
             MODEL-DERIVED PROTOTYPE OUTPUT — NOT OFFICIAL EMERGENCY ORDERS. MANDATORY SYNCHRONIZATION WITH NATIONAL DIRECTIVES REQUIRED.
           </span>
         </div>
-        <div className="hidden md:flex items-center gap-2 font-mono text-[11px] text-cyan-300">
+        <div className="hidden md:flex items-center gap-2 font-mono text-[11px] text-cyan-300 shrink-0 ml-4">
           <span className="w-2 h-2 rounded-full bg-rose-500 pulse-beacon" />
           <span>API: GET /api/v1/risk/{selectedCycloneId}</span>
         </div>
