@@ -73,7 +73,7 @@ export const Sidebar: React.FC = () => {
         isSidebarCollapsed ? 'w-16 sm:w-20' : 'w-16 md:w-64 xl:w-80'
       }`}
     >
-      <div className="flex flex-col h-[calc(100vh-140px)] overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         {/* Brand Header */}
         <div className="p-3 md:p-space-lg flex items-center justify-between bg-surface-container-lowest border-b border-outline-variant/20">
           <div className="flex items-center gap-space-md overflow-hidden">
@@ -153,8 +153,41 @@ export const Sidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Dock Bottom: Live Mode & Commander Profile */}
-      <div className="p-2 md:p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
+      {/* Dock Bottom: Emergency Helpline, Live Mode & Commander Profile */}
+      <div className="shrink-0 p-2 md:p-space-md bg-surface-container-low/90 backdrop-blur-md flex flex-col gap-space-xs border-t border-outline-variant/30 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
+        {/* Emergency Helpline Section */}
+        {!isSidebarCollapsed ? (
+          <div className="rounded-lg bg-rose-950/30 border border-rose-500/40 p-2 md:p-2.5 flex flex-col gap-1.5 shadow-[0_0_12px_rgba(255,51,102,0.15)]">
+            <div className="flex items-center justify-between">
+              <span className="font-data-label text-[10px] text-rose-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <span>🚨</span>
+                <span>EMERGENCY HELPLINE</span>
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 alert-beacon"></span>
+            </div>
+            <a
+              href="tel:112"
+              className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded bg-gradient-to-r from-rose-950/80 to-rose-900/80 hover:from-rose-900 hover:to-rose-800 border border-rose-500/60 hover:border-rose-400 text-white font-medium transition-all shadow-[0_0_10px_rgba(255,51,102,0.25)] hover:shadow-[0_0_16px_rgba(255,51,102,0.45)] cursor-pointer group"
+              title="Direct Dial Emergency: Call 112"
+            >
+              <span className="material-symbols-outlined text-[16px] text-rose-300 group-hover:scale-110 transition-transform">call</span>
+              <span className="text-xs text-rose-200 font-medium">Call</span>
+              <span className="font-headline text-lg font-black tracking-widest text-white">112</span>
+            </a>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center bg-surface-container-lowest p-space-2xs rounded-lg border border-rose-500/30">
+            <a
+              href="tel:112"
+              className="w-full flex flex-col items-center justify-center py-1 px-1 rounded bg-rose-950/70 border border-rose-500/50 text-rose-300 hover:text-white transition-all shadow-[0_0_10px_rgba(255,51,102,0.25)] cursor-pointer"
+              title="🚨 EMERGENCY HELPLINE: Call 112"
+            >
+              <span className="text-xs leading-none">🚨</span>
+              <span className="font-headline text-[11px] font-black tracking-wider text-white mt-0.5">112</span>
+            </a>
+          </div>
+        )}
+
         <div className="flex items-center bg-surface-container-lowest p-space-2xs rounded-lg border border-outline-variant/30">
           <div 
             className="w-full flex items-center justify-center gap-space-xs py-space-2xs px-space-xs rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 font-badge text-badge uppercase font-bold shadow-[0_0_10px_rgba(0,229,255,0.25)] select-none"
